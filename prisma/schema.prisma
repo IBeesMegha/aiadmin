@@ -1,0 +1,213 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Authentication Models
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String
+  roleId    String?
+  role      Role?     @relation(fields: [roleId], references: [id])
+  isActive  Boolean   @default(true)
+  sessions  Session[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([email])
+  @@map("users")
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  name        String
+  slug        String           @unique
+  description String?
+  users       User[]
+  permissions RolePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([slug])
+  @@map("roles")
+}
+
+model Permission {
+  id          String           @id @default(cuid())
+  name        String
+  slug        String           @unique
+  description String?
+  module      String
+  action      String
+  roles       RolePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([slug])
+  @@index([module, action])
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshToken String
+  userAgent    String?
+  ipAddress    String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// Language Model for Internationalization
+model Language {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  nativeName  String
+  flag        String?
+  isDefault   Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([code])
+  @@index([isDefault])
+  @@map("languages")
+}
+
+// Content Type Definitions
+model CollectionType {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  displayName String
+  description String?
+  fields      Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SingleType {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  displayName String
+  description String?
+  fields      Json
+  data        Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Component {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  displayName String
+  category    String
+  fields      Json
+  entries     ComponentEntry[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ComponentEntry {
+  id          String    @id @default(cuid())
+  componentId String
+  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  data        Json
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([componentId])
+  @@map("component_entries")
+}
+
+// Media Library
+model Media {
+  id              String   @id @default(cuid())
+  name            String
+  alternativeText String?
+  caption         String?
+  url             String
+  mime            String
+  size            Int
+  width           Int?
+  height          Int?
+  ext             String
+  folder          String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("media")
+}
+
+// Dynamic Collection Types
+
+model Blog {
+  id        String   @id @default(cuid())
+  name  String?
+  heading  String?
+  blogCategorys   BlogCategory[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("blog")
+}
+
+model BlogCategory {
+  id        String   @id @default(cuid())
+  name  String?
+  slug  String? @unique
+  blogs   Blog[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("blog_category")
+}
+
+model ProdCategory {
+  id        String   @id @default(cuid())
+  name  String?
+  slug  String? @unique
+  products  Product[] @relation("ProductToProdCategory")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("prod_category")
+}
+
+model Product {
+  id        String   @id @default(cuid())
+  name  String?
+  content  String?
+  prodCategoryId String?
+  prodCategory   ProdCategory? @relation("ProductToProdCategory", fields: [prodCategoryId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("product")
+}

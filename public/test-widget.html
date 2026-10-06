@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Widget Test - Standalone HTML</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #1a202c;
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+        
+        .subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+        
+        .info-box {
+            background: #edf2f7;
+            border-left: 4px solid #4299e1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .info-box h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .status-dot.green { background: #48bb78; }
+        .status-dot.red { background: #f56565; }
+        .status-dot.yellow { background: #ed8936; }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #4299e1;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #3182ce;
+        }
+        
+        code {
+            background: #2d3748;
+            color: #68d391;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+        }
+        
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .checklist li {
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .checklist li:before {
+            content: '□ ';
+            color: #4299e1;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🧪 AI Widget Test Page</h1>
+            <p class="subtitle">Standalone HTML test for external embedding</p>
+            
+            <div class="info-box">
+                <h3>📌 About This Test</h3>
+                <p>This is a plain HTML file that loads the AI widget from your localhost:3000 server. It simulates embedding the widget on an external website.</p>
+            </div>
+
+            <div class="test-section">
+                <h2>🔍 Real-Time Status</h2>
+                <div id="status-container">
+                    <div class="status">
+                        <span class="status-dot yellow"></span>
+                        <span>Checking status...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h2>✅ What Should Happen</h2>
+                <ol>
+                    <li>Page loads this HTML</li>
+                    <li>Widget script loads from <code>localhost:3000</code></li>
+                    <li>Widget fetches configuration</li>
+                    <li>Chat bubble appears in bottom corner</li>
+                    <li>Clicking bubble opens chat interface</li>
+                </ol>
+            </div>
+
+            <div class="test-section">
+                <h2>📋 Checklist</h2>
+                <ul class="checklist">
+                    <li>Widget server (localhost:3000) is running</li>
+                    <li>Widget is enabled in admin panel</li>
+                    <li>Chat bubble visible in bottom corner</li>
+                    <li>Can click to open chat panel</li>
+                    <li>Can type and send messages</li>
+                    <li>Receive AI responses</li>
+                </ul>
+            </div>
+
+            <div class="test-section">
+                <h2>🛠️ Troubleshooting</h2>
+                <p>If widget doesn't appear:</p>
+                <ol>
+                    <li>Open browser DevTools (F12)</li>
+                    <li>Check Console tab for errors</li>
+                    <li>Check Network tab for failed requests</li>
+                    <li>Verify <code>localhost:3000</code> is accessible</li>
+                    <li>Ensure widget is enabled in admin panel</li>
+                </ol>
+            </div>
+
+            <div class="test-section">
+                <a href="http://localhost:3000/admin/widget" class="btn" target="_blank">
+                    Open Widget Settings
+                </a>
+                <a href="http://localhost:3000/widget-debug" class="btn" target="_blank" style="margin-left: 10px; background: #805ad5;">
+                    Open Debug Console
+                </a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📝 Embed Code Used</h2>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 20px; border-radius: 8px; overflow-x: auto;">
+                <pre style="margin: 0; font-family: 'Courier New', monospace; font-size: 14px;">&lt;!-- AI Chat Widget --&gt;
+&lt;div id="ai-chat-widget"&gt;&lt;/div&gt;
+&lt;script src="http://localhost:3000/api/widget/embed.js" defer&gt;&lt;/script&gt;</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chat Widget Embed Code -->
+    <div id="ai-chat-widget"></div>
+    <script src="http://localhost:3000/api/widget/embed.js" defer></script>
+
+    <!-- Status Check Script -->
+    <script>
+        // Wait for page to load
+        window.addEventListener('load', function() {
+            setTimeout(checkStatus, 1000);
+            setInterval(checkStatus, 3000);
+        });
+
+        function checkStatus() {
+            const container = document.getElementById('status-container');
+            const statuses = [];
+
+            // Check if container exists
+            const widgetContainer = document.getElementById('ai-chat-widget');
+            statuses.push({
+                label: 'Container Element',
+                status: widgetContainer ? 'green' : 'red',
+                text: widgetContainer ? 'Found' : 'Not Found'
+            });
+
+            // Check if root exists
+            const widgetRoot = document.getElementById('ai-w-root');
+            statuses.push({
+                label: 'Widget Root',
+                status: widgetRoot ? 'green' : 'red',
+                text: widgetRoot ? 'Initialized' : 'Not Initialized'
+            });
+
+            // Check if button exists
+            const widgetButton = document.getElementById('ai-fab');
+            statuses.push({
+                label: 'Chat Button',
+                status: widgetButton ? 'green' : 'yellow',
+                text: widgetButton ? 'Visible' : 'Loading...'
+            });
+
+            // Update UI
+            container.innerHTML = statuses.map(s => `
+                <div class="status">
+                    <span class="status-dot ${s.status}"></span>
+                    <span><strong>${s.label}:</strong> ${s.text}</span>
+                </div>
+            `).join('');
+
+            // Check API connectivity
+            fetch('http://localhost:3000/api/widget/config')
+                .then(res => res.json())
+                .then(data => {
+                    container.innerHTML += `
+                        <div class="status">
+                            <span class="status-dot green"></span>
+                            <span><strong>API Connection:</strong> Connected</span>
+                        </div>
+                        <div class="status">
+                            <span class="status-dot ${data.data?.embedActive ? 'green' : 'red'}"></span>
+                            <span><strong>Widget Active:</strong> ${data.data?.embedActive ? 'Yes' : 'No'}</span>
+                        </div>
+                    `;
+                })
+                .catch(err => {
+                    container.innerHTML += `
+                        <div class="status">
+                            <span class="status-dot red"></span>
+                            <span><strong>API Connection:</strong> Failed (Is localhost:3000 running?)</span>
+                        </div>
+                    `;
+                });
+        }
+    </script>
+</body>
+</html>

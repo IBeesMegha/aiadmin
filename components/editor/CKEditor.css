@@ -1,0 +1,219 @@
+.ckeditor-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+.ckeditor-wrapper .ck-editor {
+  width: 100%;
+}
+
+.ckeditor-wrapper .ck-editor__editable {
+  min-height: 500px;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ckeditor-wrapper .ck-editor__editable:hover {
+  border-color: #d1d5db;
+}
+
+.ckeditor-wrapper .ck-editor__editable:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.ckeditor-wrapper .ck-editor__editable.ck-focused {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.ckeditor-wrapper .ck-toolbar {
+  border: 1px solid #e5e7eb;
+  border-bottom: none;
+  border-radius: 0.5rem 0.5rem 0 0;
+  background-color: #f9fafb;
+}
+
+.ckeditor-wrapper .ck-content {
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.ckeditor-wrapper .ck-editor__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.ckeditor-wrapper .ck-toolbar-container {
+  width: 100%;
+}
+
+.ckeditor-wrapper .ck-heading_paragraph {
+  font-weight: normal;
+}
+
+.ckeditor-wrapper .heading-1 {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+.ckeditor-wrapper .heading-2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}
+
+.ckeditor-wrapper .heading-3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.ckeditor-wrapper .ck-content blockquote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1rem;
+  margin-left: 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.ckeditor-wrapper .ck-content pre {
+  background-color: #1f2937;
+  color: #f3f4f6;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.875rem;
+}
+
+.ckeditor-wrapper .ck-content code {
+  background-color: #f3f4f6;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.875rem;
+}
+
+.ckeditor-wrapper .ck-content pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.ckeditor-wrapper .ck-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.ckeditor-wrapper .ck-content table th,
+.ckeditor-wrapper .ck-content table td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.ckeditor-wrapper .ck-content table th {
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+.ckeditor-wrapper .ck-content table tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.ckeditor-wrapper .ck-content hr {
+  border: none;
+  border-top: 2px solid #e5e7eb;
+  margin: 1.5rem 0;
+}
+
+.ckeditor-wrapper .ck-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.ckeditor-wrapper .ck-content .image-style-align-left {
+  float: left;
+  margin-right: 1rem;
+}
+
+.ckeditor-wrapper .ck-content .image-style-align-right {
+  float: right;
+  margin-left: 1rem;
+}
+
+.ckeditor-wrapper .ck-content .image-style-align-center {
+  display: block;
+  margin: 0 auto;
+}
+
+.ckeditor-wrapper .ck-content a {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+.ckeditor-wrapper .ck-content a:hover {
+  color: #2563eb;
+}
+
+@media (max-width: 768px) {
+  .ckeditor-wrapper .ck-toolbar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .ckeditor-wrapper .ck-toolbar .ck-toolbar__items {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .ckeditor-wrapper .ck-editor__editable {
+    min-height: 300px;
+  }
+}
+
+.ckeditor-wrapper .ck-editor__source-editing-area {
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.ckeditor-wrapper .ck-editor__show-blocks {
+  display: block;
+}
+
+.ckeditor-wrapper .ck-editor__show-blocks_content {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.ckeditor-wrapper .ck-todo-list__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.ckeditor-wrapper .ck-todo-list__item .ck-todo-list__checkbox {
+  margin-top: 0.25rem;
+}
+
+.ckeditor-wrapper .ck-editor__body .ck-editor__editable {
+  padding: 1rem;
+}
+
+.ckeditor-wrapper.ckeditor-disabled .ck-editor__editable {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+  opacity: 0.7;
+}

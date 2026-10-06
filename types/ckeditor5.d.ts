@@ -1,0 +1,34 @@
+declare module 'ckeditor5' {
+  export const ClassicEditor: any;
+  export const Essentials: any;
+  export const Paragraph: any;
+  export const Heading: any;
+  export const Bold: any;
+  export const Italic: any;
+  export const Underline: any;
+  export const Strikethrough: any;
+  export const Code: any;
+  export const CodeBlock: any;
+  export const Link: any;
+  export const AutoLink: any;
+  export const BlockQuote: any;
+  export const List: any;
+  export const TodoList: any;
+  export const Indent: any;
+  export const Image: any;
+  export const ImageToolbar: any;
+  export const ImageCaption: any;
+  export const ImageStyle: any;
+  export const ImageResize: any;
+  export const Table: any;
+  export const TableToolbar: any;
+  export const TableProperties: any;
+  export const TableCellProperties: any;
+  export const SpecialCharacters: any;
+  export const SpecialCharactersEssentials: any;
+  export const HorizontalLine: any;
+  export const PageBreak: any;
+  export const Undo: any;
+  export const SourceEditing: any;
+  export const ShowBlocks: any;
+}

@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import { ApiResponse } from '@/lib/types';
+import { ApiResponse, Field } from '@/lib/types';
+import { syncInverseRelations } from '@/lib/relation-metadata';
+import { syncRelatedCollections } from '@/lib/relation-sync';
 import { 
   dropDynamicTable, 
   renameDynamicTable,
@@ -50,6 +52,22 @@ export default async function handler(
         
         // Check if collection name is being changed
         const isRenaming = newName && newName !== name;
+        const targetName = isRenaming ? newName.toLowerCase().replace(/\s+/g, '-') : name;
+
+        const existing = await prisma.collectionType.findUnique({ where: { name } });
+        if (!existing) {
+          return res.status(404).json({ error: 'Collection type not found' });
+        }
+        const previousFields: Field[] = (existing.fields as any)?.fields || [];
+
+        console.log('Step 0: Synchronizing bidirectional relations...');
+        const { fields: syncedFields, affectedCollections } = await syncInverseRelations(
+          targetName,
+          previousFields,
+          fields.fields,
+          name
+        );
+        fields.fields = syncedFields;
         
         // 1. Update the collection metadata in database
         console.log('Step 1: Updating collection metadata...');
@@ -61,8 +79,7 @@ export default async function handler(
         
         // If renaming, include the new name
         if (isRenaming) {
-          const normalizedNewName = newName.toLowerCase().replace(/\s+/g, '-');
-          updateData.name = normalizedNewName;
+          updateData.name = targetName;
         }
         
         const collectionType = await prisma.collectionType.update({
@@ -82,6 +99,8 @@ export default async function handler(
         console.log('Step 3: Synchronizing table schema...');
         await syncTableSchema(finalName, fields.fields);
         console.log('✓ Table schema synchronized');
+
+        await syncRelatedCollections(affectedCollections);
 
         // 4. Regenerate the collection module so the model, service, controller,
         //    API routes and (on rename) admin pages carry the new collection name,

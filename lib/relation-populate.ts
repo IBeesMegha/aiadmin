@@ -68,7 +68,16 @@ export async function populateRelations(
       const relationType = field.relation.type;
       const targetCollection = field.relation.targetCollection;
 
-      if (relationType === 'manyToOne' || relationType === 'oneToOne') {
+      if (relationType === 'oneToOne' && field.relation.isVirtual) {
+        const related = await populateManyRelation(
+          entry.id,
+          targetCollection,
+          field.relation.targetField,
+          visitedIds,
+          { ...options, maxDepth: maxDepth - 1 }
+        );
+        populatedEntry[field.name] = related[0] || null;
+      } else if (relationType === 'manyToOne' || relationType === 'oneToOne') {
         // Populate single relation using FK field
         if (fkValue) {
           // Use the original field name for the populated object

@@ -385,7 +385,7 @@ export function filterVirtualRelationFields(
   const virtualRelationFieldNames = new Set(
     fields
       .filter(f => f.type === 'relation' && f.relation)
-      .filter(f => f.relation!.type === 'oneToMany' || f.relation!.type === 'manyToMany')
+      .filter(f => f.relation!.isVirtual || f.relation!.type === 'oneToMany' || f.relation!.type === 'manyToMany')
       .map(f => f.name)
   );
   

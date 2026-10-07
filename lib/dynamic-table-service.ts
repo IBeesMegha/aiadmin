@@ -152,7 +152,7 @@ export async function createDynamicTable(
       }
 
       // Only create foreign key columns for relations that own the FK
-      if (field.relation) {
+      if (field.relation && !field.relation.isVirtual) {
         const { type } = field.relation;
         
         if (type === 'manyToOne' || type === 'oneToOne') {
@@ -231,7 +231,7 @@ export async function addColumn(
     // Add foreign key column for relations that own the FK
     const { type } = field.relation;
     
-    if (type === 'manyToOne' || type === 'oneToOne') {
+    if (!field.relation.isVirtual && (type === 'manyToOne' || type === 'oneToOne')) {
       // Use the exact field name as the FK column (no Id suffix)
       const fkColumnName = columnName;
       const nullable = field.required ? 'NOT NULL' : '';
@@ -428,7 +428,7 @@ export async function syncTableSchema(
     
     if (field.type === 'relation' && field.relation) {
       const { type } = field.relation;
-      if (type === 'manyToOne' || type === 'oneToOne') {
+      if (!field.relation.isVirtual && (type === 'manyToOne' || type === 'oneToOne')) {
         // Use the exact field name as the FK column (no Id suffix)
         expectedColumns.add(columnName);
       }
@@ -443,7 +443,7 @@ export async function syncTableSchema(
     
     if (field.type === 'relation' && field.relation) {
       const { type } = field.relation;
-      if (type === 'manyToOne' || type === 'oneToOne') {
+      if (!field.relation.isVirtual && (type === 'manyToOne' || type === 'oneToOne')) {
         // Use the exact field name as the FK column
         const fkColumnName = columnName;
         if (!existingColumnNames.has(fkColumnName)) {

@@ -2,7 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import { ApiResponse, Field } from '@/lib/types';
 import { createDynamicTable, tableExists, syncTableSchema } from '@/lib/dynamic-table-service';
-import { createRelation } from '@/lib/relation-metadata';
+import { syncInverseRelations } from '@/lib/relation-metadata';
+import { syncRelatedCollections } from '@/lib/relation-sync';
 import { generateCollectionModule, deleteCollectionModule } from '@/lib/collection-module-generator';
 
 /**
@@ -76,27 +77,24 @@ export default async function handler(
         console.log('Step 4: Processing relations...');
         const relationFields = (fields.fields || []).filter((f: any) => f.type === 'relation');
         
-        for (const relationField of relationFields) {
-          try {
-            await createRelation({
-              sourceCollection: normalizedName,
-              sourceField: relationField.name,
-              targetCollection: relationField.relation.targetCollection,
-              relationType: relationField.relation.type,
-              displayName: relationField.displayName
-            });
-            console.log(`✓ Created relation: ${relationField.name}`);
-          } catch (error: any) {
-            console.error(`✗ Failed to create relation ${relationField.name}:`, error.message);
-          }
-        }
-
-        // 5. Sync table schema to add FK columns for owned relations
         if (relationFields.length > 0) {
+          const { fields: syncedFields, affectedCollections } = await syncInverseRelations(
+            normalizedName,
+            [],
+            fields.fields || []
+          );
+
+          await prisma.collectionType.update({
+            where: { name: normalizedName },
+            data: { fields: { fields: syncedFields } as any },
+          });
+
+          // 5. Sync table schema to add FK columns for owned relations
           console.log('Step 5: Syncing table schema for FK columns...');
-          const allFields = await getCollectionFields(normalizedName);
-          await syncTableSchema(normalizedName, allFields);
+          await syncTableSchema(normalizedName, syncedFields);
           console.log('✓ Table schema synced');
+
+          await syncRelatedCollections(affectedCollections);
         }
 
         console.log(`\n✓ Collection ${normalizedName} created successfully!`);
@@ -169,19 +167,4 @@ export default async function handler(
     console.error('Collection Types API Error:', error);
     return res.status(500).json({ error: error.message || 'Internal server error' });
   }
-}
-
-/**
- * Get collection fields from metadata
- */
-async function getCollectionFields(collectionName: string): Promise<any[]> {
-  const collection = await prisma.collectionType.findUnique({
-    where: { name: collectionName }
-  });
-
-  if (!collection) {
-    return [];
-  }
-
-  return (collection.fields as any)?.fields || [];
 }

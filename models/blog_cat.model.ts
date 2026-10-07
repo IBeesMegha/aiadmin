@@ -29,6 +29,7 @@ export interface BlogCatEntry {
   updatedAt: string | Date;
   name?: string;
   slug?: string;
+  blogs?: any;
 }
 
 /**

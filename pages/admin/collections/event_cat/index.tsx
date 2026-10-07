@@ -42,7 +42,7 @@ interface SortableRowProps {
   onSelect: (id: string, checked: boolean) => void;
 }
 
-const COLLECTION_NAME = 'blogs';
+const COLLECTION_NAME = 'event_cat';
 const COLLECTION_API_BASE = `/api/collections/${COLLECTION_NAME}`;
 
 const SortableRow: React.FC<SortableRowProps> = ({ entry, index, fields, onDelete, onImageClick, visibleColumns, collectionType, isSelected, onSelect }) => {
@@ -259,7 +259,7 @@ const SortableRow: React.FC<SortableRowProps> = ({ entry, index, fields, onDelet
       })}
       <td className="px-4 py-4 text-right w-24">
         <div className="flex items-center justify-end space-x-2">
-          <Link href={`/admin/collections/blogs/${entry.id}`} className="text-blue-600 hover:text-blue-900">
+          <Link href={`/admin/collections/event_cat/${entry.id}`} className="text-blue-600 hover:text-blue-900">
             <Edit size={18} />
           </Link>
           <button onClick={() => onDelete(entry.id)} className="text-red-600 hover:text-red-900">
@@ -322,7 +322,7 @@ const ImageLightbox: React.FC<ImageLightboxProps> = ({ images, currentIndex, onC
   );
 };
 
-export default function BlogsCollectionList() {
+export default function EventcatCollectionList() {
   const router = useRouter();
   const [collectionType, setCollectionType] = useState<any>(null);
   const [entries, setEntries] = useState<any[]>([]);
@@ -365,7 +365,7 @@ export default function BlogsCollectionList() {
       });
     });
     defaultColumns.push({ key: 'actions', label: 'ACTIONS', visible: true, locked: true });
-    const saved = localStorage.getItem(`columnConfig_blogs`);
+    const saved = localStorage.getItem(`columnConfig_event_cat`);
     if (saved) {
       try {
         const savedConfig = JSON.parse(saved);
@@ -384,13 +384,13 @@ export default function BlogsCollectionList() {
 
   const saveColumnConfig = (config: ColumnConfig[]) => {
     setColumnConfig(config);
-    localStorage.setItem(`columnConfig_blogs`, JSON.stringify(config));
+    localStorage.setItem(`columnConfig_event_cat`, JSON.stringify(config));
   };
 
   const fetchData = async () => {
     try {
       const [typeRes, entriesRes] = await Promise.all([
-        fetch(`/api/collection-types/blogs`),
+        fetch(`/api/collection-types/event_cat`),
         fetch(`${COLLECTION_API_BASE}`),
       ]);
       const typeData = await typeRes.json();
@@ -504,7 +504,7 @@ export default function BlogsCollectionList() {
     <Layout>
       <div className="p-8">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">blogs</h1>
+          <h1 className="text-3xl font-bold text-gray-900">event_cat</h1>
           <div className="flex items-center space-x-4">
             {selectedEntries.size > 0 && (
               <button
@@ -516,19 +516,19 @@ export default function BlogsCollectionList() {
               </button>
             )}
             <Link
-              href="/admin/collections/blogs/new"
+              href="/admin/collections/event_cat/new"
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-2"
             >
               <Plus size={16} />
-              <span>Add New blogs</span>
+              <span>Add New event_cat</span>
             </Link>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow overflow-auto">
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   {columnConfig.find(c => c.key === 'drag')?.visible && (
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12"></th>

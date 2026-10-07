@@ -8,10 +8,10 @@ import toast from 'react-hot-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchWithAuth } from '@/lib/api-client';
 
-const COLLECTION_NAME = 'news';
+const COLLECTION_NAME = 'event';
 const COLLECTION_API_BASE = `/api/collections/${COLLECTION_NAME}`;
 
-export default function NewNewsEntry() {
+export default function NewEventEntry() {
   const router = useRouter();
   const { hasPermission } = useAuth();
 
@@ -109,16 +109,16 @@ export default function NewNewsEntry() {
     <Layout>
       <div className="p-8">
         <Link
-          href="/admin/collections/news"
+          href="/admin/collections/event"
           className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-800 mb-6"
         >
           <ArrowLeft size={20} />
-          <span>Back to news</span>
+          <span>Back to event</span>
         </Link>
 
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            Create New news
+            Create New event
           </h1>
         </div>
 

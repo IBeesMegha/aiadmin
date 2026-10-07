@@ -10,6 +10,19 @@ import { Field } from './types';
 import { findManyDynamic, findUniqueDynamic } from './dynamic-prisma';
 import { isVirtualRelation, ownsRelation } from './relation-metadata';
 
+function isVirtualField(field: Field): boolean {
+  if (!field.relation) return false;
+  if (isVirtualRelation(field)) return true;
+  return field.relation.type === 'oneToMany';
+}
+
+function ownsForeignKey(field: Field): boolean {
+  if (!field.relation) return false;
+  if (ownsRelation(field)) return true;
+  const { type, isOwner } = field.relation;
+  return (type === 'manyToOne' || type === 'oneToOne') && isOwner !== false;
+}
+
 export interface ResolveOptions {
   maxDepth?: number;
   populate?: string[]; // Specific relations to populate
@@ -46,7 +59,7 @@ export async function resolveRelations(
     if (!field.relation) continue;
 
     try {
-      if (isVirtualRelation(field)) {
+      if (isVirtualField(field)) {
         // Virtual relation - resolve via SQL query
         resolved[field.name] = await resolveVirtualRelation(
           entry,
@@ -54,7 +67,7 @@ export async function resolveRelations(
           field,
           { ...options, maxDepth: maxDepth - 1 }
         );
-      } else if (ownsRelation(field)) {
+      } else if (ownsForeignKey(field)) {
         // Physical relation - resolve via FK
         resolved[field.name] = await resolvePhysicalRelation(
           entry,
@@ -248,16 +261,8 @@ async function getCollectionFields(collectionName: string): Promise<Field[]> {
 }
 
 /**
- * Sanitize field name to camelCase
+ * FK columns use the exact field name (no sanitization)
  */
 function sanitizeFieldName(fieldName: string): string {
-  return fieldName
-    .replace(/[\s-]+/g, '_')
-    .replace(/[^a-zA-Z0-9_]/g, '')
-    .split('_')
-    .filter((part: string) => part.length > 0)
-    .map((part: string, index: number) =>
-      index === 0 ? part.toLowerCase() : part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
-    )
-    .join('');
+  return fieldName;
 }

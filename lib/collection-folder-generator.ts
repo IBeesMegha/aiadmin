@@ -627,8 +627,8 @@ export default function ${toComponentPrefix(displayName)}CollectionList() {
 
         <div className="bg-white rounded-lg shadow overflow-auto">
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   {columnConfig.find(c => c.key === 'drag')?.visible && (
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12"></th>

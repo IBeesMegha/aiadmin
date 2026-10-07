@@ -8,10 +8,10 @@ import toast from 'react-hot-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchWithAuth } from '@/lib/api-client';
 
-const COLLECTION_NAME = 'event_cat';
+const COLLECTION_NAME = 'blog';
 const COLLECTION_API_BASE = `/api/collections/${COLLECTION_NAME}`;
 
-export default function EditEventcatEntry() {
+export default function EditBlogEntry() {
   const router = useRouter();
   const { id } = router.query;
   const { hasPermission } = useAuth();
@@ -229,16 +229,16 @@ export default function EditEventcatEntry() {
     <Layout>
       <div className="p-8">
         <Link
-          href="/admin/collections/event_cat"
+          href="/admin/collections/blog"
           className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-800 mb-6"
         >
           <ArrowLeft size={20} />
-          <span>Back to event_cat</span>
+          <span>Back to blog</span>
         </Link>
 
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            Edit event_cat
+            Edit blog
           </h1>
           <div className="flex items-center space-x-4">
             <button

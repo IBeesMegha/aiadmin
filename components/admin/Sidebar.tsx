@@ -5,7 +5,6 @@ import {
   Database,
   FileText,
   Component as ComponentIcon,
-  Plus,
   Settings,
   Home,
   Image as ImageIcon,
@@ -13,6 +12,9 @@ import {
   Shield,
   Palette,
   Key,
+  ChevronDown,
+  Layers,
+  LayoutGrid,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -22,10 +24,77 @@ interface SidebarProps {
   components: any[];
 }
 
+interface NavLinkProps {
+  href: string;
+  label: string;
+  icon: React.ElementType;
+  active: boolean;
+  size?: 'md' | 'sm';
+}
+
+const NavLink = ({ href, label, icon: Icon, active, size = 'md' }: NavLinkProps) => (
+  <Link
+    href={href}
+    className={`group relative flex items-center gap-3 rounded-lg transition-colors ${
+      size === 'md' ? 'px-3 py-2 text-sm' : 'px-3 py-1.5 text-[13px]'
+    } ${
+      active
+        ? 'bg-blue-50 text-blue-700 font-medium'
+        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+    }`}
+  >
+    {active && size === 'md' && (
+      <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r bg-blue-600" />
+    )}
+    <Icon
+      size={size === 'md' ? 18 : 15}
+      className={active ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-600'}
+    />
+    <span className="truncate">{label}</span>
+  </Link>
+);
+
+interface GroupProps {
+  label: string;
+  icon: React.ElementType;
+  open: boolean;
+  onToggle: () => void;
+  active?: boolean;
+  children: React.ReactNode;
+}
+
+const Group = ({ label, icon: Icon, open, onToggle, active, children }: GroupProps) => (
+  <div>
+    <button
+      onClick={onToggle}
+      className={`w-full flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
+        active ? 'text-gray-900 font-medium' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+      }`}
+    >
+      <span className="flex items-center gap-3">
+        <Icon size={18} className={active ? 'text-blue-600' : 'text-gray-400'} />
+        {label}
+      </span>
+      <ChevronDown
+        size={16}
+        className={`text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}
+      />
+    </button>
+    {open && (
+      <div className="mt-1 ml-5 pl-3 border-l border-gray-200 space-y-0.5">{children}</div>
+    )}
+  </div>
+);
+
+const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+  <p className="px-3 mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+    {children}
+  </p>
+);
+
 export const Sidebar: React.FC<SidebarProps> = ({
   collectionTypes,
   singleTypes,
-  components,
 }) => {
   const router = useRouter();
   const { hasPermission, hasAnyPermission } = useAuth();
@@ -36,7 +105,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [contentTypeBuilderOpen, setContentTypeBuilderOpen] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
 
-  const isActive = (path: string) => router.pathname === path;
+  const path = router.pathname;
+  const isActive = (p: string) => path === p;
 
   React.useEffect(() => {
     setMounted(true);
@@ -44,322 +114,192 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   React.useEffect(() => {
     if (!mounted) return;
-    
-    if (router.pathname.startsWith('/admin/collections/')) {
+
+    if (path.startsWith('/admin/collections/')) {
       setContentManagerOpen(true);
       setCollectionTypesOpen(true);
     }
-    if (router.pathname.startsWith('/admin/singles/')) {
+    if (path.startsWith('/admin/singles/')) {
       setContentManagerOpen(true);
       setSingleTypesOpen(true);
     }
-    if (router.pathname.startsWith('/admin/content-type-builder')) {
+    if (path.startsWith('/admin/content-type-builder')) {
       setContentTypeBuilderOpen(true);
     }
-    if (router.pathname.startsWith('/admin/settings')) {
+    if (path.startsWith('/admin/settings')) {
       setSettingsOpen(true);
     }
-  }, [router.pathname, mounted]);
+  }, [path, mounted]);
 
-  const textColor = 'var(--sidebar-text-color, #f3f4f6)';
-  const textMuted = { color: 'var(--sidebar-text-muted, #9ca3af)' };
+  const canBuild = hasAnyPermission([
+    'content_type_builder.read',
+    'content_type_builder.create',
+    'content_type_builder.update',
+    'content_type_builder.delete',
+  ]);
 
   return (
-    <div className="w-64 h-screen overflow-y-auto flex-shrink-0" style={{ backgroundColor: 'var(--sidebar-background-color)' }}>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold" style={{ color: textColor }}>CMS Admin</h1>
+    <aside className="w-64 h-screen flex-shrink-0 flex flex-col bg-white border-r border-gray-200">
+      <div className="h-16 px-5 flex items-center gap-3 border-b border-gray-100">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white shadow-sm">
+          <Layers size={18} />
+        </div>
+        <div className="leading-tight">
+          <h1 className="text-[15px] font-semibold text-gray-900">CMS Admin</h1>
+          <p className="text-[11px] text-gray-400">Content workspace</p>
+        </div>
       </div>
 
-      <nav className="px-4 space-y-6">
-        {/* Dashboard - Always visible */}
+      <nav className="flex-1 overflow-y-auto px-3 py-5 space-y-6">
         <div>
-          <Link
-            href="/admin"
-            className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition ${
-              isActive('/admin')
-                ? 'text-white'
-                : 'hover:bg-white/10'
-            }`}
-            style={{ color: isActive('/admin') ? '#fff' : textMuted.color }}
-          >
-            <Home size={20} />
-            <span>Dashboard</span>
-          </Link>
+          <SectionLabel>Overview</SectionLabel>
+          <div className="space-y-0.5">
+            <NavLink href="/admin" label="Dashboard" icon={Home} active={isActive('/admin')} />
+            <NavLink
+              href="/admin/media-library"
+              label="Media Library"
+              icon={ImageIcon}
+              active={isActive('/admin/media-library')}
+            />
+          </div>
         </div>
 
-        {/* Media Library - Always visible */}
         <div>
-          <Link
-              href="/admin/media-library"
-              className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition ${
-                isActive('/admin/media-library')
-                  ? 'text-white'
-                  : 'hover:bg-white/10'
-              }`}
-              style={{ color: isActive('/admin/media-library') ? '#fff' : textMuted.color }}
-            >
-              <ImageIcon size={20} />
-              <span>Media Library</span>
-            </Link>
-          </div>
-
-        {/* Content Manager - Always visible */}
-        <div>
-          <button
-            onClick={() => setContentManagerOpen(!contentManagerOpen)}
-            className="w-full flex items-center justify-between px-3 py-2 hover:bg-white/10 rounded-lg transition"
-            style={{ color: textMuted.color }}
+          <SectionLabel>Content</SectionLabel>
+          <Group
+            label="Content Manager"
+            icon={Database}
+            open={contentManagerOpen}
+            onToggle={() => setContentManagerOpen(!contentManagerOpen)}
+            active={path.startsWith('/admin/collections/') || path.startsWith('/admin/singles/')}
           >
-            <div className="flex items-center space-x-3">
-              <Database size={20} />
-              <span className="font-medium">Content Manager</span>
-            </div>
-            <svg
-              className={`w-4 h-4 transition-transform ${
-                contentManagerOpen ? 'rotate-180' : ''
-              }`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-
-          {contentManagerOpen && (
-            <div className="mt-2 space-y-2">
-              <div>
-                <button
-                  onClick={() => setCollectionTypesOpen(!collectionTypesOpen)}
-                  className="w-full flex items-center justify-between px-3 py-2 ml-6 text-sm hover:text-white"
-                  style={{ color: textMuted.color }}
-                >
-                  <span className="uppercase font-semibold">Collection Types</span>
-                  <svg
-                    className={`w-3 h-3 transition-transform ${
-                      collectionTypesOpen ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-
-                  {collectionTypesOpen && (
-                    <div className="ml-12 space-y-1">
-                      {collectionTypes.map((ct) => (
-                        <Link
-                          key={ct.id}
-                          href={`/admin/collections/${ct.name}`}
-                          className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition ${
-                            router.query.name === ct.name && router.pathname.startsWith('/admin/collections/')
-                              ? 'bg-white/10 text-white'
-                              : 'hover:bg-white/10'
-                          }`}
-                          style={{ color: (router.query.name === ct.name && router.pathname.startsWith('/admin/collections/')) ? '#fff' : textMuted.color }}
-                        >
-                          <Database size={16} />
-                          <span className="text-sm">{ct.displayName}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <button
-                    onClick={() => setSingleTypesOpen(!singleTypesOpen)}
-                    className="w-full flex items-center justify-between px-3 py-2 ml-6 text-sm hover:text-white"
-                    style={{ color: textMuted.color }}
-                  >
-                    <span className="uppercase font-semibold">Single Types</span>
-                    <svg
-                      className={`w-3 h-3 transition-transform ${
-                        singleTypesOpen ? 'rotate-180' : ''
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-
-                  {singleTypesOpen && (
-                    <div className="ml-12 space-y-1">
-                      {singleTypes.map((st) => (
-                        <Link
-                          key={st.id}
-                          href={`/admin/singles/${st.name}`}
-                          className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition ${
-                            router.query.name === st.name && router.pathname.startsWith('/admin/singles/')
-                              ? 'bg-white/10 text-white'
-                              : 'hover:bg-white/10'
-                          }`}
-                          style={{ color: (router.query.name === st.name && router.pathname.startsWith('/admin/singles/')) ? '#fff' : textMuted.color }}
-                        >
-                          <FileText size={16} />
-                          <span className="text-sm">{st.displayName}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-        {/* Content-Type Builder - Needs Permission */}
-        {hasAnyPermission(['content_type_builder.read', 'content_type_builder.create', 'content_type_builder.update', 'content_type_builder.delete']) && (
-          <div className="pt-4 border-t border-gray-700">
             <button
-              onClick={() => setContentTypeBuilderOpen(!contentTypeBuilderOpen)}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition hover:bg-white/10 ${
-                router.pathname.startsWith('/admin/content-type-builder') ? 'text-white' : ''
-              }`}
-              style={{ color: router.pathname.startsWith('/admin/content-type-builder') ? '#fff' : textMuted.color }}
+              onClick={() => setCollectionTypesOpen(!collectionTypesOpen)}
+              className="w-full flex items-center justify-between px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400 hover:text-gray-600"
             >
-              <div className="flex items-center space-x-3">
-                <ComponentIcon size={20} />
-                <span>Content-Type Builder</span>
-              </div>
-              <svg
-                className={`w-4 h-4 transition-transform ${
-                  contentTypeBuilderOpen ? 'rotate-180' : ''
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+              Collection Types
+              <ChevronDown
+                size={12}
+                className={`transition-transform ${collectionTypesOpen ? 'rotate-180' : ''}`}
+              />
+            </button>
+            {collectionTypesOpen &&
+              collectionTypes.map((ct) => (
+                <NavLink
+                  key={ct.id}
+                  href={`/admin/collections/${ct.name}`}
+                  label={ct.displayName}
+                  icon={LayoutGrid}
+                  size="sm"
+                  active={router.query.name === ct.name && path.startsWith('/admin/collections/')}
+                />
+              ))}
+
+            <button
+              onClick={() => setSingleTypesOpen(!singleTypesOpen)}
+              className="w-full flex items-center justify-between px-3 py-1.5 mt-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400 hover:text-gray-600"
+            >
+              Single Types
+              <ChevronDown
+                size={12}
+                className={`transition-transform ${singleTypesOpen ? 'rotate-180' : ''}`}
+              />
+            </button>
+            {singleTypesOpen &&
+              singleTypes.map((st) => (
+                <NavLink
+                  key={st.id}
+                  href={`/admin/singles/${st.name}`}
+                  label={st.displayName}
+                  icon={FileText}
+                  size="sm"
+                  active={router.query.name === st.name && path.startsWith('/admin/singles/')}
+                />
+              ))}
+          </Group>
+        </div>
+
+        <div>
+          <SectionLabel>Configure</SectionLabel>
+          <div className="space-y-1">
+            {canBuild && (
+              <Group
+                label="Content-Type Builder"
+                icon={ComponentIcon}
+                open={contentTypeBuilderOpen}
+                onToggle={() => setContentTypeBuilderOpen(!contentTypeBuilderOpen)}
+                active={path.startsWith('/admin/content-type-builder')}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {contentTypeBuilderOpen && (
-              <div className="ml-8 mt-2 space-y-1">
-                <Link
+                <NavLink
                   href="/admin/content-type-builder/collection-types"
-                  className={`block px-3 py-2 text-sm rounded-lg transition hover:bg-white/10 ${
-                    router.pathname === '/admin/content-type-builder/collection-types' ||
-                    router.pathname.startsWith('/admin/content-type-builder/edit/')
-                      ? 'bg-white/10 text-white'
-                      : ''
-                  }`}
-                  style={{ color: (router.pathname === '/admin/content-type-builder/collection-types' || router.pathname.startsWith('/admin/content-type-builder/edit/')) ? '#fff' : textMuted.color }}
-                >
-                  Collection Types
-                </Link>
-
-                <Link
+                  label="Collection Types"
+                  icon={Database}
+                  size="sm"
+                  active={
+                    path === '/admin/content-type-builder/collection-types' ||
+                    path.startsWith('/admin/content-type-builder/edit/')
+                  }
+                />
+                <NavLink
                   href="/admin/content-type-builder/single-types"
-                  className={`block px-3 py-2 text-sm rounded-lg transition hover:bg-white/10 ${
-                    router.pathname === '/admin/content-type-builder/single-types'
-                      ? 'bg-white/10 text-white'
-                      : ''
-                  }`}
-                  style={{ color: router.pathname === '/admin/content-type-builder/single-types' ? '#fff' : textMuted.color }}
-                >
-                  Single Types
-                </Link>
-
-                <Link
+                  label="Single Types"
+                  icon={FileText}
+                  size="sm"
+                  active={path === '/admin/content-type-builder/single-types'}
+                />
+                <NavLink
                   href="/admin/content-type-builder/components"
-                  className={`block px-3 py-2 text-sm rounded-lg transition hover:bg-white/10 ${
-                    router.pathname === '/admin/content-type-builder/components'
-                      ? 'bg-white/10 text-white'
-                      : ''
-                  }`}
-                  style={{ color: router.pathname === '/admin/content-type-builder/components' ? '#fff' : textMuted.color }}
-                >
-                  Components
-                </Link>
-              </div>
+                  label="Components"
+                  icon={ComponentIcon}
+                  size="sm"
+                  active={path === '/admin/content-type-builder/components'}
+                />
+              </Group>
             )}
-          </div>
-        )}
 
-        {/* Settings - Always visible, but sub-items may need permissions */}
-        <div className="pt-4 border-t border-gray-700">
-          <button
-            onClick={() => setSettingsOpen(!settingsOpen)}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition hover:bg-white/10 ${
-              router.pathname.startsWith('/admin/settings') ? 'text-white' : ''
-            }`}
-            style={{ color: router.pathname.startsWith('/admin/settings') ? '#fff' : textMuted.color }}
-          >
-            <div className="flex items-center space-x-3">
-              <Settings size={20} />
-              <span>Settings</span>
-            </div>
-            <svg
-              className={`w-4 h-4 transition-transform ${
-                settingsOpen ? 'rotate-180' : ''
-              }`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <Group
+              label="Settings"
+              icon={Settings}
+              open={settingsOpen}
+              onToggle={() => setSettingsOpen(!settingsOpen)}
+              active={path.startsWith('/admin/settings')}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-            </button>
-
-            {settingsOpen && (
-              <div className="ml-8 mt-2 space-y-1">
-                {hasPermission('users.read') && (
-                  <Link
-                    href="/admin/settings/users"
-                    className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition hover:bg-white/10 ${
-                      router.pathname === '/admin/settings/users' ? 'bg-white/10 text-white' : ''
-                    }`}
-                    style={{ color: router.pathname === '/admin/settings/users' ? '#fff' : textMuted.color }}
-                  >
-                    <Users size={16} />
-                    <span>Users</span>
-                  </Link>
-                )}
-
-                {hasPermission('roles.read') && (
-                  <Link
-                    href="/admin/settings/roles"
-                    className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition hover:bg-white/10 ${
-                      router.pathname === '/admin/settings/roles' ? 'bg-white/10 text-white' : ''
-                    }`}
-                    style={{ color: router.pathname === '/admin/settings/roles' ? '#fff' : textMuted.color }}
-                  >
-                    <Shield size={16} />
-                    <span>Roles & Permissions</span>
-                  </Link>
-                )}
-
-                {/* Theme Settings - Available to all users */}
-                <Link
-                  href="/admin/settings/theme"
-                  className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition hover:bg-white/10 ${
-                    router.pathname === '/admin/settings/theme' ? 'bg-white/10 text-white' : ''
-                  }`}
-                  style={{ color: router.pathname === '/admin/settings/theme' ? '#fff' : textMuted.color }}
-                >
-                  <Palette size={16} />
-                  <span>Theme Settings</span>
-                </Link>
-
-                {/* API Tokens - Available to all users */}
-                <Link
-                  href="/admin/settings/api-tokens"
-                  className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition hover:bg-white/10 ${
-                    router.pathname.startsWith('/admin/settings/api-tokens') ? 'bg-white/10 text-white' : ''
-                  }`}
-                  style={{ color: router.pathname.startsWith('/admin/settings/api-tokens') ? '#fff' : textMuted.color }}
-                >
-                  <Key size={16} />
-                  <span>API Tokens</span>
-                </Link>
-              </div>
-            )}
+              {hasPermission('users.read') && (
+                <NavLink
+                  href="/admin/settings/users"
+                  label="Users"
+                  icon={Users}
+                  size="sm"
+                  active={path === '/admin/settings/users'}
+                />
+              )}
+              {hasPermission('roles.read') && (
+                <NavLink
+                  href="/admin/settings/roles"
+                  label="Roles & Permissions"
+                  icon={Shield}
+                  size="sm"
+                  active={path === '/admin/settings/roles'}
+                />
+              )}
+              <NavLink
+                href="/admin/settings/theme"
+                label="Theme Settings"
+                icon={Palette}
+                size="sm"
+                active={path === '/admin/settings/theme'}
+              />
+              <NavLink
+                href="/admin/settings/api-tokens"
+                label="API Tokens"
+                icon={Key}
+                size="sm"
+                active={path.startsWith('/admin/settings/api-tokens')}
+              />
+            </Group>
           </div>
+        </div>
       </nav>
-    </div>
+    </aside>
   );
 };

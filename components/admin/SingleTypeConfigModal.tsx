@@ -15,6 +15,7 @@ interface SingleTypeConfigModalProps {
         displayName: string;
         required?: boolean;
         unique?: boolean;
+        multiple?: boolean;
         relation?: any;
       }>;
     };
@@ -205,17 +206,14 @@ ${singleType.fields?.fields
               <div>
                 <p className="text-xs text-gray-600 mb-1">Response Body:</p>
                 <pre className="text-xs bg-gray-900 text-green-400 p-3 rounded overflow-x-auto">
-{`{
-  "data": {
-    "id": "string",
-${singleType.fields?.fields
-  ?.slice(0, 3)
-  .map(f => `    "${f.name}": "${f.type === 'number' ? 'number' : f.type === 'boolean' ? 'boolean' : 'string'}"`)
-  .join(',\n')},
-    "createdAt": "timestamp",
-    "updatedAt": "timestamp"
-  }
-}`}
+{JSON.stringify({
+  data: Object.fromEntries(
+    (singleType.fields?.fields || []).slice(0, 3).map(f => [
+      f.name,
+      f.type === 'component' && f.multiple ? [] : f.type === 'number' ? 0 : f.type === 'boolean' ? false : 'string',
+    ])
+  ),
+}, null, 2)}
                 </pre>
               </div>
             </div>

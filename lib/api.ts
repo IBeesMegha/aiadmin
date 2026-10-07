@@ -148,7 +148,7 @@ export class ApiClient {
   }
 
   async getSingleType(name: string) {
-    return this.request(`/single-types/${name}`);
+    return this.request(`/single-types/${name}?includeMeta=true`);
   }
 
   async createSingleType(data: any) {

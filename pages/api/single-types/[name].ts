@@ -22,21 +22,11 @@ export default async function handler(
         return res.status(404).json({ error: 'Single type not found' });
       }
 
-      // Return the full single type object including schema fields
-      const response: any = {
-        id: singleType.id,
-        name: singleType.name,
-        displayName: singleType.displayName,
-        description: singleType.description,
-        data: singleType.data,
-        createdAt: singleType.createdAt,
-        updatedAt: singleType.updatedAt,
-      };
+      if (req.query.includeMeta === 'true') {
+        return res.status(200).json({ data: singleType });
+      }
 
-      // Always include fields for admin UI
-      response.fields = singleType.fields;
-
-      return res.status(200).json({ data: response });
+      return res.status(200).json({ data: singleType.data });
     }
 
     if (req.method === 'PUT') {

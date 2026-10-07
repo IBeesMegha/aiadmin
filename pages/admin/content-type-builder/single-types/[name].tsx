@@ -54,7 +54,7 @@ export default function EditSingleType() {
   const loadSingleType = async (itemName: string) => {
     try {
       console.log('[EditSingleType] Loading:', itemName);
-      const endpoint = `/api/single-types/${itemName}`;
+      const endpoint = `/api/single-types/${itemName}?includeMeta=true`;
       
       console.log('[EditSingleType] Fetching from:', endpoint);
       const response = await fetch(endpoint);

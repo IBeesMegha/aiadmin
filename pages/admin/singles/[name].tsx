@@ -21,8 +21,7 @@ export default function SingleTypeEdit() {
   const fetchSingleType = async () => {
     try {
       console.log('[SingleTypeEdit] Fetching single type:', name);
-      // Request fields explicitly for admin UI
-      const response = await fetch(`/api/single-types/${name}`);
+      const response = await fetch(`/api/single-types/${name}?includeMeta=true`);
       console.log('[SingleTypeEdit] Response status:', response.status);
       const data = await response.json();
       console.log('[SingleTypeEdit] Response data:', data);

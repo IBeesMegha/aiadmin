@@ -67,7 +67,7 @@ export default function ContentTypeBuilder() {
       } else if (itemType === 'collection') {
         endpoint = `/api/collection-types/${itemName}`;
       } else if (itemType === 'single') {
-        endpoint = `/api/single-types/${itemName}`;
+        endpoint = `/api/single-types/${itemName}?includeMeta=true`;
       }
 
       console.log('[ContentTypeBuilder] Fetching from:', endpoint);

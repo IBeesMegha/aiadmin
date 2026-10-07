@@ -1,0 +1,11 @@
+
+> nextjs-cms@1.0.0 dev
+> next dev
+
+   ▲ Next.js 14.1.0
+   - Local:        http://localhost:3000
+   - Environments: .env
+
+ ✓ Ready in 16.8s
+ ○ Compiling /admin/login ...
+^C^C

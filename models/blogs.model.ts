@@ -27,8 +27,8 @@ export interface BlogsEntry {
   id: string;
   createdAt: string | Date;
   updatedAt: string | Date;
-  title?: string;
-  content?: string;
+  name?: string;
+  description?: string;
 }
 
 /**

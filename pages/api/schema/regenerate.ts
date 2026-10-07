@@ -6,8 +6,10 @@ import { promisify } from 'util';
 const execAsync = promisify(exec);
 
 /**
- * API endpoint to regenerate Prisma schema from CollectionType metadata
- * This ensures the schema.prisma file matches what's in the database
+ * API endpoint to synchronize the Prisma schema with the Content Type Builder.
+ * Removes any dynamically generated collection models from schema.prisma and
+ * regenerates the Prisma Client. Dynamic content tables are created at runtime
+ * via raw SQL and are intentionally never part of Prisma migrations.
  */
 export default async function handler(
   req: NextApiRequest,
@@ -20,9 +22,9 @@ export default async function handler(
   try {
     console.log('[Schema Regenerate] Starting schema regeneration...');
     
-    // Step 1: Regenerate schema from CollectionType metadata
+    // Step 1: Remove any dynamic collection models from the schema file
     await regenerateSchema();
-    console.log('[Schema Regenerate] ✓ Schema file regenerated');
+    console.log('[Schema Regenerate] ✓ Schema file synchronized');
     
     // Step 2: Generate Prisma Client
     console.log('[Schema Regenerate] Generating Prisma Client...');
@@ -44,20 +46,6 @@ export default async function handler(
       } else {
         throw genError;
       }
-    }
-    
-    // Step 3: Create migration
-    console.log('[Schema Regenerate] Creating migration...');
-    const migrationName = `sync_schema_${Date.now()}`;
-    try {
-      await execAsync(`npx prisma migrate dev --name ${migrationName} --skip-generate`, {
-        windowsHide: true,
-        timeout: 120000,
-      });
-      console.log('[Schema Regenerate] ✓ Migration created');
-    } catch (migrateError: any) {
-      // If migration fails, it might be because there are no changes
-      console.log('[Schema Regenerate] Migration note:', migrateError.message);
     }
     
     res.status(200).json({

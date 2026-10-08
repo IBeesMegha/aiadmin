@@ -192,18 +192,25 @@ export default function CreateApiTokenPage() {
     setLoading(true);
 
     try {
+      const requestBody: any = {
+        name,
+        description,
+        type,
+        expiresIn: expiresIn === 'unlimited' ? null : expiresIn,
+      };
+
+      // Only send endpoints for custom tokens
+      // For read_only and full_access, let the backend auto-generate
+      if (type === 'custom') {
+        requestBody.endpoints = selectedEndpoints;
+      }
+
       const response = await fetch('/api/api-tokens', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name,
-          description,
-          type,
-          expiresIn: expiresIn === 'unlimited' ? null : expiresIn,
-          endpoints: selectedEndpoints,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const result = await response.json();
@@ -341,6 +348,9 @@ export default function CreateApiTokenPage() {
           <h1 className="text-3xl font-bold text-gray-900">Create New API Token</h1>
           <p className="text-gray-600 mt-2">
             Generate a new API token for frontend/external access (Admin APIs use JWT only)
+          </p>
+          <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+            API tokens are shared across all users. Creating a token deactivates every previously active API token.
           </p>
         </div>
 

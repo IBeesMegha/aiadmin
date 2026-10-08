@@ -17,6 +17,7 @@ model User {
   role      Role?     @relation(fields: [roleId], references: [id])
   isActive  Boolean   @default(true)
   sessions  Session[]
+  apiTokens ApiToken[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -163,4 +164,40 @@ model Media {
   updatedAt       DateTime @updatedAt
 
   @@map("media")
+}
+
+model ApiToken {
+  id          String             @id @default(cuid())
+  name        String
+  description String?
+  token       String             @unique
+  type        String             @default("read_only")
+  expiresAt   DateTime?
+  lastUsedAt  DateTime?
+  isActive    Boolean            @default(true)
+  createdById String
+  createdBy   User               @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  endpoints   ApiTokenEndpoint[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([token])
+  @@index([type])
+  @@index([createdById])
+  @@map("api_tokens")
+}
+
+model ApiTokenEndpoint {
+  id        String   @id @default(cuid())
+  tokenId   String
+  token     ApiToken @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+  module    String
+  endpoint  String
+  method    String
+  createdAt DateTime @default(now())
+
+  @@unique([tokenId, endpoint, method])
+  @@index([tokenId])
+  @@index([module])
+  @@map("api_token_endpoints")
 }

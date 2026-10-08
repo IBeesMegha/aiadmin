@@ -24,9 +24,8 @@ export default async function handler(
       });
     }
 
-    let payload;
     try {
-      payload = verifyAccessToken(token);
+      verifyAccessToken(token);
     } catch (error) {
       return res.status(401).json({
         success: false,
@@ -34,15 +33,11 @@ export default async function handler(
       });
     }
 
-    const userId = payload.userId;
     const tokenId = req.query.id as string;
 
     if (req.method === 'GET') {
-      const apiToken = await prisma.apiToken.findFirst({
-        where: {
-          id: tokenId,
-          createdById: userId,
-        },
+      const apiToken = await prisma.apiToken.findUnique({
+        where: { id: tokenId },
         include: {
           endpoints: true,
           createdBy: {
@@ -84,12 +79,8 @@ export default async function handler(
     if (req.method === 'PATCH') {
       const { name, description, isActive, endpoints } = req.body;
 
-      // Check ownership
-      const existingToken = await prisma.apiToken.findFirst({
-        where: {
-          id: tokenId,
-          createdById: userId,
-        },
+      const existingToken = await prisma.apiToken.findUnique({
+        where: { id: tokenId },
       });
 
       if (!existingToken) {
@@ -105,6 +96,7 @@ export default async function handler(
       if (description !== undefined) updateData.description = description;
       if (isActive !== undefined) updateData.isActive = isActive;
 
+      // Update token (no need to deactivate others - multiple tokens can be active)
       const updatedToken = await prisma.apiToken.update({
         where: { id: tokenId },
         data: updateData,
@@ -146,12 +138,8 @@ export default async function handler(
     }
 
     if (req.method === 'DELETE') {
-      // Check ownership
-      const existingToken = await prisma.apiToken.findFirst({
-        where: {
-          id: tokenId,
-          createdById: userId,
-        },
+      const existingToken = await prisma.apiToken.findUnique({
+        where: { id: tokenId },
       });
 
       if (!existingToken) {

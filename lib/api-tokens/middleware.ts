@@ -30,6 +30,18 @@ export async function authenticateApiToken(
   next: () => void
 ) {
   try {
+    // CRITICAL: Block API tokens from accessing admin routes
+    const requestPath = req.url?.split('?')[0] || '';
+    
+    // Admin routes are NOT accessible with API tokens
+    if (isAdminRoute(requestPath)) {
+      return res.status(403).json({
+        success: false,
+        error: 'Forbidden',
+        message: 'API tokens cannot access admin routes. Use JWT authentication for admin panel.',
+      });
+    }
+    
     // Extract token from Authorization header
     const authHeader = req.headers.authorization;
     
@@ -88,11 +100,9 @@ export async function authenticateApiToken(
       createdById: apiToken.createdById,
     };
 
-    // Check endpoint permission
-    const requestPath = req.url?.split('?')[0] || ''; // Remove query params
     const requestMethod = req.method?.toUpperCase() || 'GET';
 
-    // Check if this endpoint and method are allowed
+    // Check endpoint permission
     const hasPermission = apiToken.endpoints.some((ep) =>
       matchEndpoint(requestPath, ep.endpoint) && ep.method === requestMethod
     );
@@ -113,6 +123,31 @@ export async function authenticateApiToken(
       error: 'Authentication failed',
     });
   }
+}
+
+/**
+ * Check if a route is an admin route that should NOT accept API tokens
+ */
+function isAdminRoute(path: string): boolean {
+  const adminPaths = [
+    '/api/auth',
+    '/api/users',
+    '/api/roles',
+    '/api/permissions',
+    '/api/collection-types',
+    '/api/single-types',
+    '/api/components',
+    '/api/component-entries',
+    '/api/collections', // Admin collection management
+    '/api/media', // Admin media management (not /api/public/media)
+    '/api/dashboard',
+    '/api/schema',
+    '/api/api-tokens', // Token management itself
+    '/api/theme-settings',
+    '/api/debug',
+  ];
+
+  return adminPaths.some((adminPath) => path.startsWith(adminPath));
 }
 
 /**

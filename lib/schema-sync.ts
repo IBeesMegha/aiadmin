@@ -9,8 +9,11 @@
  * and must NEVER be written into schema.prisma or created by Prisma migrations.
  */
 
-import fs from 'fs/promises';
-import path from 'path';
+if (typeof (globalThis as any).__nodeRequire === 'undefined') {
+  (globalThis as any).__nodeRequire = typeof (globalThis as any).__non_webpack_require__ !== 'undefined'
+    ? (globalThis as any).__non_webpack_require__
+    : (id: string) => require(id);
+}
 
 const DYNAMIC_MODELS_MARKER = '// Dynamic Collection Types';
 
@@ -21,6 +24,8 @@ const DYNAMIC_MODELS_MARKER = '// Dynamic Collection Types';
 export async function regenerateSchema(): Promise<void> {
   console.log('Checking Prisma schema for dynamic collection models...');
 
+  const fs = (globalThis as any).__nodeRequire('fs/promises');
+  const path = (globalThis as any).__nodeRequire('path');
   const schemaPath = path.join(process.cwd(), 'prisma', 'schema.prisma');
   const current = await fs.readFile(schemaPath, 'utf-8');
 
@@ -43,8 +48,8 @@ export async function regenerateSchema(): Promise<void> {
  */
 export async function validateSchema(): Promise<{ valid: boolean; error?: string }> {
   try {
-    const { exec } = require('child_process');
-    const { promisify } = require('util');
+    const { exec } = (globalThis as any).__nodeRequire('child_process');
+    const { promisify } = (globalThis as any).__nodeRequire('util');
     const execAsync = promisify(exec);
 
     await execAsync('npx prisma validate', {

@@ -1,10 +1,15 @@
 import { Field } from './types';
-import { exec } from 'child_process';
 import { promisify } from 'util';
 import fs from 'fs/promises';
 import path from 'path';
 
-const execAsync = promisify(exec);
+if (typeof (globalThis as any).__nodeRequire === 'undefined') {
+  (globalThis as any).__nodeRequire = typeof (globalThis as any).__non_webpack_require__ !== 'undefined'
+    ? (globalThis as any).__non_webpack_require__
+    : (id: string) => require(id);
+}
+
+const execAsync = promisify((globalThis as any).__nodeRequire('child_process').exec);
 
 /**
  * Generate Prisma model definition from fields

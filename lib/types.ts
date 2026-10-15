@@ -55,7 +55,10 @@ export interface ApiResponse<T = any> {
   data?: T;
   error?: string;
   message?: string;
-  requiresRestart?: boolean; // Indicates if dev server restart is needed
+  success?: boolean;
+  count?: number;
+  requiresRestart?: boolean;
+  code?: string;
 }
 
 // Content Type Builder Types

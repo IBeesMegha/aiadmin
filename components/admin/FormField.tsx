@@ -474,8 +474,8 @@ export const FormField: React.FC<FormFieldProps> = ({
                             });
                             controllerField.onChange(selected);
                           }}
-                          placeholder={`Select ${field.relation.targetCollectionDisplay}...`}
-                          label={field.relation.targetCollectionDisplay}
+                           placeholder={`Select ${field.relation?.targetCollectionDisplay}...`}
+                           label={field.relation?.targetCollectionDisplay}
                           error={!!error}
                           loading={loadingRelations}
                         />

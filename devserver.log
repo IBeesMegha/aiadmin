@@ -1,0 +1,15 @@
+
+> nextjs-cms@1.0.0 dev
+> next dev
+
+   ▲ Next.js 14.1.0
+   - Local:        http://localhost:3000
+   - Environments: .env
+
+ ✓ Ready in 4.8s
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 29.4s (278 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 1416ms (278 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[?25h

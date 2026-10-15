@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useParams, usePathname } from 'next/navigation';
 import {
   Database,
   FileText,
@@ -96,7 +96,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   collectionTypes,
   singleTypes,
 }) => {
-  const router = useRouter();
+  const params = useParams();
   const { hasPermission, hasAnyPermission } = useAuth();
   const [mounted, setMounted] = React.useState(false);
   const [contentManagerOpen, setContentManagerOpen] = React.useState(true);
@@ -105,7 +105,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [contentTypeBuilderOpen, setContentTypeBuilderOpen] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
 
-  const path = router.pathname;
+  const path = usePathname();
   const isActive = (p: string) => path === p;
 
   React.useEffect(() => {
@@ -191,7 +191,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   label={ct.displayName}
                   icon={LayoutGrid}
                   size="sm"
-                  active={router.query.name === ct.name && path.startsWith('/admin/collections/')}
+                  active={params?.name === ct.name && path.startsWith('/admin/collections/')}
                 />
               ))}
 
@@ -213,7 +213,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   label={st.displayName}
                   icon={FileText}
                   size="sm"
-                  active={router.query.name === st.name && path.startsWith('/admin/singles/')}
+                  active={params?.name === st.name && path.startsWith('/admin/singles/')}
                 />
               ))}
           </Group>

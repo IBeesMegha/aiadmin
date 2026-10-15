@@ -3,8 +3,10 @@
  * Provides authentication state and methods throughout the app
  */
 
+'use client';
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { fetchWithAuth } from '@/lib/api-client';
 import { useTokenRefresh } from '@/hooks/useTokenRefresh';
 import { useVisibilityRefresh } from '@/hooks/useVisibilityRefresh';

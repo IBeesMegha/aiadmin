@@ -15,7 +15,7 @@ export interface UserWithPermissions {
     id: string;
     name: string;
     slug: string;
-    isSystem: boolean;
+    isSystem?: boolean;
     permissions: {
       permission: {
         id: string;
@@ -116,7 +116,11 @@ export async function getUserWithPermissions(
     },
   });
 
-  return user;
+  if (!user) return null;
+  return {
+    ...user,
+    role: user.role ? { ...user.role, isSystem: (user.role as any).isSystem ?? false } : null,
+  } as UserWithPermissions;
 }
 
 /**
@@ -182,8 +186,7 @@ export async function assignPermissionsToRole(
 export async function isSystemRole(roleId: string): Promise<boolean> {
   const role = await prisma.role.findUnique({
     where: { id: roleId },
-    select: { isSystem: true },
   });
-  
-  return role?.isSystem || false;
+
+  return (role as any)?.isSystem || false;
 }

@@ -2,8 +2,13 @@
  * API Token Authentication Middleware
  * Validates API tokens and checks endpoint permissions
  * 
- * IMPORTANT: This middleware is ONLY for public API endpoints.
- * Admin panel APIs use JWT authentication and should NOT accept API tokens.
+ * IMPORTANT: This middleware is ONLY for frontend CMS APIs under /cms/*
+ * Admin panel APIs under /api/* use JWT authentication and should NOT accept API tokens.
+ * 
+ * API Namespaces:
+ * - /api/*   → Admin JWT authentication (authMiddleware)
+ * - /cms/*   → Bearer API token authentication (withApiToken)
+ * - /v1/*   → Bearer API token authentication (withApiToken)
  */
 
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -21,8 +26,8 @@ export interface ApiTokenRequest extends NextApiRequest {
 
 /**
  * Middleware to authenticate API token from request
- * This should ONLY be used on public API routes under /api/public/*
- * Admin routes should use JWT authentication instead
+ * This should ONLY be used on frontend CMS routes under /cms/*
+ * Admin routes under /api/* should use JWT authentication instead
  */
 export async function authenticateApiToken(
   req: ApiTokenRequest,
@@ -33,8 +38,15 @@ export async function authenticateApiToken(
     // CRITICAL: Block API tokens from accessing admin routes
     const requestPath = req.url?.split('?')[0] || '';
     
+    console.log('[API Token Middleware] REQUEST RECEIVED:', {
+      path: requestPath,
+      method: req.method,
+      hasAuthHeader: !!req.headers.authorization,
+    });
+    
     // Admin routes are NOT accessible with API tokens
     if (isAdminRoute(requestPath)) {
+      console.log('[API Token Middleware] ✗ Admin route blocked for API token');
       return res.status(403).json({
         success: false,
         error: 'Forbidden',
@@ -102,19 +114,78 @@ export async function authenticateApiToken(
 
     const requestMethod = req.method?.toUpperCase() || 'GET';
 
-    // Check endpoint permission
-    const hasPermission = apiToken.endpoints.some((ep) =>
-      matchEndpoint(requestPath, ep.endpoint) && ep.method === requestMethod
-    );
+    // ===== TOKEN TYPE AUTHORIZATION =====
+    // Different authorization logic based on token type
+    
+    console.log('[API Token Auth]', {
+      tokenId: apiToken.id,
+      tokenName: apiToken.name,
+      tokenType: apiToken.type,
+      requestPath,
+      requestMethod,
+      endpointCount: apiToken.endpoints.length,
+    });
+    
+    let hasPermission = false;
 
-    if (!hasPermission) {
+    if (apiToken.type === 'read_only') {
+      // READ ONLY: Allow ONLY GET requests, reject all write operations
+      if (requestMethod === 'GET') {
+        hasPermission = true;
+        console.log('[API Token Auth] ✓ Read Only token - GET request allowed');
+      } else {
+        console.log('[API Token Auth] ✗ Read Only token - Blocked', requestMethod);
+        return res.status(403).json({
+          success: false,
+          error: 'Forbidden',
+          message: `Read Only tokens can only perform GET requests. ${requestMethod} is not allowed.`,
+        });
+      }
+    } else if (apiToken.type === 'full_access') {
+      // FULL ACCESS: Allow ALL HTTP methods on all public endpoints
+      // No need to check specific endpoints - full access to everything
+      const allowedMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
+      if (allowedMethods.includes(requestMethod)) {
+        hasPermission = true;
+        console.log('[API Token Auth] ✓ Full Access token - All methods allowed');
+      } else {
+        console.log('[API Token Auth] ✗ Full Access token - Unsupported method', requestMethod);
+        return res.status(403).json({
+          success: false,
+          error: 'Forbidden',
+          message: `HTTP method ${requestMethod} is not supported.`,
+        });
+      }
+    } else if (apiToken.type === 'custom') {
+      // CUSTOM: Check exact endpoint + method permission from database
+      hasPermission = apiToken.endpoints.some((ep) =>
+        matchEndpoint(requestPath, ep.endpoint) && ep.method === requestMethod
+      );
+
+      console.log('[API Token Auth] Custom token - Checking permissions:', {
+        hasPermission,
+        allowedEndpoints: apiToken.endpoints.map(ep => `${ep.method} ${ep.endpoint}`),
+      });
+
+      if (!hasPermission) {
+        return res.status(403).json({
+          success: false,
+          error: 'Forbidden',
+          message: `This API token does not have permission to ${requestMethod} ${requestPath}`,
+        });
+      }
+    } else {
+      // Unknown token type - deny access
+      console.log('[API Token Auth] ✗ Unknown token type:', apiToken.type);
       return res.status(403).json({
         success: false,
         error: 'Forbidden',
-        message: `This API token does not have permission to ${requestMethod} ${requestPath}`,
+        message: `Unknown token type: ${apiToken.type}`,
       });
     }
 
+    // Authorization passed - proceed to handler
+    console.log('[API Token Auth] ✓ Authorization passed - Calling handler');
     next();
   } catch (error) {
     console.error('API token authentication error:', error);
@@ -127,27 +198,32 @@ export async function authenticateApiToken(
 
 /**
  * Check if a route is an admin route that should NOT accept API tokens
+ * Admin routes are under /api/* (except legacy /api/public/*)
+ * CMS routes are under /cms/* and REQUIRE API tokens
  */
 function isAdminRoute(path: string): boolean {
-  const adminPaths = [
-    '/api/auth',
-    '/api/users',
-    '/api/roles',
-    '/api/permissions',
-    '/api/collection-types',
-    '/api/single-types',
-    '/api/components',
-    '/api/component-entries',
-    '/api/collections', // Admin collection management
-    '/api/media', // Admin media management (not /api/public/media)
-    '/api/dashboard',
-    '/api/schema',
-    '/api/api-tokens', // Token management itself
-    '/api/theme-settings',
-    '/api/debug',
-  ];
+  // /api/* routes are admin routes (with JWT auth)
+  // EXCEPT /api/public/* which is legacy and still uses API tokens
+  if (path.startsWith('/api/')) {
+    // Allow legacy /api/public/* to use API tokens for backwards compatibility
+    if (path.startsWith('/api/public/')) {
+      return false; // Not an admin route, can use API tokens
+    }
+    // All other /api/* routes are admin-only
+    return true;
+  }
 
-  return adminPaths.some((adminPath) => path.startsWith(adminPath));
+  // /cms/* routes are frontend CMS routes (require API tokens)
+  if (path.startsWith('/cms/')) {
+    return false; // Not an admin route, requires API tokens
+  }
+
+  // /v1/* routes are public API routes (require API tokens)
+  if (path.startsWith('/v1/')) {
+    return false; // Not an admin route, requires API tokens
+  }
+
+  return false;
 }
 
 /**
@@ -158,11 +234,23 @@ export function withApiToken(
   handler: (req: ApiTokenRequest, res: NextApiResponse) => Promise<void> | void
 ) {
   return async (req: ApiTokenRequest, res: NextApiResponse) => {
-    await new Promise<void>((resolve, reject) => {
-      authenticateApiToken(req, res, () => resolve());
-    });
-    
-    // If we reach here, authentication passed
+    let authPassed = false;
+
+    // Await the authenticator promise directly. On success it invokes the
+    // `next` callback (setting authPassed); on failure it sends the error
+    // response and resolves without calling `next`.
+    await Promise.resolve(
+      authenticateApiToken(req, res, () => {
+        authPassed = true;
+      })
+    );
+
+    // Only call handler if authentication passed
+    // If response was already sent by middleware, don't call handler
+    if (!authPassed || res.headersSent) {
+      return;
+    }
+
     return handler(req, res);
   };
 }

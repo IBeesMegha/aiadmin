@@ -1,56 +1,48 @@
 /**
  * Collection Module Generator
  *
- * One generic generator that accepts a collection name (from the Content Type
- * Builder request) plus its fields and creates the complete collection module:
+ * Generates a complete collection module with inline business logic:
  *
  *   models/<collectionName>.model.ts
- *   services/<collectionName>.service.ts
- *   controllers/<collectionName>.controller.ts
- *   pages/api/collections/<collectionName>/index.ts
- *   pages/api/collections/<collectionName>/[id].ts
- *   pages/admin/collections/<collectionName>/{index,new,[id]}.tsx
+ *   app/(backend)/api/collections/<collectionName>/handler.ts   (admin, JWT auth)
+ *   app/(backend)/api/collections/<collectionName>/route.ts
+ *   app/(backend)/api/collections/<collectionName>/[id]/handler.ts
+ *   app/(backend)/api/collections/<collectionName>/[id]/route.ts
+ *   app/(backend)/v1/api/collections/<collectionName>/handler.ts  (public, bearer token)
+ *   app/(backend)/v1/api/collections/<collectionName>/route.ts
+ *   app/(backend)/v1/api/collections/<collectionName>/[id]/handler.ts
+ *   app/(backend)/v1/api/collections/<collectionName>/[id]/route.ts
+ * No separate controller or service folders - all business logic is inline
+ * in the route files.
  *
- * Nothing is hardcoded - every collection (news, products, blogs, events or any
- * future collection) gets its own module generated from the same templates.
+ * Runtime architecture:
  *
- * Runtime architecture of a generated module:
- *
- *   API Route -> controller -> service -> model -> lib/dynamic-prisma -> PostgreSQL
- *
- * The generated model always points at the real dynamic table created by
- * lib/dynamic-table-service.ts, and the generic /api/collections/[name] routes
- * remain untouched as a fallback for collections without generated modules.
+ *   Route (inline logic) -> model -> lib/dynamic-prisma -> PostgreSQL
  */
 
-import fs from 'fs';
-import path from 'path';
-import { Field } from './types';
+import type { Field } from './types';
 import { sanitizeTableName } from './dynamic-table-service';
-import {
-  generateCollectionFolder,
-  deleteCollectionFolder,
-} from './collection-folder-generator';
+
 
 export interface GenerateCollectionModuleOptions {
-  /** Collection name as stored in the CollectionType metadata (required). */
   collectionName: string;
-  /** Human readable name used for admin page titles. */
   displayName?: string;
-  /** Collection fields (used for the generated model typing). */
   fields?: Field[];
-  /** Generate the admin pages too (default: true). */
   includeAdminPages?: boolean;
 }
 
 export interface CollectionModulePaths {
   model: string;
-  service: string;
-  controller: string;
-  apiIndex: string;
-  apiId: string;
   apiDir: string;
-  adminDir: string;
+  apiIndex: string;
+  apiIndexRoute: string;
+  apiId: string;
+  apiIdRoute: string;
+  v1ApiDir: string;
+  v1ApiIndex: string;
+  v1ApiIndexRoute: string;
+  v1ApiId: string;
+  v1ApiIdRoute: string;
 }
 
 export interface GeneratedCollectionModule {
@@ -60,9 +52,6 @@ export interface GeneratedCollectionModule {
 
 const SAFE_COLLECTION_NAME = /^[a-z0-9][a-z0-9_-]*$/;
 
-/**
- * Normalize a collection name the same way the Content Type Builder does.
- */
 export function normalizeCollectionName(collectionName: string): string {
   return String(collectionName || '')
     .trim()
@@ -70,10 +59,6 @@ export function normalizeCollectionName(collectionName: string): string {
     .replace(/\s+/g, '-');
 }
 
-/**
- * Build a PascalCase identifier from a collection name.
- * news -> News, blog-posts -> BlogPosts, "Event Items" -> EventItems
- */
 export function toIdentifier(collectionName: string): string {
   const identifier = normalizeCollectionName(collectionName)
     .split(/[^a-zA-Z0-9]+/)
@@ -83,10 +68,6 @@ export function toIdentifier(collectionName: string): string {
   return identifier || 'Collection';
 }
 
-/**
- * Guard against path traversal / invalid file names. Only the collection name
- * coming from the request is used to build paths, so it must be safe.
- */
 export function assertSafeCollectionName(collectionName: string): void {
   if (!SAFE_COLLECTION_NAME.test(collectionName)) {
     throw new Error(
@@ -95,65 +76,59 @@ export function assertSafeCollectionName(collectionName: string): void {
   }
 }
 
-/**
- * All files/folders that belong to a generated collection module.
- */
 export function getCollectionModulePaths(
   collectionName: string
 ): CollectionModulePaths {
+  const nodePath = (globalThis as any).__nodePath || ((globalThis as any).__nodePath = eval('require')('path'));
   const name = normalizeCollectionName(collectionName);
   const root = process.cwd();
-  const apiDir = path.join(root, 'pages', 'api', 'collections', name);
+  const apiDir = nodePath.join(root, 'app', '(backend)', 'api', 'collections', name);
+  const v1ApiDir = nodePath.join(root, 'app', '(backend)', 'v1', 'api', 'collections', name);
 
   return {
-    model: path.join(root, 'models', `${name}.model.ts`),
-    service: path.join(root, 'services', `${name}.service.ts`),
-    controller: path.join(root, 'controllers', `${name}.controller.ts`),
-    apiIndex: path.join(apiDir, 'index.ts'),
-    apiId: path.join(apiDir, '[id].ts'),
+    model: nodePath.join(root, 'models', `${name}.model.ts`),
     apiDir,
-    adminDir: path.join(root, 'pages', 'admin', 'collections', name),
+    apiIndex: nodePath.join(apiDir, 'handler.ts'),
+    apiIndexRoute: nodePath.join(apiDir, 'route.ts'),
+    apiId: nodePath.join(apiDir, '[id]', 'handler.ts'),
+    apiIdRoute: nodePath.join(apiDir, '[id]', 'route.ts'),
+    v1ApiDir,
+    v1ApiIndex: nodePath.join(v1ApiDir, 'handler.ts'),
+    v1ApiIndexRoute: nodePath.join(v1ApiDir, 'route.ts'),
+    v1ApiId: nodePath.join(v1ApiDir, '[id]', 'handler.ts'),
+    v1ApiIdRoute: nodePath.join(v1ApiDir, '[id]', 'route.ts'),
   };
 }
 
-/* -------------------------------------------------------------------------- */
-/*                              File management                               */
-/* -------------------------------------------------------------------------- */
-
 function writeGeneratedFile(filePath: string, content: string): string {
+  const fs = (globalThis as any).__nodeFs || ((globalThis as any).__nodeFs = eval('require')('fs'));
+  const path = (globalThis as any).__nodePath || ((globalThis as any).__nodePath = eval('require')('path'));
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, content, 'utf8');
-  console.log(`✓ Generated: ${path.relative(process.cwd(), filePath)}`);
+  console.log(`Generated: ${path.relative(process.cwd(), filePath)}`);
   return filePath;
 }
 
 function removeIfExists(targetPath: string): boolean {
+  const fs = (globalThis as any).__nodeFs || ((globalThis as any).__nodeFs = eval('require')('fs'));
+  const path = (globalThis as any).__nodePath || ((globalThis as any).__nodePath = eval('require')('path'));
   if (!fs.existsSync(targetPath)) return false;
   fs.rmSync(targetPath, { recursive: true, force: true });
-  console.log(`✓ Removed: ${path.relative(process.cwd(), targetPath)}`);
+  console.log(`Removed: ${path.relative(process.cwd(), targetPath)}`);
   return true;
 }
 
-/* -------------------------------------------------------------------------- */
-/*                             Template helpers                               */
-/* -------------------------------------------------------------------------- */
-
 function tsTypeForField(field: Field): string {
   switch (field.type) {
-    case 'number':
-      return 'number';
-    case 'boolean':
-      return 'boolean';
-    case 'date':
-      return 'string | Date';
+    case 'number': return 'number';
+    case 'boolean': return 'boolean';
+    case 'date': return 'string | Date';
     case 'json':
     case 'media':
     case 'component':
     case 'dynamiczone':
-    case 'relation':
-      return 'any';
-    default:
-      return 'string';
+    case 'relation': return 'any';
+    default: return 'string';
   }
 }
 
@@ -296,53 +271,23 @@ export async function getFields(): Promise<Field[]> {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                              Service template                              */
+/*                       Inline business logic block                          */
 /* -------------------------------------------------------------------------- */
 
-export function generateServiceTemplate(params: {
+export function generateBusinessLogicBlock(params: {
   collectionName: string;
   identifier: string;
 }): string {
-  const { collectionName, identifier } = params;
-  const modelImport = `@/models/${collectionName}.model`;
+  const { identifier } = params;
   const alias = `${identifier}Model`;
 
-  const header = [
-    '/**',
-    ' * AUTO-GENERATED FILE - DO NOT EDIT MANUALLY.',
-    ` *`,
-    ` * Service for the "${escapeComment(collectionName)}" collection.`,
-    ' * All entry data access goes through the generated model only.',
-    ' *',
-    ' * Generated by lib/collection-module-generator.ts.',
-    ' */',
-    '',
-  ].join('\n');
-
-  return `${header}import * as ${alias} from '${modelImport}';
-import type { Field } from '@/lib/types';
-import { resolveMultipleRelations } from '@/lib/relation-resolver';
-import { populateRelations } from '@/lib/relation-populate';
-import {
-  populateComponents,
-  populateMultipleEntries,
-  createComponentEntry,
-} from '@/lib/component-populate';
-import { filterVirtualRelationFields } from '@/lib/relation-engine';
-import {
-  extractManyToManyData,
-  updateManyToManyRelations,
-} from '@/lib/many-to-many-handler';
-
+  return `
 function httpError(statusCode: number, message: string): Error {
   const error = new Error(message) as Error & { statusCode: number };
   error.statusCode = statusCode;
   return error;
 }
 
-/**
- * Current field definitions of the collection (fetched from metadata).
- */
 async function getFields(): Promise<Field[]> {
   const collectionType = await ${alias}.getCollectionType();
   if (!collectionType) {
@@ -354,9 +299,6 @@ async function getFields(): Promise<Field[]> {
     : [];
 }
 
-/**
- * Unique field validation (same rules as the generic collections API).
- */
 async function assertUnique(
   fields: Field[],
   data: Record<string, any>,
@@ -374,19 +316,12 @@ async function assertUnique(
     if (duplicate) {
       throw httpError(
         400,
-        'This ' +
-          field.displayName +
-          ' already exists. The field "' +
-          field.displayName +
-          '" must be unique.'
+        'This ' + field.displayName + ' already exists. The field "' + field.displayName + '" must be unique.'
       );
     }
   }
 }
 
-/**
- * Create component entries for inline component data.
- */
 async function processComponentFields(
   data: Record<string, any>,
   fields: Field[]
@@ -407,26 +342,17 @@ async function processComponentFields(
           );
         }
       } else {
-        processed[field.name] = await processComponentValue(
-          value,
-          field.componentRef!
-        );
+        processed[field.name] = await processComponentValue(value, field.componentRef!);
       }
     } catch (error: any) {
-      console.error(
-        '[${identifier} Service] Error processing field ' + field.name + ':',
-        error
-      );
+      console.error('[${identifier}] Error processing field ' + field.name + ':', error);
     }
   }
 
   return processed;
 }
 
-async function processComponentValue(
-  value: any,
-  componentName: string
-): Promise<string> {
+async function processComponentValue(value: any, componentName: string): Promise<string> {
   if (typeof value === 'string') return value;
   if (typeof value === 'object' && value !== null && value.id) return value.id;
 
@@ -438,19 +364,10 @@ async function processComponentValue(
   throw httpError(400, 'Invalid component value: ' + JSON.stringify(value));
 }
 
-/**
- * List entries (relations are always resolved).
- */
-export async function listEntries(
-  options: { populate?: boolean } = {}
-): Promise<Record<string, any>[]> {
+async function listEntries(options: { populate?: boolean } = {}): Promise<Record<string, any>[]> {
   const fields = await getFields();
   const entries = await ${alias}.findMany();
-  const resolved = await resolveMultipleRelations(
-    entries,
-    ${alias}.COLLECTION_NAME,
-    fields
-  );
+  const resolved = await resolveMultipleRelations(entries, ${alias}.COLLECTION_NAME, fields);
 
   if (options.populate) {
     return populateMultipleEntries(resolved, fields);
@@ -458,24 +375,14 @@ export async function listEntries(
   return resolved;
 }
 
-/**
- * Single entry with populated relations.
- */
-export async function getEntry(
-  id: string,
-  options: { populate?: boolean } = {}
-): Promise<Record<string, any>> {
+async function getEntry(id: string, options: { populate?: boolean } = {}): Promise<Record<string, any>> {
   const fields = await getFields();
   const entry = await ${alias}.findById(id);
   if (!entry) {
     throw httpError(404, 'Entry not found');
   }
 
-  const resolved = await populateRelations(
-    { ...entry },
-    ${alias}.COLLECTION_NAME,
-    fields
-  );
+  const resolved = await populateRelations({ ...entry }, ${alias}.COLLECTION_NAME, fields);
 
   if (options.populate) {
     return populateComponents(resolved, fields);
@@ -483,12 +390,7 @@ export async function getEntry(
   return resolved;
 }
 
-/**
- * Create a new entry.
- */
-export async function createEntry(
-  entryData: Record<string, any>
-): Promise<Record<string, any>> {
+async function createEntry(entryData: Record<string, any>): Promise<Record<string, any>> {
   if (!entryData || Object.keys(entryData).length === 0) {
     throw httpError(400, 'Missing entry data');
   }
@@ -502,13 +404,7 @@ export async function createEntry(
   return ${alias}.create(filtered);
 }
 
-/**
- * Update an existing entry.
- */
-export async function updateEntry(
-  id: string,
-  entryData: Record<string, any>
-): Promise<Record<string, any>> {
+async function updateEntry(id: string, entryData: Record<string, any>): Promise<Record<string, any>> {
   if (!entryData || Object.keys(entryData).length === 0) {
     throw httpError(400, 'Missing entry data');
   }
@@ -517,10 +413,7 @@ export async function updateEntry(
   await assertUnique(fields, entryData, id);
 
   const processed = await processComponentFields(entryData, fields);
-  const { manyToManyData, cleanedData } = extractManyToManyData(
-    processed,
-    fields
-  );
+  const { manyToManyData, cleanedData } = extractManyToManyData(processed, fields);
   const filtered = filterVirtualRelationFields(fields, cleanedData);
 
   const dataToUpdate: Record<string, any> = {};
@@ -533,21 +426,13 @@ export async function updateEntry(
   const entry = await ${alias}.update(id, dataToUpdate);
 
   if (Object.keys(manyToManyData).length > 0) {
-    await updateManyToManyRelations(
-      ${alias}.COLLECTION_NAME,
-      id,
-      manyToManyData,
-      fields
-    );
+    await updateManyToManyRelations(${alias}.COLLECTION_NAME, id, manyToManyData, fields);
   }
 
   return entry;
 }
 
-/**
- * Delete an existing entry.
- */
-export async function deleteEntry(id: string): Promise<void> {
+async function deleteEntry(id: string): Promise<void> {
   await getFields();
   const entry = await ${alias}.findById(id);
   if (!entry) {
@@ -560,45 +445,128 @@ export async function deleteEntry(id: string): Promise<void> {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                             Controller template                            */
+/*                          Shared route file header                          */
 /* -------------------------------------------------------------------------- */
 
-export function generateControllerTemplate(params: {
+function getRouteImports(identifier: string, collectionName: string): string {
+  return `import type { NextApiRequest, NextApiResponse } from 'next';
+import { ApiResponse, Field } from '@/lib/types';
+import { authMiddleware } from '@/lib/middlewares/api/auth-middleware';
+import { withApiToken } from '@/lib/api-tokens/middleware';
+import { resolveMultipleRelations } from '@/lib/relation-resolver';
+import { populateRelations } from '@/lib/relation-populate';
+import {
+  populateComponents,
+  populateMultipleEntries,
+  createComponentEntry,
+} from '@/lib/component-populate';
+import { filterVirtualRelationFields } from '@/lib/relation-engine';
+import {
+  extractManyToManyData,
+  updateManyToManyRelations,
+} from '@/lib/many-to-many-handler';
+import * as ${identifier}Model from '@/models/${collectionName}.model';`;
+}
+
+/**
+ * App Router `route.ts` wrapper that adapts the Pages-style `handler.ts`.
+ */
+export function generateRouteWrapperTemplate(): string {
+  return `export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+import { adaptHandler } from '@/lib/app-router/route-adapter';
+import handler from './handler';
+
+const route = adaptHandler(handler as any);
+
+export const GET = route;
+export const POST = route;
+export const PUT = route;
+export const PATCH = route;
+export const DELETE = route;
+export const OPTIONS = route;
+export const HEAD = route;
+`;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                          Admin API route templates                         */
+/* -------------------------------------------------------------------------- */
+
+export function generateAdminRouteIndexTemplate(params: {
   collectionName: string;
   identifier: string;
 }): string {
   const { collectionName, identifier } = params;
-  const serviceImport = `@/services/${collectionName}.service`;
-  const alias = `${identifier}Service`;
-  const logPrefix = `[${identifier} Controller]`;
+  const businessLogic = generateBusinessLogicBlock(params);
 
-  const header = [
-    '/**',
-    ' * AUTO-GENERATED FILE - DO NOT EDIT MANUALLY.',
-    ` *`,
-    ` * Controller for the "${escapeComment(collectionName)}" collection.`,
-    ' * Maps HTTP requests onto the generated service only.',
-    ' *',
-    ' * Generated by lib/collection-module-generator.ts.',
-    ' */',
-    '',
-  ].join('\n');
+  return `/**
+ * AUTO-GENERATED FILE - DO NOT EDIT MANUALLY.
+ *
+ * Admin API route: /api/collections/${collectionName}
+ * Uses JWT authentication (admin panel login).
+ * All business logic is inline in this file.
+ *
+ * Generated by lib/collection-module-generator.ts.
+ */
+${getRouteImports(identifier, collectionName)}
 
-  return `${header}import type { NextApiRequest, NextApiResponse } from 'next';
-import { ApiResponse } from '@/lib/types';
-import * as ${alias} from '${serviceImport}';
+${businessLogic}
 
-function sendError(
-  res: NextApiResponse<ApiResponse>,
-  error: any,
-  context: string
-): void {
-  console.error('${logPrefix}', context, error);
-  const statusCode =
-    typeof error?.statusCode === 'number' ? error.statusCode : 500;
-  res.status(statusCode).json({
-    error: error?.message || 'Internal server error',
-  });
+function sendError(res: NextApiResponse<ApiResponse>, error: any, context: string): void {
+  console.error('[${identifier} Route]', context, error);
+  const statusCode = typeof error?.statusCode === 'number' ? error.statusCode : 500;
+  res.status(statusCode).json({ error: error?.message || 'Internal server error' });
+}
+
+async function handler(req: NextApiRequest, res: NextApiResponse<ApiResponse>): Promise<void> {
+  try {
+    if (req.method === 'GET') {
+      const entries = await listEntries({ populate: req.query.populate === 'true' });
+      res.status(200).json({ data: entries });
+      return;
+    }
+    if (req.method === 'POST') {
+      const entryData = (req.body && req.body.data) || {};
+      const entry = await createEntry(entryData);
+      res.status(201).json({ data: entry });
+      return;
+    }
+    res.status(405).json({ error: 'Method not allowed' });
+  } catch (error: any) {
+    sendError(res, error, 'Request failed');
+  }
+}
+
+export default authMiddleware(handler);
+`;
+}
+
+export function generateAdminRouteIdTemplate(params: {
+  collectionName: string;
+  identifier: string;
+}): string {
+  const { collectionName, identifier } = params;
+  const businessLogic = generateBusinessLogicBlock(params);
+
+  return `/**
+ * AUTO-GENERATED FILE - DO NOT EDIT MANUALLY.
+ *
+ * Admin API route: /api/collections/${collectionName}/[id]
+ * Uses JWT authentication (admin panel login).
+ * All business logic is inline in this file.
+ *
+ * Generated by lib/collection-module-generator.ts.
+ */
+${getRouteImports(identifier, collectionName)}
+
+${businessLogic}
+
+function sendError(res: NextApiResponse<ApiResponse>, error: any, context: string): void {
+  console.error('[${identifier} Route]', context, error);
+  const statusCode = typeof error?.statusCode === 'number' ? error.statusCode : 500;
+  res.status(statusCode).json({ error: error?.message || 'Internal server error' });
 }
 
 function readEntryId(req: NextApiRequest): string | null {
@@ -606,184 +574,153 @@ function readEntryId(req: NextApiRequest): string | null {
   return typeof id === 'string' ? id : null;
 }
 
-/**
- * GET /api/collections/${collectionName}
- */
-export async function listEntries(
-  req: NextApiRequest,
-  res: NextApiResponse<ApiResponse>
-): Promise<void> {
-  try {
-    const entries = await ${alias}.listEntries({
-      populate: req.query.populate === 'true',
-    });
-    res.status(200).json({ data: entries });
-  } catch (error: any) {
-    sendError(res, error, 'Failed to list entries');
-  }
-}
-
-/**
- * POST /api/collections/${collectionName}
- */
-export async function createEntry(
-  req: NextApiRequest,
-  res: NextApiResponse<ApiResponse>
-): Promise<void> {
-  try {
-    const entryData = (req.body && req.body.data) || {};
-    const entry = await ${alias}.createEntry(entryData);
-    res.status(201).json({ data: entry });
-  } catch (error: any) {
-    sendError(res, error, 'Failed to create entry');
-  }
-}
-
-/**
- * GET /api/collections/${collectionName}/[id]
- */
-export async function getEntry(
-  req: NextApiRequest,
-  res: NextApiResponse<ApiResponse>
-): Promise<void> {
+async function handler(req: NextApiRequest, res: NextApiResponse<ApiResponse>): Promise<void> {
   try {
     const id = readEntryId(req);
     if (!id) {
       res.status(400).json({ error: 'Invalid entry id' });
       return;
     }
-    const entry = await ${alias}.getEntry(id, {
-      populate: req.query.populate === 'true',
-    });
-    res.status(200).json({ data: entry });
-  } catch (error: any) {
-    sendError(res, error, 'Failed to get entry');
-  }
-}
-
-/**
- * PUT /api/collections/${collectionName}/[id]
- */
-export async function updateEntry(
-  req: NextApiRequest,
-  res: NextApiResponse<ApiResponse>
-): Promise<void> {
-  try {
-    const id = readEntryId(req);
-    if (!id) {
-      res.status(400).json({ error: 'Invalid entry id' });
+    if (req.method === 'GET') {
+      const entry = await getEntry(id, { populate: req.query.populate === 'true' });
+      res.status(200).json({ data: entry });
       return;
     }
-    const entryData = (req.body && req.body.data) || {};
-    const entry = await ${alias}.updateEntry(id, entryData);
-    res.status(200).json({ data: entry });
-  } catch (error: any) {
-    sendError(res, error, 'Failed to update entry');
-  }
-}
-
-/**
- * DELETE /api/collections/${collectionName}/[id]
- */
-export async function deleteEntry(
-  req: NextApiRequest,
-  res: NextApiResponse<ApiResponse>
-): Promise<void> {
-  try {
-    const id = readEntryId(req);
-    if (!id) {
-      res.status(400).json({ error: 'Invalid entry id' });
+    if (req.method === 'PUT') {
+      const entryData = (req.body && req.body.data) || {};
+      const entry = await updateEntry(id, entryData);
+      res.status(200).json({ data: entry });
       return;
     }
-    await ${alias}.deleteEntry(id);
-    res.status(200).json({ message: 'Entry deleted' });
+    if (req.method === 'DELETE') {
+      await deleteEntry(id);
+      res.status(200).json({ message: 'Entry deleted' });
+      return;
+    }
+    res.status(405).json({ error: 'Method not allowed' });
   } catch (error: any) {
-    sendError(res, error, 'Failed to delete entry');
+    sendError(res, error, 'Request failed');
   }
-}
-`;
-}
-
-/* -------------------------------------------------------------------------- */
-/*                              API route templates                           */
-/* -------------------------------------------------------------------------- */
-
-export function generateApiIndexTemplate(params: {
-  collectionName: string;
-  identifier: string;
-}): string {
-  const { collectionName, identifier } = params;
-  const controllerImport = `@/controllers/${collectionName}.controller`;
-  const alias = `${identifier}Controller`;
-
-  return `/**
- * AUTO-GENERATED FILE - DO NOT EDIT MANUALLY.
- *
- * API route: /api/collections/${collectionName}
- * Delegates to the generated controller (fallback: /api/collections/[name]).
- *
- * Generated by lib/collection-module-generator.ts.
- */
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { ApiResponse } from '@/lib/types';
-import { authMiddleware } from '@/lib/middlewares/api/auth-middleware';
-import * as ${alias} from '${controllerImport}';
-
-async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ApiResponse>
-): Promise<void> {
-  if (req.method === 'GET') {
-    return ${alias}.listEntries(req, res);
-  }
-  if (req.method === 'POST') {
-    return ${alias}.createEntry(req, res);
-  }
-  res.status(405).json({ error: 'Method not allowed' });
 }
 
 export default authMiddleware(handler);
 `;
 }
 
-export function generateApiIdTemplate(params: {
+/* -------------------------------------------------------------------------- */
+/*                       Public v1 API route templates                        */
+/* -------------------------------------------------------------------------- */
+
+export function generateV1RouteIndexTemplate(params: {
   collectionName: string;
   identifier: string;
 }): string {
   const { collectionName, identifier } = params;
-  const controllerImport = `@/controllers/${collectionName}.controller`;
-  const alias = `${identifier}Controller`;
+  const businessLogic = generateBusinessLogicBlock(params);
 
   return `/**
  * AUTO-GENERATED FILE - DO NOT EDIT MANUALLY.
  *
- * API route: /api/collections/${collectionName}/[id]
- * Delegates to the generated controller (fallback: /api/collections/[name]/[id]).
+ * Public API route: /v1/api/collections/${collectionName}
+ * Uses bearer token authentication (API tokens from admin panel).
+ * All business logic is inline in this file.
  *
  * Generated by lib/collection-module-generator.ts.
  */
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { ApiResponse } from '@/lib/types';
-import { authMiddleware } from '@/lib/middlewares/api/auth-middleware';
-import * as ${alias} from '${controllerImport}';
+${getRouteImports(identifier, collectionName)}
 
-async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ApiResponse>
-): Promise<void> {
-  if (req.method === 'GET') {
-    return ${alias}.getEntry(req, res);
-  }
-  if (req.method === 'PUT') {
-    return ${alias}.updateEntry(req, res);
-  }
-  if (req.method === 'DELETE') {
-    return ${alias}.deleteEntry(req, res);
-  }
-  res.status(405).json({ error: 'Method not allowed' });
+${businessLogic}
+
+function sendError(res: NextApiResponse<ApiResponse>, error: any, context: string): void {
+  console.error('[${identifier} Route]', context, error);
+  const statusCode = typeof error?.statusCode === 'number' ? error.statusCode : 500;
+  res.status(statusCode).json({ error: error?.message || 'Internal server error' });
 }
 
-export default authMiddleware(handler);
+async function handler(req: NextApiRequest, res: NextApiResponse<ApiResponse>): Promise<void> {
+  try {
+    if (req.method === 'GET') {
+      const entries = await listEntries({ populate: req.query.populate === 'true' });
+      res.status(200).json({ data: entries });
+      return;
+    }
+    if (req.method === 'POST') {
+      const entryData = (req.body && req.body.data) || {};
+      const entry = await createEntry(entryData);
+      res.status(201).json({ data: entry });
+      return;
+    }
+    res.status(405).json({ error: 'Method not allowed' });
+  } catch (error: any) {
+    sendError(res, error, 'Request failed');
+  }
+}
+
+export default withApiToken(handler);
+`;
+}
+
+export function generateV1RouteIdTemplate(params: {
+  collectionName: string;
+  identifier: string;
+}): string {
+  const { collectionName, identifier } = params;
+  const businessLogic = generateBusinessLogicBlock(params);
+
+  return `/**
+ * AUTO-GENERATED FILE - DO NOT EDIT MANUALLY.
+ *
+ * Public API route: /v1/api/collections/${collectionName}/[id]
+ * Uses bearer token authentication (API tokens from admin panel).
+ * All business logic is inline in this file.
+ *
+ * Generated by lib/collection-module-generator.ts.
+ */
+${getRouteImports(identifier, collectionName)}
+
+${businessLogic}
+
+function sendError(res: NextApiResponse<ApiResponse>, error: any, context: string): void {
+  console.error('[${identifier} Route]', context, error);
+  const statusCode = typeof error?.statusCode === 'number' ? error.statusCode : 500;
+  res.status(statusCode).json({ error: error?.message || 'Internal server error' });
+}
+
+function readEntryId(req: NextApiRequest): string | null {
+  const { id } = req.query;
+  return typeof id === 'string' ? id : null;
+}
+
+async function handler(req: NextApiRequest, res: NextApiResponse<ApiResponse>): Promise<void> {
+  try {
+    const id = readEntryId(req);
+    if (!id) {
+      res.status(400).json({ error: 'Invalid entry id' });
+      return;
+    }
+    if (req.method === 'GET') {
+      const entry = await getEntry(id, { populate: req.query.populate === 'true' });
+      res.status(200).json({ data: entry });
+      return;
+    }
+    if (req.method === 'PUT') {
+      const entryData = (req.body && req.body.data) || {};
+      const entry = await updateEntry(id, entryData);
+      res.status(200).json({ data: entry });
+      return;
+    }
+    if (req.method === 'DELETE') {
+      await deleteEntry(id);
+      res.status(200).json({ message: 'Entry deleted' });
+      return;
+    }
+    res.status(405).json({ error: 'Method not allowed' });
+  } catch (error: any) {
+    sendError(res, error, 'Request failed');
+  }
+}
+
+export default withApiToken(handler);
 `;
 }
 
@@ -791,21 +728,15 @@ export default authMiddleware(handler);
 /*                          Public generator API                              */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Generate the complete module (backend MVC + API routes + admin pages) for a
- * single collection. The collection name always comes from the request.
- */
 export async function generateCollectionModule(
   options: GenerateCollectionModuleOptions
 ): Promise<GeneratedCollectionModule> {
   const collectionName = normalizeCollectionName(options.collectionName);
   assertSafeCollectionName(collectionName);
 
-  const displayName = options.displayName || collectionName;
   const fields = options.fields || [];
   const identifier = toIdentifier(collectionName);
   const tableName = sanitizeTableName(collectionName);
-  const includeAdminPages = options.includeAdminPages !== false;
   const paths = getCollectionModulePaths(collectionName);
 
   const files: string[] = [];
@@ -818,49 +749,48 @@ export async function generateCollectionModule(
   );
   files.push(
     writeGeneratedFile(
-      paths.service,
-      generateServiceTemplate({ collectionName, identifier })
-    )
-  );
-  files.push(
-    writeGeneratedFile(
-      paths.controller,
-      generateControllerTemplate({ collectionName, identifier })
-    )
-  );
-  files.push(
-    writeGeneratedFile(
       paths.apiIndex,
-      generateApiIndexTemplate({ collectionName, identifier })
+      generateAdminRouteIndexTemplate({ collectionName, identifier })
     )
+  );
+  files.push(
+    writeGeneratedFile(paths.apiIndexRoute, generateRouteWrapperTemplate())
   );
   files.push(
     writeGeneratedFile(
       paths.apiId,
-      generateApiIdTemplate({ collectionName, identifier })
+      generateAdminRouteIdTemplate({ collectionName, identifier })
     )
   );
-
-  if (includeAdminPages) {
-    await generateCollectionFolder(collectionName, displayName);
-    files.push(
-      paths.adminDir + path.sep + 'index.tsx',
-      paths.adminDir + path.sep + 'new.tsx',
-      paths.adminDir + path.sep + '[id].tsx'
-    );
-  }
+  files.push(
+    writeGeneratedFile(paths.apiIdRoute, generateRouteWrapperTemplate())
+  );
+  files.push(
+    writeGeneratedFile(
+      paths.v1ApiIndex,
+      generateV1RouteIndexTemplate({ collectionName, identifier })
+    )
+  );
+  files.push(
+    writeGeneratedFile(paths.v1ApiIndexRoute, generateRouteWrapperTemplate())
+  );
+  files.push(
+    writeGeneratedFile(
+      paths.v1ApiId,
+      generateV1RouteIdTemplate({ collectionName, identifier })
+    )
+  );
+  files.push(
+    writeGeneratedFile(paths.v1ApiIdRoute, generateRouteWrapperTemplate())
+  );
 
   console.log(
-    `✓✓ Collection module generated for "${collectionName}" (${files.length} files)`
+    `Collection module generated for "${collectionName}" (${files.length} files)`
   );
 
   return { collectionName, files };
 }
 
-/**
- * Remove every generated file that belongs to a collection. Never touches
- * unrelated files (the generic [name] fallback routes are left alone).
- */
 export function deleteCollectionModule(collectionName: string): void {
   const collectionNameNormalized = normalizeCollectionName(collectionName);
   assertSafeCollectionName(collectionNameNormalized);
@@ -868,18 +798,14 @@ export function deleteCollectionModule(collectionName: string): void {
   const paths = getCollectionModulePaths(collectionNameNormalized);
 
   removeIfExists(paths.model);
-  removeIfExists(paths.service);
-  removeIfExists(paths.controller);
   removeIfExists(paths.apiIndex);
   removeIfExists(paths.apiId);
   removeIfExists(paths.apiDir);
-  removeIfExists(paths.adminDir);
+  removeIfExists(paths.v1ApiIndex);
+  removeIfExists(paths.v1ApiId);
+  removeIfExists(paths.v1ApiDir);
 }
 
-/**
- * Rename a generated module: generate everything under the new name (so all
- * internal collection references are updated) and delete the old files.
- */
 export async function renameCollectionModule(params: {
   oldName: string;
   newName: string;
@@ -893,7 +819,6 @@ export async function renameCollectionModule(params: {
     collectionName: newName,
     displayName: params.displayName,
     fields: params.fields,
-    includeAdminPages: true,
   });
 
   if (oldName && oldName !== newName) {

@@ -156,12 +156,12 @@ export default async function handler(
           const collectionEndpoints = [
             {
               module: `collection_${collection.name}`,
-              endpoint: `/cms/collections/${collection.name}`,
+              endpoint: `/v1/api/collections/${collection.name}`,
               method: 'GET',
             },
             {
               module: `collection_${collection.name}`,
-              endpoint: `/cms/collections/${collection.name}/:id`,
+              endpoint: `/v1/api/collections/${collection.name}/:id`,
               method: 'GET',
             },
           ];
@@ -171,22 +171,22 @@ export default async function handler(
             collectionEndpoints.push(
               {
                 module: `collection_${collection.name}`,
-                endpoint: `/cms/collections/${collection.name}`,
+                endpoint: `/v1/api/collections/${collection.name}`,
                 method: 'POST',
               },
               {
                 module: `collection_${collection.name}`,
-                endpoint: `/cms/collections/${collection.name}/:id`,
+                endpoint: `/v1/api/collections/${collection.name}/:id`,
                 method: 'PUT',
               },
               {
                 module: `collection_${collection.name}`,
-                endpoint: `/cms/collections/${collection.name}/:id`,
+                endpoint: `/v1/api/collections/${collection.name}/:id`,
                 method: 'PATCH',
               },
               {
                 module: `collection_${collection.name}`,
-                endpoint: `/cms/collections/${collection.name}/:id`,
+                endpoint: `/v1/api/collections/${collection.name}/:id`,
                 method: 'DELETE',
               }
             );
@@ -200,7 +200,7 @@ export default async function handler(
           const singleEndpoints = [
             {
               module: `single_${single.name}`,
-              endpoint: `/cms/singles/${single.name}`,
+              endpoint: `/v1/api/single-types/${single.name}`,
               method: 'GET',
             },
           ];
@@ -209,7 +209,7 @@ export default async function handler(
           if (type === 'full_access') {
             singleEndpoints.push({
               module: `single_${single.name}`,
-              endpoint: `/cms/singles/${single.name}`,
+              endpoint: `/v1/api/single-types/${single.name}`,
               method: 'PUT',
             });
           }
@@ -217,39 +217,19 @@ export default async function handler(
           endpointsToCreate.push(...singleEndpoints);
         }
 
-        // Add media endpoints
+        // Add media endpoints (frontend read-only; upload/edit is admin-only)
         const mediaEndpoints = [
           {
             module: 'media',
-            endpoint: '/cms/media',
+            endpoint: '/v1/api/media',
             method: 'GET',
           },
           {
             module: 'media',
-            endpoint: '/cms/media/:id',
+            endpoint: '/v1/api/media/:id',
             method: 'GET',
           },
         ];
-
-        if (type === 'full_access') {
-          mediaEndpoints.push(
-            {
-              module: 'media',
-              endpoint: '/cms/media/upload',
-              method: 'POST',
-            },
-            {
-              module: 'media',
-              endpoint: '/cms/media/:id',
-              method: 'PUT',
-            },
-            {
-              module: 'media',
-              endpoint: '/cms/media/:id',
-              method: 'DELETE',
-            }
-          );
-        }
 
         endpointsToCreate.push(...mediaEndpoints);
       } else if (type === 'custom') {

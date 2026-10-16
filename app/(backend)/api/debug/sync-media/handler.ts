@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+import { authMiddleware } from '@/lib/middlewares/api/auth-middleware';
 import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import path from 'path';
@@ -61,7 +62,7 @@ function getMimeType(filename: string): string {
   return mimeTypes[ext] || 'application/octet-stream';
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -125,3 +126,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 }
+
+export default authMiddleware(handler);

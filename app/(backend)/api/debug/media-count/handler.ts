@@ -1,11 +1,12 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+import { authMiddleware } from '@/lib/middlewares/api/auth-middleware';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/lib/prisma';
 
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const count = await prisma.media.count();
     const allMedia = await prisma.media.findMany({
@@ -31,3 +32,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 }
+
+export default authMiddleware(handler);

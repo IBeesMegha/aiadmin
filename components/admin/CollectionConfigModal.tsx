@@ -36,33 +36,33 @@ export const CollectionConfigModal: React.FC<CollectionConfigModalProps> = ({
   const apiRoutes = {
     getAll: {
       method: 'GET',
-      path: `/api/collections/${collectionType.name}`,
+      path: `/v1/api/collections/${collectionType.name}`,
       description: 'Get all entries',
-      example: `${baseUrl}/api/collections/${collectionType.name}`,
+      example: `${baseUrl}/v1/api/collections/${collectionType.name}`,
     },
     getOne: {
       method: 'GET',
-      path: `/api/collections/${collectionType.name}/[id]`,
+      path: `/v1/api/collections/${collectionType.name}/[id]`,
       description: 'Get single entry by ID',
-      example: `${baseUrl}/api/collections/${collectionType.name}/[id]`,
+      example: `${baseUrl}/v1/api/collections/${collectionType.name}/[id]`,
     },
     create: {
       method: 'POST',
-      path: `/api/collections/${collectionType.name}`,
+      path: `/v1/api/collections/${collectionType.name}`,
       description: 'Create new entry',
-      example: `${baseUrl}/api/collections/${collectionType.name}`,
+      example: `${baseUrl}/v1/api/collections/${collectionType.name}`,
     },
     update: {
       method: 'PUT',
-      path: `/api/collections/${collectionType.name}/[id]`,
+      path: `/v1/api/collections/${collectionType.name}/[id]`,
       description: 'Update entry by ID',
-      example: `${baseUrl}/api/collections/${collectionType.name}/[id]`,
+      example: `${baseUrl}/v1/api/collections/${collectionType.name}/[id]`,
     },
     delete: {
       method: 'DELETE',
-      path: `/api/collections/${collectionType.name}/[id]`,
+      path: `/v1/api/collections/${collectionType.name}/[id]`,
       description: 'Delete entry by ID',
-      example: `${baseUrl}/api/collections/${collectionType.name}/[id]`,
+      example: `${baseUrl}/v1/api/collections/${collectionType.name}/[id]`,
     },
   };
 
@@ -184,6 +184,10 @@ export const CollectionConfigModal: React.FC<CollectionConfigModalProps> = ({
           {/* API Routes */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-3">API Routes</h3>
+            <p className="text-sm text-gray-500 mb-3">
+              Frontend access requires a Bearer API token. Send header:
+              <code className="ml-1 px-1 py-0.5 bg-gray-200 rounded text-xs">Authorization: Bearer YOUR_API_TOKEN</code>
+            </p>
             <div className="space-y-3">
               {Object.entries(apiRoutes).map(([key, route]) => (
                 <div key={key} className="bg-gray-50 rounded-lg p-4 border border-gray-200">

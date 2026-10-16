@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+import { authMiddleware } from '@/lib/middlewares/api/auth-middleware';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { exec } from 'child_process';
 import { promisify } from 'util';
@@ -12,7 +13,7 @@ import { regenerateSchema } from '@/lib/schema-sync';
  * regenerates the Prisma Client. Dynamic content tables are created at runtime
  * via raw SQL and are intentionally never part of Prisma migrations.
  */
-export default async function handler(
+async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -63,3 +64,5 @@ export default async function handler(
     });
   }
 }
+
+export default authMiddleware(handler);

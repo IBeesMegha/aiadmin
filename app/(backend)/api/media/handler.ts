@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+import { authMiddleware } from '@/lib/middlewares/api/auth-middleware';
 import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs/promises';
 import path from 'path';
@@ -162,7 +163,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET':
       return handleGet(req, res);
@@ -173,3 +174,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
+
+export default authMiddleware(handler);

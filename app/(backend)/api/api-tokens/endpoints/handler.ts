@@ -76,37 +76,37 @@ export default async function handler(
           displayName: collection.displayName,
           endpoints: [
             {
-              endpoint: `/cms/collections/${collection.name}`,
+              endpoint: `/v1/api/collections/${collection.name}`,
               method: 'GET',
               description: `List all ${collection.displayName} entries`,
               module: `collection_${collection.name}`,
             },
             {
-              endpoint: `/cms/collections/${collection.name}/:id`,
+              endpoint: `/v1/api/collections/${collection.name}/:id`,
               method: 'GET',
               description: `Get single ${collection.displayName} entry`,
               module: `collection_${collection.name}`,
             },
             {
-              endpoint: `/cms/collections/${collection.name}`,
+              endpoint: `/v1/api/collections/${collection.name}`,
               method: 'POST',
               description: `Create ${collection.displayName} entry`,
               module: `collection_${collection.name}`,
             },
             {
-              endpoint: `/cms/collections/${collection.name}/:id`,
+              endpoint: `/v1/api/collections/${collection.name}/:id`,
               method: 'PUT',
               description: `Update ${collection.displayName} entry`,
               module: `collection_${collection.name}`,
             },
             {
-              endpoint: `/cms/collections/${collection.name}/:id`,
+              endpoint: `/v1/api/collections/${collection.name}/:id`,
               method: 'PATCH',
               description: `Partially update ${collection.displayName} entry`,
               module: `collection_${collection.name}`,
             },
             {
-              endpoint: `/cms/collections/${collection.name}/:id`,
+              endpoint: `/v1/api/collections/${collection.name}/:id`,
               method: 'DELETE',
               description: `Delete ${collection.displayName} entry`,
               module: `collection_${collection.name}`,
@@ -122,20 +122,70 @@ export default async function handler(
           displayName: single.displayName,
           endpoints: [
             {
-              endpoint: `/cms/singles/${single.name}`,
+              endpoint: `/v1/api/single-types/${single.name}`,
               method: 'GET',
               description: `Get ${single.displayName} data`,
               module: `single_${single.name}`,
             },
             {
-              endpoint: `/cms/singles/${single.name}`,
+              endpoint: `/v1/api/single-types/${single.name}`,
               method: 'PUT',
               description: `Update ${single.displayName} data`,
+              module: `single_${single.name}`,
+            },
+            {
+              endpoint: `/v1/api/single-types/${single.name}`,
+              method: 'PATCH',
+              description: `Partially update ${single.displayName} data`,
               module: `single_${single.name}`,
             },
           ],
         });
       }
+
+      // Add Components as a module
+      modules.push({
+        module: 'components',
+        displayName: 'Components',
+        endpoints: [
+          {
+            endpoint: '/v1/api/components',
+            method: 'GET',
+            description: 'List all components',
+            module: 'components',
+          },
+          {
+            endpoint: '/v1/api/components/:name',
+            method: 'GET',
+            description: 'Get a component',
+            module: 'components',
+          },
+          {
+            endpoint: '/v1/api/components',
+            method: 'POST',
+            description: 'Create a component',
+            module: 'components',
+          },
+          {
+            endpoint: '/v1/api/components/:name',
+            method: 'PUT',
+            description: 'Update a component',
+            module: 'components',
+          },
+          {
+            endpoint: '/v1/api/components/:name',
+            method: 'PATCH',
+            description: 'Partially update a component',
+            module: 'components',
+          },
+          {
+            endpoint: '/v1/api/components/:name',
+            method: 'DELETE',
+            description: 'Delete a component',
+            module: 'components',
+          },
+        ],
+      });
 
       // Add Media Library module (system module)
       modules.push({
@@ -143,33 +193,15 @@ export default async function handler(
         displayName: 'Media Library',
         endpoints: [
           {
-            endpoint: '/cms/media',
+            endpoint: '/v1/api/media',
             method: 'GET',
             description: 'List all media files',
             module: 'media',
           },
           {
-            endpoint: '/cms/media/:id',
+            endpoint: '/v1/api/media/:id',
             method: 'GET',
             description: 'Get single media file',
-            module: 'media',
-          },
-          {
-            endpoint: '/cms/media/upload',
-            method: 'POST',
-            description: 'Upload media file',
-            module: 'media',
-          },
-          {
-            endpoint: '/cms/media/:id',
-            method: 'PUT',
-            description: 'Update media metadata',
-            module: 'media',
-          },
-          {
-            endpoint: '/cms/media/:id',
-            method: 'DELETE',
-            description: 'Delete media file',
             module: 'media',
           },
         ],

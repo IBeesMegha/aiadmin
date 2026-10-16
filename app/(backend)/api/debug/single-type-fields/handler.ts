@@ -1,11 +1,12 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+import { authMiddleware } from '@/lib/middlewares/api/auth-middleware';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/lib/prisma';
 
 
-export default async function handler(
+async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -37,3 +38,5 @@ export default async function handler(
     return res.status(500).json({ error: error.message });
   }
 }
+
+export default authMiddleware(handler);

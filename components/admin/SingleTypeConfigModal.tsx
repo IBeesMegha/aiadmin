@@ -37,21 +37,21 @@ export const SingleTypeConfigModal: React.FC<SingleTypeConfigModalProps> = ({
   const apiRoutes = {
     get: {
       method: 'GET',
-      path: `/api/single-types/${singleType.name}`,
+      path: `/v1/api/single-types/${singleType.name}`,
       description: 'Get single type entry',
-      example: `${baseUrl}/api/single-types/${singleType.name}`,
+      example: `${baseUrl}/v1/api/single-types/${singleType.name}`,
     },
     update: {
       method: 'PUT',
-      path: `/api/single-types/${singleType.name}`,
+      path: `/v1/api/single-types/${singleType.name}`,
       description: 'Update single type entry',
-      example: `${baseUrl}/api/single-types/${singleType.name}`,
+      example: `${baseUrl}/v1/api/single-types/${singleType.name}`,
     },
     delete: {
       method: 'DELETE',
-      path: `/api/single-types/${singleType.name}`,
+      path: `/v1/api/single-types/${singleType.name}`,
       description: 'Delete single type entry',
-      example: `${baseUrl}/api/single-types/${singleType.name}`,
+      example: `${baseUrl}/v1/api/single-types/${singleType.name}`,
     },
   };
 
@@ -125,6 +125,10 @@ export const SingleTypeConfigModal: React.FC<SingleTypeConfigModalProps> = ({
           {/* API Routes */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-3">API Routes</h3>
+            <p className="text-sm text-gray-500 mb-3">
+              Frontend access requires a Bearer API token. Send header:
+              <code className="ml-1 px-1 py-0.5 bg-gray-100 rounded text-xs">Authorization: Bearer YOUR_API_TOKEN</code>
+            </p>
             <div className="space-y-3">
               {Object.entries(apiRoutes).map(([key, route]) => (
                 <div key={key} className="bg-gray-50 rounded-lg p-4 border border-gray-200">

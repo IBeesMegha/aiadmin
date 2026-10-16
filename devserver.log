@@ -6,10 +6,797 @@
    - Local:        http://localhost:3000
    - Environments: .env
 
- ✓ Ready in 4.8s
- ○ Compiling /_error ...
- ✓ Compiled /_error in 29.4s (278 modules)
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
- ✓ Compiled in 1416ms (278 modules)
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-[?25h
+ ✓ Ready in 10.8s
+ ○ Compiling /v1/api/collections ...
+ ✓ Compiled /v1/api/collections in 1648ms (27 modules)
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/collections', method: 'GET', hasAuthHeader: false }
+ ○ Compiling /v1/api/collections/fons ...
+ ✓ Compiled /v1/api/collections/fons in 700ms (40 modules)
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/collections/fons',
+  method: 'GET',
+  hasAuthHeader: false
+}
+ ✓ Compiled /v1/api/single-types in 271ms (43 modules)
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/single-types', method: 'GET', hasAuthHeader: false }
+ ✓ Compiled /v1/api/single-types/[name] in 278ms (46 modules)
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/single-types/home',
+  method: 'GET',
+  hasAuthHeader: false
+}
+ ✓ Compiled /v1/api/components in 376ms (49 modules)
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/components', method: 'GET', hasAuthHeader: false }
+ ✓ Compiled /v1/api/components/[name] in 444ms (52 modules)
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/components/list',
+  method: 'GET',
+  hasAuthHeader: false
+}
+ ○ Compiling /api/single-types ...
+ ✓ Compiled /api/single-types in 636ms (55 modules)
+ ✓ Compiled /api/single-types/[name] in 370ms (58 modules)
+ ○ Compiling /api/components ...
+ ✓ Compiled /api/components in 671ms (61 modules)
+ ✓ Compiled /api/components/[name] in 439ms (64 modules)
+ ○ Compiling /api/collections ...
+ ✓ Compiled /api/collections in 2.9s (152 modules)
+ ○ Compiling /api/collections/fons ...
+ ✓ Compiled /api/collections/fons in 764ms (155 modules)
+ ○ Compiling /api/collection-types ...
+ ✓ Compiled /api/collection-types in 766ms (158 modules)
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/single-types', method: 'GET', hasAuthHeader: true }
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/single-types/home',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/components', method: 'GET', hasAuthHeader: true }
+ ○ Compiling /api/component-entries ...
+ ✓ Compiled /api/component-entries in 761ms (45 modules)
+ ✓ Compiled /api/media in 471ms (52 modules)
+[Media API GET] Returning 1 media items
+[Media API GET] Sample: {
+  id: 'cmvakvyfy000013rqgxvkkvgj',
+  name: 'Sainik_Design_Studio_2025-2.webp',
+  alternativeText: '',
+  caption: '',
+  url: '/uploads/2409c42d-b1a7-4037-88d3-1ecc162ff3b7.webp',
+  mime: 'image/webp',
+  size: 102088,
+  width: null,
+  height: null,
+  ext: '.webp',
+  folder: null,
+  createdAt: 2026-10-16T06:20:07.582Z,
+  updatedAt: 2026-10-16T06:20:07.582Z
+}
+ ✓ Compiled /api/media/folders in 438ms (55 modules)
+ ○ Compiling /api/collections ...
+ ✓ Compiled /api/collections in 543ms (141 modules)
+ ○ Compiling /api/collections/fons ...
+ ✓ Compiled /api/collections/fons in 763ms (150 modules)
+ ✓ Compiled /v1/api/single-types in 435ms (155 modules)
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/single-types', method: 'GET', hasAuthHeader: true }
+[API Token Auth] {
+  tokenId: 'cmvakz60u000213rqk92ka5g0',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/single-types',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+ ✓ Compiled /v1/api/single-types/[name] in 498ms (158 modules)
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/single-types/cloths',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Auth] {
+  tokenId: 'cmvakz60u000213rqk92ka5g0',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/single-types/cloths',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+ ✓ Compiled /v1/api/collections/fons in 475ms (161 modules)
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/collections/fons',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Auth] {
+  tokenId: 'cmvakz60u000213rqk92ka5g0',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/collections/fons',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+ ✓ Compiled /v1/api/components in 467ms (164 modules)
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/components', method: 'GET', hasAuthHeader: true }
+[API Token Auth] {
+  tokenId: 'cmvakz60u000213rqk92ka5g0',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/components',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+ ○ Compiling /not-found ...
+ ✓ Compiled /not-found in 21.7s (588 modules)
+ ○ Compiling /admin/login ...
+ ✓ Compiled /admin/login in 5.6s (490 modules)
+ ✓ Compiled /api/auth/me in 504ms (338 modules)
+ ✓ Compiled (341 modules)
+ ○ Compiling /api/auth/refresh ...
+ ✓ Compiled /api/auth/refresh in 582ms (347 modules)
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 4s (768 modules)
+ ○ Compiling /api/dashboard/stats ...
+ ✓ Compiled /api/dashboard/stats in 747ms (443 modules)
+ ✓ Compiled (452 modules)
+ ✓ Compiled in 16.7s (680 modules)
+ ✓ Compiled /api/single-types in 435ms (427 modules)
+ ✓ Compiled /api/single-types/[name] in 382ms (430 modules)
+ ✓ Compiled /api/components in 216ms (433 modules)
+ ✓ Compiled /api/components/[name] in 259ms (436 modules)
+ ✓ Compiled /api/collection-types in 341ms (443 modules)
+ ○ Compiling /api/component-entries ...
+ ✓ Compiled /api/component-entries in 726ms (447 modules)
+ ✓ Compiled /api/media in 361ms (453 modules)
+ ✓ Compiled /api/media/folders in 309ms (456 modules)
+ ✓ Compiled /api/debug/media-count in 296ms (459 modules)
+ ✓ Compiled /api/schema/regenerate in 485ms (464 modules)
+ ○ Compiling /api/collections ...
+ ✓ Compiled /api/collections in 516ms (467 modules)
+ ○ Compiling /api/collections/fons ...
+ ✓ Compiled /api/collections/fons in 682ms (476 modules)
+ ✓ Compiled /v1/api/single-types in 436ms (481 modules)
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/single-types', method: 'GET', hasAuthHeader: false }
+ ✓ Compiled /v1/api/single-types/[name] in 419ms (484 modules)
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/single-types/cloths',
+  method: 'GET',
+  hasAuthHeader: false
+}
+ ✓ Compiled /v1/api/collections/fons in 489ms (487 modules)
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/collections/fons',
+  method: 'GET',
+  hasAuthHeader: false
+}
+ ✓ Compiled /v1/api/components in 337ms (490 modules)
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/components', method: 'GET', hasAuthHeader: false }
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/single-types', method: 'GET', hasAuthHeader: true }
+[API Token Auth] {
+  tokenId: 'cmvakz60u000213rqk92ka5g0',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/single-types',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/single-types/cloths',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Auth] {
+  tokenId: 'cmvakz60u000213rqk92ka5g0',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/single-types/cloths',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/collections/fons',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Auth] {
+  tokenId: 'cmvakz60u000213rqk92ka5g0',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/collections/fons',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/components', method: 'GET', hasAuthHeader: true }
+[API Token Auth] {
+  tokenId: 'cmvakz60u000213rqk92ka5g0',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/components',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+ ✓ Compiled in 760ms (346 modules)
+ ✓ Compiled in 1376ms (822 modules)
+ ✓ Compiled in 304ms (346 modules)
+ ✓ Compiled in 1543ms (822 modules)
+ ✓ Compiled in 508ms (346 modules)
+ ✓ Compiled in 627ms (346 modules)
+ ✓ Compiled in 408ms (346 modules)
+ ✓ Compiled in 269ms (346 modules)
+ ✓ Compiled in 285ms (346 modules)
+ ✓ Compiled in 396ms (346 modules)
+ ✓ Compiled in 498ms (346 modules)
+ ○ Compiling /api/auth/login ...
+ ✓ Compiled /api/auth/login in 1033ms (440 modules)
+Login error: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [],
+    "message": "Required"
+  }
+]
+    at get error (webpack-internal:///(rsc)/./node_modules/zod/v3/types.js:134:31)
+    at ZodObject.parse (webpack-internal:///(rsc)/./node_modules/zod/v3/types.js:219:22)
+    at handler (webpack-internal:///(rsc)/./app/(backend)/api/auth/login/handler.ts:28:93)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async routeHandler (webpack-internal:///(rsc)/./lib/app-router/route-adapter.ts:162:13)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63809
+    at async eU.execute (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:53964)
+    at async eU.handle (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:65062)
+    at async doRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1333:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1555:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1463:28)
+    at async DevServer.renderPageComponent (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1856:24)
+    at async DevServer.renderToResponseImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1894:32)
+    at async DevServer.pipeImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:911:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\next-server.js:271:17)
+    at async DevServer.handleRequestImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:807:17)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:331:20
+    at async Span.traceAsyncFn (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\trace\trace.js:151:20)
+    at async DevServer.handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:328:24)
+    at async invokeRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:163:21)
+    at async handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:342:24)
+    at async requestHandlerImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:366:13)
+    at async Server.requestListener (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\start-server.js:140:13) {
+  issues: [
+    {
+      code: 'invalid_type',
+      expected: 'object',
+      received: 'undefined',
+      path: [],
+      message: 'Required'
+    }
+  ],
+  addIssue: [Function (anonymous)],
+  addIssues: [Function (anonymous)],
+  errors: [
+    {
+      code: 'invalid_type',
+      expected: 'object',
+      received: 'undefined',
+      path: [],
+      message: 'Required'
+    }
+  ]
+}
+ ✓ Compiled /api/single-types in 320ms (444 modules)
+ ✓ Compiled /api/components in 250ms (447 modules)
+ ✓ Compiled /api/collection-types in 289ms (454 modules)
+ ✓ Compiled /api/media in 492ms (460 modules)
+ ✓ Compiled /api/auth/me in 284ms (463 modules)
+ ✓ Compiled /v1/api/media in 315ms (468 modules)
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/media', method: 'GET', hasAuthHeader: false }
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/media', method: 'GET', hasAuthHeader: true }
+[API Token Auth] {
+  tokenId: 'cmvakz60u000213rqk92ka5g0',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/media',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/media', method: 'GET', hasAuthHeader: true }
+[API Token Auth] {
+  tokenId: 'cmvakz60u000213rqk92ka5g0',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/media',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+ ✓ Compiled /v1/api/media/[id] in 342ms (471 modules)
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/media/nonexistent',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Auth] {
+  tokenId: 'cmvakz60u000213rqk92ka5g0',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/media/nonexistent',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+Login error: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [],
+    "message": "Required"
+  }
+]
+    at get error (webpack-internal:///(rsc)/./node_modules/zod/v3/types.js:134:31)
+    at ZodObject.parse (webpack-internal:///(rsc)/./node_modules/zod/v3/types.js:219:22)
+    at handler (webpack-internal:///(rsc)/./app/(backend)/api/auth/login/handler.ts:28:93)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async routeHandler (webpack-internal:///(rsc)/./lib/app-router/route-adapter.ts:162:13)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63809
+    at async eU.execute (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:53964)
+    at async eU.handle (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:65062)
+    at async doRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1333:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1555:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1463:28)
+    at async DevServer.renderPageComponent (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1856:24)
+    at async DevServer.renderToResponseImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1894:32)
+    at async DevServer.pipeImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:911:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\next-server.js:271:17)
+    at async DevServer.handleRequestImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:807:17)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:331:20
+    at async Span.traceAsyncFn (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\trace\trace.js:151:20)
+    at async DevServer.handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:328:24)
+    at async invokeRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:163:21)
+    at async handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:342:24)
+    at async requestHandlerImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:366:13)
+    at async Server.requestListener (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\start-server.js:140:13) {
+  issues: [
+    {
+      code: 'invalid_type',
+      expected: 'object',
+      received: 'undefined',
+      path: [],
+      message: 'Required'
+    }
+  ],
+  addIssue: [Function (anonymous)],
+  addIssues: [Function (anonymous)],
+  errors: [
+    {
+      code: 'invalid_type',
+      expected: 'object',
+      received: 'undefined',
+      path: [],
+      message: 'Required'
+    }
+  ]
+}
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+[Media API GET] Returning 1 media items
+[Media API GET] Sample: {
+  id: 'cmvakvyfy000013rqgxvkkvgj',
+  name: 'Sainik_Design_Studio_2025-2.webp',
+  alternativeText: '',
+  caption: '',
+  url: '/uploads/2409c42d-b1a7-4037-88d3-1ecc162ff3b7.webp',
+  mime: 'image/webp',
+  size: 102088,
+  width: null,
+  height: null,
+  ext: '.webp',
+  folder: null,
+  createdAt: 2026-10-16T06:20:07.582Z,
+  updatedAt: 2026-10-16T06:20:07.582Z
+}
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+ ○ Compiling /api/api-tokens/endpoints ...
+ ✓ Compiled /api/api-tokens/endpoints in 895ms (466 modules)
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+ ✓ Compiled /api/api-tokens in 461ms (444 modules)
+[API Tokens] Creating token: {
+  name: 'custom-scope-test',
+  type: 'custom',
+  expiresIn: 'unlimited',
+  endpointsCount: 1
+}
+[API Tokens] Token type: custom
+[API Tokens] Total endpoints to create: 1
+[API Tokens] Creating token with 1 endpoints
+ ✓ Compiled /v1/api/single-types/[name] in 269ms (449 modules)
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/single-types/cloths',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Auth] {
+  tokenId: 'cmvamgxm60007djaurp1h89v9',
+  tokenName: 'custom-scope-test',
+  tokenType: 'custom',
+  requestPath: '/v1/api/single-types/cloths',
+  requestMethod: 'GET',
+  endpointCount: 1
+}
+[API Token Auth] Custom token - Checking permissions: {
+  hasPermission: true,
+  allowedEndpoints: [ 'GET /v1/api/single-types/cloths' ]
+}
+[API Token Auth] ✓ Authorization passed - Calling handler
+ ○ Compiling /v1/api/single-types ...
+ ✓ Compiled /v1/api/single-types in 674ms (452 modules)
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/single-types', method: 'GET', hasAuthHeader: true }
+[API Token Auth] {
+  tokenId: 'cmvamgxm60007djaurp1h89v9',
+  tokenName: 'custom-scope-test',
+  tokenType: 'custom',
+  requestPath: '/v1/api/single-types',
+  requestMethod: 'GET',
+  endpointCount: 1
+}
+[API Token Auth] Custom token - Checking permissions: {
+  hasPermission: false,
+  allowedEndpoints: [ 'GET /v1/api/single-types/cloths' ]
+}
+ ○ Compiling /v1/api/components ...
+ ✓ Compiled /v1/api/components in 515ms (455 modules)
+[API Token Middleware] REQUEST RECEIVED: { path: '/v1/api/components', method: 'GET', hasAuthHeader: true }
+[API Token Auth] {
+  tokenId: 'cmvamgxm60007djaurp1h89v9',
+  tokenName: 'custom-scope-test',
+  tokenType: 'custom',
+  requestPath: '/v1/api/components',
+  requestMethod: 'GET',
+  endpointCount: 1
+}
+[API Token Auth] Custom token - Checking permissions: {
+  hasPermission: false,
+  allowedEndpoints: [ 'GET /v1/api/single-types/cloths' ]
+}
+ ✓ Compiled /v1/api/collections/fons in 344ms (467 modules)
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/collections/fons',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Auth] {
+  tokenId: 'cmvamgxm60007djaurp1h89v9',
+  tokenName: 'custom-scope-test',
+  tokenType: 'custom',
+  requestPath: '/v1/api/collections/fons',
+  requestMethod: 'GET',
+  endpointCount: 1
+}
+[API Token Auth] Custom token - Checking permissions: {
+  hasPermission: false,
+  allowedEndpoints: [ 'GET /v1/api/single-types/cloths' ]
+}
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/single-types/cloths',
+  method: 'POST',
+  hasAuthHeader: true
+}
+[API Token Auth] {
+  tokenId: 'cmvamgxm60007djaurp1h89v9',
+  tokenName: 'custom-scope-test',
+  tokenType: 'custom',
+  requestPath: '/v1/api/single-types/cloths',
+  requestMethod: 'POST',
+  endpointCount: 1
+}
+[API Token Auth] Custom token - Checking permissions: {
+  hasPermission: false,
+  allowedEndpoints: [ 'GET /v1/api/single-types/cloths' ]
+}
+ ✓ Compiled /api/api-tokens/[id] in 316ms (470 modules)
+ ○ Compiling /api/single-types/[name] ...
+ ✓ Compiled /api/single-types/[name] in 1329ms (427 modules)
+ ○ Compiling /api/auth/refresh ...
+ ✓ Compiled /api/auth/refresh in 1096ms (433 modules)
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 793ms (436 modules)
+ ○ Compiling /admin/settings/users ...
+ ✓ Compiled /admin/settings/users in 4.8s (800 modules)
+ ○ Compiling /api/components ...
+ ✓ Compiled /api/components in 2.7s (460 modules)
+ ✓ Compiled /admin/settings/api-tokens in 1ms (476 modules)
+ ✓ Compiled in 7.9s (826 modules)
+ ○ Compiling /api/api-tokens ...
+ ✓ Compiled /api/api-tokens in 1816ms (486 modules)
+ ○ Compiling /api/api-tokens/[id] ...
+ ✓ Compiled /api/api-tokens/[id] in 853ms (489 modules)
+ ○ Compiling /admin/settings/api-tokens/create ...
+ ✓ Compiled /admin/settings/api-tokens/create in 6.3s (853 modules)
+ ○ Compiling /api/api-tokens/endpoints ...
+ ✓ Compiled /api/api-tokens/endpoints in 1399ms (503 modules)
+[API Tokens] Creating token: {
+  name: 'read',
+  type: 'read_only',
+  expiresIn: null,
+  endpointsCount: undefined
+}
+[API Tokens] Token type: read_only
+[API Tokens] Auto-generating endpoints for read_only
+[API Tokens] Found collections: 1
+[API Tokens] Found single types: 1
+[API Tokens] Total endpoints to create: 5
+[API Tokens] Creating token with 5 endpoints
+ ○ Compiling /v1/api/single-types/[name] ...
+ ✓ Compiled /v1/api/single-types/[name] in 3.2s (432 modules)
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/single-types/cloths',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Auth] {
+  tokenId: 'cmvaml747000adjau2iprv64y',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/single-types/cloths',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/single-types/cloths',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Auth] {
+  tokenId: 'cmvaml747000adjau2iprv64y',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/single-types/cloths',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+ ○ Compiling /not-found ...
+ ✓ Compiled /not-found in 5.4s (804 modules)
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/single-types/cloths',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Auth] {
+  tokenId: 'cmvaml747000adjau2iprv64y',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/single-types/cloths',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/single-types/cloths',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/single-types/cloths',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/single-types/cloths',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Auth] {
+  tokenId: 'cmvaml747000adjau2iprv64y',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/single-types/cloths',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler
+ ○ Compiling /admin/collections/[name] ...
+ ✓ Compiled /admin/settings/api-tokens/create in 49.2s (2746 modules)
+ ○ Compiling /admin/settings/theme ...
+ ✓ Compiled /admin/settings/theme in 2s (1389 modules)
+ ✓ Compiled in 3.7s (1390 modules)
+ ○ Compiling /api/single-types ...
+ ✓ Compiled /api/single-types in 3.1s (1492 modules)
+ ✓ Compiled (1511 modules)
+Error fetching theme settings: TypeError: Cannot read properties of undefined (reading 'findFirst')
+    at handleGet (webpack-internal:///(rsc)/./app/(backend)/api/theme-settings/handler.ts:31:92)
+    at handler (webpack-internal:///(rsc)/./app/(backend)/api/theme-settings/handler.ts:16:19)
+    at withAuth (webpack-internal:///(rsc)/./lib/middlewares/api/auth-middleware.ts:61:16)
+    at async routeHandler (webpack-internal:///(rsc)/./lib/app-router/route-adapter.ts:162:13)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63809
+    at async eU.execute (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:53964)
+    at async eU.handle (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:65062)
+    at async doRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1333:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1555:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1463:28)
+    at async DevServer.renderPageComponent (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1856:24)
+    at async DevServer.renderToResponseImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1894:32)
+    at async DevServer.pipeImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:911:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\next-server.js:271:17)
+    at async DevServer.handleRequestImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:807:17)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:331:20
+    at async Span.traceAsyncFn (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\trace\trace.js:151:20)
+    at async DevServer.handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:328:24)
+    at async invokeRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:163:21)
+    at async handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:342:24)
+    at async requestHandlerImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:366:13)
+    at async Server.requestListener (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\start-server.js:140:13)
+Error fetching theme settings: TypeError: Cannot read properties of undefined (reading 'findFirst')
+    at handleGet (webpack-internal:///(rsc)/./app/(backend)/api/theme-settings/handler.ts:31:92)
+    at handler (webpack-internal:///(rsc)/./app/(backend)/api/theme-settings/handler.ts:16:19)
+    at withAuth (webpack-internal:///(rsc)/./lib/middlewares/api/auth-middleware.ts:61:16)
+    at async routeHandler (webpack-internal:///(rsc)/./lib/app-router/route-adapter.ts:162:13)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63809
+    at async eU.execute (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:53964)
+    at async eU.handle (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:65062)
+    at async doRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1333:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1555:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1463:28)
+    at async DevServer.renderPageComponent (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1856:24)
+    at async DevServer.renderToResponseImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1894:32)
+    at async DevServer.pipeImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:911:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\next-server.js:271:17)
+    at async DevServer.handleRequestImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:807:17)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:331:20
+    at async Span.traceAsyncFn (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\trace\trace.js:151:20)
+    at async DevServer.handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:328:24)
+    at async invokeRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:163:21)
+    at async handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:342:24)
+    at async requestHandlerImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:366:13)
+    at async Server.requestListener (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\start-server.js:140:13)
+Error fetching theme settings: TypeError: Cannot read properties of undefined (reading 'findFirst')
+    at handleGet (webpack-internal:///(rsc)/./app/(backend)/api/theme-settings/handler.ts:31:92)
+    at handler (webpack-internal:///(rsc)/./app/(backend)/api/theme-settings/handler.ts:16:19)
+    at withAuth (webpack-internal:///(rsc)/./lib/middlewares/api/auth-middleware.ts:61:16)
+    at async routeHandler (webpack-internal:///(rsc)/./lib/app-router/route-adapter.ts:162:13)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63809
+    at async eU.execute (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:53964)
+    at async eU.handle (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:65062)
+    at async doRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1333:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1555:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1463:28)
+    at async DevServer.renderPageComponent (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1856:24)
+    at async DevServer.renderToResponseImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1894:32)
+    at async DevServer.pipeImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:911:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\next-server.js:271:17)
+    at async DevServer.handleRequestImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:807:17)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:331:20
+    at async Span.traceAsyncFn (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\trace\trace.js:151:20)
+    at async DevServer.handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:328:24)
+    at async invokeRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:163:21)
+    at async handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:342:24)
+    at async requestHandlerImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:366:13)
+    at async Server.requestListener (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\start-server.js:140:13)
+ ○ Compiling /api/users ...
+ ✓ Compiled /api/users in 2.7s (1520 modules)
+ ✓ Compiled (1525 modules)
+ ○ Compiling /api/permissions ...
+ ✓ Compiled /api/permissions in 1583ms (1528 modules)
+ ○ Compiling /not-found ...
+ ✓ Compiled /not-found in 5.4s (1742 modules)
+ ○ Compiling /api/auth/refresh ...
+ ✓ Compiled /api/auth/refresh in 1580ms (441 modules)
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 4.9s (446 modules)
+ ○ Compiling /not-found ...
+ ✓ Compiled /not-found in 10.2s (1841 modules)
+ ○ Compiling /api/components ...
+ ✓ Compiled /api/components in 887ms (452 modules)
+ ✓ Compiled (465 modules)
+Error fetching theme settings: TypeError: Cannot read properties of undefined (reading 'findFirst')
+    at handleGet (webpack-internal:///(rsc)/./app/(backend)/api/theme-settings/handler.ts:31:92)
+    at handler (webpack-internal:///(rsc)/./app/(backend)/api/theme-settings/handler.ts:16:19)
+    at withAuth (webpack-internal:///(rsc)/./lib/middlewares/api/auth-middleware.ts:61:16)
+    at async routeHandler (webpack-internal:///(rsc)/./lib/app-router/route-adapter.ts:162:13)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63809
+    at async eU.execute (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:53964)
+    at async eU.handle (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:65062)
+    at async doRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1333:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1555:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1463:28)
+    at async DevServer.renderPageComponent (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1856:24)
+    at async DevServer.renderToResponseImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1894:32)
+    at async DevServer.pipeImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:911:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\next-server.js:271:17)
+    at async DevServer.handleRequestImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:807:17)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:331:20
+    at async Span.traceAsyncFn (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\trace\trace.js:151:20)
+    at async DevServer.handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:328:24)
+    at async invokeRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:163:21)
+    at async handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:342:24)
+    at async requestHandlerImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:366:13)
+    at async Server.requestListener (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\start-server.js:140:13)
+Error fetching theme settings: TypeError: Cannot read properties of undefined (reading 'findFirst')
+    at handleGet (webpack-internal:///(rsc)/./app/(backend)/api/theme-settings/handler.ts:31:92)
+    at handler (webpack-internal:///(rsc)/./app/(backend)/api/theme-settings/handler.ts:16:19)
+    at withAuth (webpack-internal:///(rsc)/./lib/middlewares/api/auth-middleware.ts:61:16)
+    at async routeHandler (webpack-internal:///(rsc)/./lib/app-router/route-adapter.ts:162:13)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63809
+    at async eU.execute (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:53964)
+    at async eU.handle (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:65062)
+    at async doRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1333:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1555:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1463:28)
+    at async DevServer.renderPageComponent (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1856:24)
+    at async DevServer.renderToResponseImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1894:32)
+    at async DevServer.pipeImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:911:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\next-server.js:271:17)
+    at async DevServer.handleRequestImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:807:17)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:331:20
+    at async Span.traceAsyncFn (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\trace\trace.js:151:20)
+    at async DevServer.handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:328:24)
+    at async invokeRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:163:21)
+    at async handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:342:24)
+    at async requestHandlerImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:366:13)
+    at async Server.requestListener (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\start-server.js:140:13)
+Error fetching theme settings: TypeError: Cannot read properties of undefined (reading 'findFirst')
+    at handleGet (webpack-internal:///(rsc)/./app/(backend)/api/theme-settings/handler.ts:31:92)
+    at handler (webpack-internal:///(rsc)/./app/(backend)/api/theme-settings/handler.ts:16:19)
+    at withAuth (webpack-internal:///(rsc)/./lib/middlewares/api/auth-middleware.ts:61:16)
+    at async routeHandler (webpack-internal:///(rsc)/./lib/app-router/route-adapter.ts:162:13)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63809
+    at async eU.execute (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:53964)
+    at async eU.handle (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:65062)
+    at async doRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1333:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1555:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1463:28)
+    at async DevServer.renderPageComponent (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1856:24)
+    at async DevServer.renderToResponseImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1894:32)
+    at async DevServer.pipeImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:911:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\next-server.js:271:17)
+    at async DevServer.handleRequestImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:807:17)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:331:20
+    at async Span.traceAsyncFn (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\trace\trace.js:151:20)
+    at async DevServer.handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:328:24)
+    at async invokeRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:163:21)
+    at async handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:342:24)
+    at async requestHandlerImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:366:13)
+    at async Server.requestListener (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\start-server.js:140:13)
+ ○ Compiling /v1/api/collections/fons ...
+ ✓ Compiled /v1/api/collections/fons in 1093ms (477 modules)
+[API Token Middleware] REQUEST RECEIVED: {
+  path: '/v1/api/collections/fons',
+  method: 'GET',
+  hasAuthHeader: true
+}
+[API Token Auth] {
+  tokenId: 'cmvaml747000adjau2iprv64y',
+  tokenName: 'read',
+  tokenType: 'read_only',
+  requestPath: '/v1/api/collections/fons',
+  requestMethod: 'GET',
+  endpointCount: 5
+}
+[API Token Auth] ✓ Read Only token - GET request allowed
+[API Token Auth] ✓ Authorization passed - Calling handler

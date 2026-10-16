@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+import { authMiddleware } from '@/lib/middlewares/api/auth-middleware';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/lib/prisma';
@@ -25,7 +26,7 @@ import { generateCollectionModule, deleteCollectionModule } from '@/lib/collecti
  * - NO Prisma schema modifications
  * - NO migrations needed for content tables
  */
-export default async function handler(
+async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ApiResponse>
 ) {
@@ -177,3 +178,5 @@ export default async function handler(
     return res.status(500).json({ error: error.message || 'Internal server error' });
   }
 }
+
+export default authMiddleware(handler);

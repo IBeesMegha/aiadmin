@@ -1,21 +1,18 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+
 /**
- * API Token Statistics and Analytics
- * GET /api/api-tokens/stats - Get token usage statistics
+ * API Token Permissions Details
+ * GET /api/api-tokens/[id]/permissions - Get detailed permission info for a token
  */
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-
 import { verifyAccessToken } from '@/lib/auth/jwt';
-
 import { getAccessToken } from '@/lib/auth/cookies';
-
 import {
-
-  getTokensByType,
-  findUnusedTokens,
-  getExpiringTokens,
+  getTokenPermissionSummary,
+  getTokenUsageStats,
+  validateTokenIntegrity,
 } from '@/lib/api-tokens/permissions';
 
 export default async function handler(
@@ -41,34 +38,22 @@ export default async function handler(
       });
     }
 
+    const tokenId = req.query.id as string;
+
     if (req.method === 'GET') {
-      const { unusedDays, expiringDays } = req.query;
-
-      // Get overall statistics
-      const typeStats = await getTokensByType();
-
-      // Find unused tokens (default 30 days)
-      const unusedThreshold = unusedDays ? parseInt(unusedDays as string) : 30;
-      const unusedTokens = await findUnusedTokens(unusedThreshold);
-
-      // Find expiring tokens (default 7 days)
-      const expiringThreshold = expiringDays ? parseInt(expiringDays as string) : 7;
-      const expiringTokens = await getExpiringTokens(expiringThreshold);
+      // Get comprehensive permission analysis
+      const [summary, usage, validation] = await Promise.all([
+        getTokenPermissionSummary(tokenId),
+        getTokenUsageStats(tokenId),
+        validateTokenIntegrity(tokenId),
+      ]);
 
       return res.status(200).json({
         success: true,
         data: {
-          overview: typeStats,
-          unused: {
-            threshold: unusedThreshold,
-            count: unusedTokens.length,
-            tokens: unusedTokens,
-          },
-          expiring: {
-            threshold: expiringThreshold,
-            count: expiringTokens.length,
-            tokens: expiringTokens,
-          },
+          summary,
+          usage,
+          validation,
         },
       });
     }
@@ -78,7 +63,7 @@ export default async function handler(
       error: 'Method not allowed',
     });
   } catch (error: any) {
-    console.error('Token stats error:', error);
+    console.error('Token permissions error:', error);
     return res.status(500).json({
       success: false,
       error: error.message || 'Internal server error',

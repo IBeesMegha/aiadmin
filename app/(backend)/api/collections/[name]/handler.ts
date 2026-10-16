@@ -1,179 +1,176 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+
 import type { NextApiRequest, NextApiResponse } from 'next';
-
 import { prisma } from '@/lib/prisma';
-
+import { findManyDynamic, createDynamic } from '@/lib/dynamic-prisma';
 import { ApiResponse, Field } from '@/lib/types';
+import { filterVirtualRelationFields } from '@/lib/relation-engine';
+import { populateMultipleEntries, createComponentEntry } from '@/lib/component-populate';
+import { resolveMultipleRelations } from '@/lib/relation-resolver';
+import { authMiddleware } from '@/lib/middlewares/api/auth-middleware';
 
-import { createDynamicTable, tableExists, syncTableSchema } from '@/lib/dynamic-table-service';
-
-import { syncInverseRelations } from '@/lib/relation-metadata';
-
-import { syncRelatedCollections } from '@/lib/relation-sync';
-
-import { generateCollectionModule, deleteCollectionModule } from '@/lib/collection-module-generator';
-
-
-/**
- * Collection Types API - Manages dynamic content type definitions
- * 
- * NEW ARCHITECTURE:
- * - CollectionType metadata is stored in Prisma-managed table
- * - Actual content tables are created via raw SQL at runtime
- * - Relations are metadata-driven with automatic inverse generation
- * - NO Prisma schema modifications
- * - NO migrations needed for content tables
- */
-export default async function handler(
+async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ApiResponse>
 ) {
+  const { name, populate } = req.query;
+
+  if (typeof name !== 'string') {
+    return res.status(400).json({ error: 'Invalid collection name' });
+  }
+
   try {
+    // Get collection type metadata
+    const collectionType = await prisma.collectionType.findUnique({
+      where: { name },
+    });
+
+    if (!collectionType) {
+      return res.status(404).json({ error: 'Collection type not found' });
+    }
+
+    const fields = (collectionType.fields as any)?.fields || [];
+
     if (req.method === 'GET') {
-      // Get all collection types
-      const collectionTypes = await prisma.collectionType.findMany({
-        orderBy: { createdAt: 'desc' },
+      // Get all entries from dynamic table
+      let entries: any = await findManyDynamic(name, {});
+
+      // Convert field names from database format back to collection type format
+      // Use exact field names - no conversion
+      const convertedEntries = entries.map((entry: any) => {
+        return { ...entry };
       });
-      return res.status(200).json({ data: collectionTypes });
+
+      // ALWAYS resolve relations automatically using new relation resolver
+      let finalEntries = await resolveMultipleRelations(convertedEntries, name, fields);
+
+      // Populate components if requested
+      if (populate === 'true') {
+        finalEntries = await populateMultipleEntries(finalEntries, fields);
+      }
+
+      return res.status(200).json({ data: finalEntries });
     }
 
     if (req.method === 'POST') {
-      // Create new collection type
-      const { name, displayName, description, fields } = req.body;
+      // Create new entry in dynamic table
+      const { data: entryData } = req.body;
 
-      if (!name || !displayName || !fields) {
-        return res.status(400).json({ error: 'Missing required fields' });
+      if (!entryData || Object.keys(entryData).length === 0) {
+        return res.status(400).json({ error: 'Missing entry data' });
       }
 
-      const normalizedName = name.toLowerCase().replace(/\s+/g, '-');
-      let collectionType;
+      console.log('[API POST] Collection fields:', fields.map((f: any) => ({ name: f.name, type: f.type })));
 
-      try {
-        console.log(`\n=== Creating collection: ${normalizedName} ===`);
-        
-        // 1. Check if table already exists
-        console.log('Step 1: Checking if table exists...');
-        if (await tableExists(normalizedName)) {
-          return res.status(400).json({ 
-            error: `Table for collection "${normalizedName}" already exists` 
-          });
-        }
-        console.log('âœ“ Table does not exist, proceeding...');
+      // Use exact field names - no conversion
+      const convertedData: Record<string, any> = {};
+      Object.keys(entryData).forEach(key => {
+        convertedData[key] = entryData[key];
+      });
 
-        // 2. Create collection type metadata (WITHOUT relation fields first)
-        console.log('Step 2: Creating collection metadata...');
-        const nonRelationFields = (fields.fields || []).filter((f: any) => f.type !== 'relation');
-        
-        collectionType = await prisma.collectionType.create({
-          data: {
-            name: normalizedName,
-            displayName,
-            description,
-            fields: {
-              fields: nonRelationFields
-            },
-          },
-        });
-        console.log('âœ“ Metadata created');
+      console.log('[API POST] Data to insert:', convertedData);
 
-        // 3. Create dynamic table via raw SQL (only non-relation fields)
-        console.log('Step 3: Creating dynamic table via raw SQL...');
-        await createDynamicTable(normalizedName, nonRelationFields);
-        console.log('âœ“ Dynamic table created');
+      // Check for unique field violations
+      for (const field of fields) {
+        if (field.unique && convertedData[field.name] !== undefined && convertedData[field.name] !== null && convertedData[field.name] !== '') {
+          const fieldName = field.name; // Use exact field name
 
-        // 4. Process relation fields and create inverse relations
-        console.log('Step 4: Processing relations...');
-        const relationFields = (fields.fields || []).filter((f: any) => f.type === 'relation');
-        
-        if (relationFields.length > 0) {
-          const { fields: syncedFields, affectedCollections } = await syncInverseRelations(
-            normalizedName,
-            [],
-            fields.fields || []
-          );
+          const existingEntry = await findManyDynamic(name, {
+            where: {
+              [fieldName]: convertedData[fieldName]
+            }
+          }) as any[];
 
-          await prisma.collectionType.update({
-            where: { name: normalizedName },
-            data: { fields: { fields: syncedFields } as any },
-          });
-
-          // 5. Sync table schema to add FK columns for owned relations
-          console.log('Step 5: Syncing table schema for FK columns...');
-          await syncTableSchema(normalizedName, syncedFields);
-          console.log('âœ“ Table schema synced');
-
-          await syncRelatedCollections(affectedCollections);
-        }
-
-        console.log(`\nâœ“ Collection ${normalizedName} created successfully!`);
-        console.log('âœ“ No server restart needed - table is ready to use\n');
-
-        // Get updated collection with all fields (relations are merged into the
-        // metadata by createRelation above)
-        const updatedCollection = await prisma.collectionType.findUnique({
-          where: { id: collectionType.id }
-        });
-
-        // 6. Generate the complete collection module using the actual collection
-        //    name from the request (never hardcoded):
-        //      models/<name>.model.ts
-        //      services/<name>.service.ts
-        //      controllers/<name>.controller.ts
-        //      pages/api/collections/<name>/{index,[id]}.ts
-        //      pages/admin/collections/<name>/{index,new,[id]}.tsx
-        console.log('Step 6: Generating collection module (model/service/controller/API/admin)...');
-        try {
-          const allFields: Field[] = (updatedCollection?.fields as any)?.fields || [];
-          await generateCollectionModule({
-            collectionName: normalizedName,
-            displayName,
-            fields: allFields,
-          });
-          console.log('âœ“ Collection module generated');
-        } catch (error: any) {
-          console.error('âœ— Failed to generate collection module:', error.message);
-          // Don't fail the entire operation, just log the error
-        }
-
-        return res.status(201).json({ 
-          data: updatedCollection,
-          message: 'Collection created successfully. Table and collection module are ready to use.',
-          requiresRestart: false
-        });
-        
-      } catch (error: any) {
-        console.error('\nâœ— Creation failed:', error.message);
-        
-        // Rollback: delete the collection type if it was created
-        if (collectionType) {
-          try {
-            console.log('Rolling back: Deleting collection metadata...');
-            await prisma.collectionType.delete({
-              where: { id: collectionType.id },
+          if (existingEntry && existingEntry.length > 0) {
+            return res.status(400).json({ 
+              error: `This ${field.displayName} already exists. The field "${field.displayName}" must be unique.` 
             });
-            console.log('âœ“ Rollback completed');
-          } catch (rollbackError) {
-            console.error('âœ— Rollback error:', rollbackError);
-          }
-
-          // Remove any module files generated for this collection before the failure
-          try {
-            deleteCollectionModule(normalizedName);
-          } catch (cleanupError: any) {
-            console.error('âœ— Rollback cleanup error:', cleanupError.message);
           }
         }
-        
-        return res.status(500).json({ 
-          error: `Failed to create collection: ${error.message}` 
-        });
       }
+
+      // Process component fields - create component entries if needed
+      const processedData = await processComponentFields(convertedData, fields);
+
+      // Filter out virtual relation fields (like "blogs" in Category)
+      // Only keep physical columns (like "categoryId" in Blog)
+      const filteredData = filterVirtualRelationFields(fields, processedData);
+
+      const dataToInsert = {
+        ...filteredData,
+      };
+
+      const entry = await createDynamic(name, dataToInsert);
+      return res.status(201).json({ data: entry });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (error: any) {
-    console.error('Collection Types API Error:', error);
+    console.error('Collection Entries API Error:', error);
     return res.status(500).json({ error: error.message || 'Internal server error' });
   }
+}
+
+export default authMiddleware(handler);
+
+/**
+ * Process component fields in entry data
+ * Creates component entries for inline component data
+ */
+async function processComponentFields(
+  data: Record<string, any>,
+  fields: Field[]
+): Promise<Record<string, any>> {
+  const processed = { ...data };
+
+  for (const field of fields) {
+    if (field.type !== 'component') continue;
+
+    const value = data[field.name];
+    if (!value) continue;
+
+    try {
+      if (field.multiple) {
+        // Repeatable component
+        if (Array.isArray(value)) {
+          processed[field.name] = await Promise.all(
+            value.map(item => processComponentValue(item, field.componentRef!))
+          );
+        }
+      } else {
+        // Single component
+        processed[field.name] = await processComponentValue(value, field.componentRef!);
+      }
+    } catch (error) {
+      console.error(`[Process Components] Error processing field ${field.name}:`, error);
+      // Keep original value on error
+    }
+  }
+
+  return processed;
+}
+
+/**
+ * Process a single component value
+ * If it's an object without ID, create a new component entry
+ */
+async function processComponentValue(value: any, componentName: string): Promise<string> {
+  // Already a reference (string ID)
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  // Object with ID (reference object)
+  if (typeof value === 'object' && value.id) {
+    return value.id;
+  }
+
+  // Object without ID - create new component entry
+  if (typeof value === 'object' && !value.id) {
+    const entry = await createComponentEntry(componentName, value);
+    return entry.id;
+  }
+
+  throw new Error(`Invalid component value: ${JSON.stringify(value)}`);
 }

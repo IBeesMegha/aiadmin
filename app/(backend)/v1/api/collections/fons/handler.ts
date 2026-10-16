@@ -1,7 +1,7 @@
 /**
  * AUTO-GENERATED FILE - DO NOT EDIT MANUALLY.
  *
- * Public API route: /v1/api/collections/toys_cat
+ * Public API route: /v1/api/collections/fons
  * Uses bearer token authentication (API tokens from admin panel).
  * All business logic is inline in this file.
  *
@@ -23,7 +23,7 @@ import {
   extractManyToManyData,
   updateManyToManyRelations,
 } from '@/lib/many-to-many-handler';
-import * as ToysCatModel from '@/models/toys_cat.model';
+import * as FonsModel from '@/models/fons.model';
 
 
 function httpError(statusCode: number, message: string): Error {
@@ -33,7 +33,7 @@ function httpError(statusCode: number, message: string): Error {
 }
 
 async function getFields(): Promise<Field[]> {
-  const collectionType = await ToysCatModel.getCollectionType();
+  const collectionType = await FonsModel.getCollectionType();
   if (!collectionType) {
     throw httpError(404, 'Collection type not found');
   }
@@ -53,7 +53,7 @@ async function assertUnique(
     const value = data[field.name];
     if (value === undefined || value === null || value === '') continue;
 
-    const existing = await ToysCatModel.findMany({
+    const existing = await FonsModel.findMany({
       where: { [field.name]: value },
     });
     const duplicate = existing.find((row: any) => row.id !== excludeId);
@@ -89,7 +89,7 @@ async function processComponentFields(
         processed[field.name] = await processComponentValue(value, field.componentRef!);
       }
     } catch (error: any) {
-      console.error('[ToysCat] Error processing field ' + field.name + ':', error);
+      console.error('[Fons] Error processing field ' + field.name + ':', error);
     }
   }
 
@@ -110,8 +110,8 @@ async function processComponentValue(value: any, componentName: string): Promise
 
 async function listEntries(options: { populate?: boolean } = {}): Promise<Record<string, any>[]> {
   const fields = await getFields();
-  const entries = await ToysCatModel.findMany();
-  const resolved = await resolveMultipleRelations(entries, ToysCatModel.COLLECTION_NAME, fields);
+  const entries = await FonsModel.findMany();
+  const resolved = await resolveMultipleRelations(entries, FonsModel.COLLECTION_NAME, fields);
 
   if (options.populate) {
     return populateMultipleEntries(resolved, fields);
@@ -121,12 +121,12 @@ async function listEntries(options: { populate?: boolean } = {}): Promise<Record
 
 async function getEntry(id: string, options: { populate?: boolean } = {}): Promise<Record<string, any>> {
   const fields = await getFields();
-  const entry = await ToysCatModel.findById(id);
+  const entry = await FonsModel.findById(id);
   if (!entry) {
     throw httpError(404, 'Entry not found');
   }
 
-  const resolved = await populateRelations({ ...entry }, ToysCatModel.COLLECTION_NAME, fields);
+  const resolved = await populateRelations({ ...entry }, FonsModel.COLLECTION_NAME, fields);
 
   if (options.populate) {
     return populateComponents(resolved, fields);
@@ -145,7 +145,7 @@ async function createEntry(entryData: Record<string, any>): Promise<Record<strin
   const processed = await processComponentFields(entryData, fields);
   const filtered = filterVirtualRelationFields(fields, processed);
 
-  return ToysCatModel.create(filtered);
+  return FonsModel.create(filtered);
 }
 
 async function updateEntry(id: string, entryData: Record<string, any>): Promise<Record<string, any>> {
@@ -167,10 +167,10 @@ async function updateEntry(id: string, entryData: Record<string, any>): Promise<
     }
   });
 
-  const entry = await ToysCatModel.update(id, dataToUpdate);
+  const entry = await FonsModel.update(id, dataToUpdate);
 
   if (Object.keys(manyToManyData).length > 0) {
-    await updateManyToManyRelations(ToysCatModel.COLLECTION_NAME, id, manyToManyData, fields);
+    await updateManyToManyRelations(FonsModel.COLLECTION_NAME, id, manyToManyData, fields);
   }
 
   return entry;
@@ -178,17 +178,17 @@ async function updateEntry(id: string, entryData: Record<string, any>): Promise<
 
 async function deleteEntry(id: string): Promise<void> {
   await getFields();
-  const entry = await ToysCatModel.findById(id);
+  const entry = await FonsModel.findById(id);
   if (!entry) {
     throw httpError(404, 'Entry not found');
   }
 
-  await ToysCatModel.remove(id);
+  await FonsModel.remove(id);
 }
 
 
 function sendError(res: NextApiResponse<ApiResponse>, error: any, context: string): void {
-  console.error('[ToysCat Route]', context, error);
+  console.error('[Fons Route]', context, error);
   const statusCode = typeof error?.statusCode === 'number' ? error.statusCode : 500;
   res.status(statusCode).json({ error: error?.message || 'Internal server error' });
 }

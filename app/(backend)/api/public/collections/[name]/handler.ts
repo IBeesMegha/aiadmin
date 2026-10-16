@@ -1,123 +1,137 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
-/**
- * Public API: Enquiry Submission
- * POST /api/public/enquiry - Submit a new enquiry
- * 
- * This endpoint requires an API token with permission for this endpoint
- * Admin APIs do NOT accept API tokens - they use JWT authentication
- * 
- * Usage:
- * curl -X POST \
- *      -H "Authorization: Bearer YOUR_TOKEN" \
- *      -H "Content-Type: application/json" \
- *      -d '{"name":"John","email":"john@test.com","message":"Hello"}' \
- *      https://your-domain.com/api/public/enquiry
- */
 
 import type { NextApiResponse } from 'next';
-
 import { prisma } from '@/lib/prisma';
-
+import { findManyDynamic, createDynamic } from '@/lib/dynamic-prisma';
+import { ApiResponse, Field } from '@/lib/types';
+import { filterVirtualRelationFields } from '@/lib/relation-engine';
+import { populateMultipleEntries, createComponentEntry } from '@/lib/component-populate';
+import { resolveMultipleRelations } from '@/lib/relation-resolver';
 import { withApiToken, ApiTokenRequest } from '@/lib/api-tokens/middleware';
-
-
-interface EnquiryData {
-  name: string;
-  email: string;
-  phone?: string;
-  message: string;
-  subject?: string;
-}
 
 async function handler(
   req: ApiTokenRequest,
-  res: NextApiResponse
+  res: NextApiResponse<ApiResponse>
 ) {
+  const { name, populate } = req.query;
+
+  if (typeof name !== 'string') {
+    return res.status(400).json({ error: 'Invalid collection name' });
+  }
+
   try {
-    // Validate request body
-    const { name, email, message, phone, subject }: EnquiryData = req.body;
-
-    if (!name || !email || !message) {
-      return res.status(400).json({
-        success: false,
-        error: 'Missing required fields: name, email, message',
-      });
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid email format',
-      });
-    }
-
-    // Get enquiry collection type
-    const enquiryCollection = await prisma.collectionType.findUnique({
-      where: { name: 'enquiry' },
+    const collectionType = await prisma.collectionType.findUnique({
+      where: { name },
     });
 
-    if (!enquiryCollection) {
-      return res.status(404).json({
-        success: false,
-        error: 'Enquiry collection not found. Please create an "enquiry" collection type first.',
-      });
+    if (!collectionType) {
+      return res.status(404).json({ error: 'Collection type not found' });
     }
 
-    // Prepare enquiry data
-    const enquiryData = {
-      name,
-      email,
-      message,
-      ...(phone && { phone }),
-      ...(subject && { subject }),
-      submittedAt: new Date().toISOString(),
-      status: 'pending',
-    };
+    const fields = (collectionType.fields as any)?.fields || [];
 
-    // Create enquiry entry
-    await prisma.$executeRaw`
-      INSERT INTO collection_entries (
-        id,
-        collection_type_id,
-        data,
-        lang,
-        locale_status,
-        translation_group_id,
-        created_at,
-        updated_at
-      ) VALUES (
-        gen_random_uuid()::text,
-        ${enquiryCollection.id},
-        ${JSON.stringify(enquiryData)}::jsonb,
-        'en',
-        'published',
-        gen_random_uuid()::text,
-        NOW(),
-        NOW()
-      )
-    `;
+    if (req.method === 'GET') {
+      let entries: any = await findManyDynamic(name, {});
 
-    return res.status(201).json({
-      success: true,
-      message: 'Enquiry submitted successfully',
-      data: {
-        name,
-        email,
-        submittedAt: enquiryData.submittedAt,
-      },
-    });
+      const convertedEntries = entries.map((entry: any) => {
+        return { ...entry };
+      });
+
+      let finalEntries = await resolveMultipleRelations(convertedEntries, name, fields);
+
+      if (populate === 'true') {
+        finalEntries = await populateMultipleEntries(finalEntries, fields);
+      }
+
+      return res.status(200).json({ data: finalEntries });
+    }
+
+    if (req.method === 'POST') {
+      const { data: entryData } = req.body;
+
+      if (!entryData || Object.keys(entryData).length === 0) {
+        return res.status(400).json({ error: 'Missing entry data' });
+      }
+
+      const convertedData: Record<string, any> = {};
+      Object.keys(entryData).forEach(key => {
+        convertedData[key] = entryData[key];
+      });
+
+      for (const field of fields) {
+        if (field.unique && convertedData[field.name] !== undefined && convertedData[field.name] !== null && convertedData[field.name] !== '') {
+          const existingEntry = await findManyDynamic(name, {
+            where: { [field.name]: convertedData[field.name] }
+          }) as any[];
+
+          if (existingEntry && existingEntry.length > 0) {
+            return res.status(400).json({
+              error: `This ${field.displayName} already exists. The field "${field.displayName}" must be unique.`
+            });
+          }
+        }
+      }
+
+      const processedData = await processComponentFields(convertedData, fields);
+      const filteredData = filterVirtualRelationFields(fields, processedData);
+
+      const entry = await createDynamic(name, filteredData);
+      return res.status(201).json({ data: entry });
+    }
+
+    return res.status(405).json({ error: 'Method not allowed' });
   } catch (error: any) {
-    console.error('Error creating enquiry:', error);
-
-    return res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-    });
+    console.error('Public Collections API Error:', error);
+    return res.status(500).json({ error: error.message || 'Internal server error' });
   }
 }
 
-// Export with API token authentication wrapper
+async function processComponentFields(
+  data: Record<string, any>,
+  fields: Field[]
+): Promise<Record<string, any>> {
+  const processed = { ...data };
+
+  for (const field of fields) {
+    if (field.type !== 'component') continue;
+
+    const value = data[field.name];
+    if (!value) continue;
+
+    try {
+      if (field.multiple) {
+        if (Array.isArray(value)) {
+          processed[field.name] = await Promise.all(
+            value.map(item => processComponentValue(item, field.componentRef!))
+          );
+        }
+      } else {
+        processed[field.name] = await processComponentValue(value, field.componentRef!);
+      }
+    } catch (error) {
+      console.error(`[Process Components] Error processing field ${field.name}:`, error);
+    }
+  }
+
+  return processed;
+}
+
+async function processComponentValue(value: any, componentName: string): Promise<string> {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (typeof value === 'object' && value.id) {
+    return value.id;
+  }
+
+  if (typeof value === 'object' && !value.id) {
+    const entry = await createComponentEntry(componentName, value);
+    return entry.id;
+  }
+
+  throw new Error(`Invalid component value: ${JSON.stringify(value)}`);
+}
+
 export default withApiToken(handler);

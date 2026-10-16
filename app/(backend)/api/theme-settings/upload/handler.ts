@@ -1,15 +1,11 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 import { NextApiRequest, NextApiResponse } from 'next';
+import fs from 'fs/promises';
+import path from 'path';
+import { randomUUID } from 'crypto';
 
 import { withAuth, AuthenticatedRequest } from '@/lib/middlewares/api/auth-middleware';
-
-
-if (typeof (globalThis as any).__nodeRequire === 'undefined') {
-  (globalThis as any).__nodeRequire = typeof (globalThis as any).__non_webpack_require__ !== 'undefined'
-    ? (globalThis as any).__non_webpack_require__
-    : (id: string) => require(id);
-}
 
 export const config = {
   api: {
@@ -63,10 +59,6 @@ function parseMultipart(body: Buffer, boundary: string): { fields: Record<string
 }
 
 async function handler(req: AuthenticatedRequest, res: NextApiResponse) {
-  const fs = (globalThis as any).__nodeRequire('fs/promises');
-  const path = (globalThis as any).__nodeRequire('path');
-  const crypto = (globalThis as any).__nodeRequire('crypto');
-
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -100,7 +92,7 @@ async function handler(req: AuthenticatedRequest, res: NextApiResponse) {
     }
 
     const ext = path.extname(uploadedFile.filename) || '';
-    const fileName = crypto.randomUUID() + ext;
+    const fileName = randomUUID() + ext;
     const baseUploadDir = path.join(process.cwd(), 'public', 'uploads', 'theme');
 
     try {

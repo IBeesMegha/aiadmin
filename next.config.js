@@ -35,7 +35,7 @@ const nextConfig = {
         'node:url': 'url',
       };
       config.externals.push(({ request }, callback) => {
-        if (request && ['fs', 'fs/promises', 'path', 'util', 'crypto', 'stream', 'buffer', 'url', 'os', 'http', 'https', 'zlib', 'assert'].includes(request)) {
+        if (request && ['fs', 'fs/promises', 'path', 'util', 'crypto', 'child_process', 'stream', 'buffer', 'url', 'os', 'http', 'https', 'zlib', 'assert'].includes(request)) {
           return callback(null, 'commonjs ' + request);
         }
         callback();

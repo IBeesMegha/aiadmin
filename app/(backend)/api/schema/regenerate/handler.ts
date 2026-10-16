@@ -1,15 +1,10 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 import { NextApiRequest, NextApiResponse } from 'next';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 
 import { regenerateSchema } from '@/lib/schema-sync';
-
-
-if (typeof (globalThis as any).__nodeRequire === 'undefined') {
-  (globalThis as any).__nodeRequire = typeof (globalThis as any).__non_webpack_require__ !== 'undefined'
-    ? (globalThis as any).__non_webpack_require__
-    : (id: string) => require(id);
-}
 
 /**
  * API endpoint to synchronize the Prisma schema with the Content Type Builder.
@@ -28,8 +23,7 @@ export default async function handler(
   try {
     console.log('[Schema Regenerate] Starting schema regeneration...');
 
-    const { promisify } = (globalThis as any).__nodeRequire('util');
-    const execAsync = promisify((globalThis as any).__nodeRequire('child_process').exec);
+    const execAsync = promisify(exec);
 
     // Step 1: Remove any dynamic collection models from the schema file
     await regenerateSchema();

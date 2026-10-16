@@ -1,19 +1,12 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
-if (typeof (globalThis as any).__nodeRequire === 'undefined') {
-  (globalThis as any).__nodeRequire = typeof (globalThis as any).__non_webpack_require__ !== 'undefined'
-    ? (globalThis as any).__non_webpack_require__
-    : (id: string) => require(id);
-}
-
 import { NextApiRequest, NextApiResponse } from 'next';
+import fs from 'fs';
+import path from 'path';
 
 import { prisma } from '@/lib/prisma';
 
-
 function scanDirectory(dir: string, baseDir: string): any[] {
-  const fs = (globalThis as any).__nodeRequire('fs');
-  const path = (globalThis as any).__nodeRequire('path');
   const files: any[] = [];
   
   try {
@@ -54,7 +47,6 @@ function scanDirectory(dir: string, baseDir: string): any[] {
 }
 
 function getMimeType(filename: string): string {
-  const path = (globalThis as any).__nodeRequire('path');
   const ext = path.extname(filename).toLowerCase();
   const mimeTypes: Record<string, string> = {
     '.jpg': 'image/jpeg',
@@ -75,8 +67,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const fs = (globalThis as any).__nodeRequire('fs');
-    const path = (globalThis as any).__nodeRequire('path');
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
     
     console.log('Scanning uploads directory:', uploadsDir);

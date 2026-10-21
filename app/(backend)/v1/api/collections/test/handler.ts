@@ -1,7 +1,7 @@
 /**
  * AUTO-GENERATED FILE - DO NOT EDIT MANUALLY.
  *
- * Public API route: /v1/api/collections/fons/[id]
+ * Public API route: /v1/api/collections/test
  * Uses bearer token authentication (API tokens from admin panel).
  * All business logic is inline in this file.
  *
@@ -23,7 +23,7 @@ import {
   extractManyToManyData,
   updateManyToManyRelations,
 } from '@/lib/many-to-many-handler';
-import * as FonsModel from '@/models/fons.model';
+import * as TestModel from '@/models/test.model';
 
 
 function httpError(statusCode: number, message: string): Error {
@@ -33,7 +33,7 @@ function httpError(statusCode: number, message: string): Error {
 }
 
 async function getFields(): Promise<Field[]> {
-  const collectionType = await FonsModel.getCollectionType();
+  const collectionType = await TestModel.getCollectionType();
   if (!collectionType) {
     throw httpError(404, 'Collection type not found');
   }
@@ -53,7 +53,7 @@ async function assertUnique(
     const value = data[field.name];
     if (value === undefined || value === null || value === '') continue;
 
-    const existing = await FonsModel.findMany({
+    const existing = await TestModel.findMany({
       where: { [field.name]: value },
     });
     const duplicate = existing.find((row: any) => row.id !== excludeId);
@@ -89,7 +89,7 @@ async function processComponentFields(
         processed[field.name] = await processComponentValue(value, field.componentRef!);
       }
     } catch (error: any) {
-      console.error('[Fons] Error processing field ' + field.name + ':', error);
+      console.error('[Test] Error processing field ' + field.name + ':', error);
     }
   }
 
@@ -110,8 +110,8 @@ async function processComponentValue(value: any, componentName: string): Promise
 
 async function listEntries(options: { populate?: boolean } = {}): Promise<Record<string, any>[]> {
   const fields = await getFields();
-  const entries = await FonsModel.findMany();
-  const resolved = await resolveMultipleRelations(entries, FonsModel.COLLECTION_NAME, fields);
+  const entries = await TestModel.findMany();
+  const resolved = await resolveMultipleRelations(entries, TestModel.COLLECTION_NAME, fields);
 
   if (options.populate) {
     return populateMultipleEntries(resolved, fields);
@@ -121,12 +121,12 @@ async function listEntries(options: { populate?: boolean } = {}): Promise<Record
 
 async function getEntry(id: string, options: { populate?: boolean } = {}): Promise<Record<string, any>> {
   const fields = await getFields();
-  const entry = await FonsModel.findById(id);
+  const entry = await TestModel.findById(id);
   if (!entry) {
     throw httpError(404, 'Entry not found');
   }
 
-  const resolved = await populateRelations({ ...entry }, FonsModel.COLLECTION_NAME, fields);
+  const resolved = await populateRelations({ ...entry }, TestModel.COLLECTION_NAME, fields);
 
   if (options.populate) {
     return populateComponents(resolved, fields);
@@ -145,7 +145,7 @@ async function createEntry(entryData: Record<string, any>): Promise<Record<strin
   const processed = await processComponentFields(entryData, fields);
   const filtered = filterVirtualRelationFields(fields, processed);
 
-  return FonsModel.create(filtered);
+  return TestModel.create(filtered);
 }
 
 async function updateEntry(id: string, entryData: Record<string, any>): Promise<Record<string, any>> {
@@ -167,10 +167,10 @@ async function updateEntry(id: string, entryData: Record<string, any>): Promise<
     }
   });
 
-  const entry = await FonsModel.update(id, dataToUpdate);
+  const entry = await TestModel.update(id, dataToUpdate);
 
   if (Object.keys(manyToManyData).length > 0) {
-    await updateManyToManyRelations(FonsModel.COLLECTION_NAME, id, manyToManyData, fields);
+    await updateManyToManyRelations(TestModel.COLLECTION_NAME, id, manyToManyData, fields);
   }
 
   return entry;
@@ -178,47 +178,32 @@ async function updateEntry(id: string, entryData: Record<string, any>): Promise<
 
 async function deleteEntry(id: string): Promise<void> {
   await getFields();
-  const entry = await FonsModel.findById(id);
+  const entry = await TestModel.findById(id);
   if (!entry) {
     throw httpError(404, 'Entry not found');
   }
 
-  await FonsModel.remove(id);
+  await TestModel.remove(id);
 }
 
 
 function sendError(res: NextApiResponse<ApiResponse>, error: any, context: string): void {
-  console.error('[Fons Route]', context, error);
+  console.error('[Test Route]', context, error);
   const statusCode = typeof error?.statusCode === 'number' ? error.statusCode : 500;
   res.status(statusCode).json({ error: error?.message || 'Internal server error' });
 }
 
-function readEntryId(req: NextApiRequest): string | null {
-  const { id } = req.query;
-  return typeof id === 'string' ? id : null;
-}
-
 async function handler(req: NextApiRequest, res: NextApiResponse<ApiResponse>): Promise<void> {
   try {
-    const id = readEntryId(req);
-    if (!id) {
-      res.status(400).json({ error: 'Invalid entry id' });
-      return;
-    }
     if (req.method === 'GET') {
-      const entry = await getEntry(id, { populate: req.query.populate === 'true' });
-      res.status(200).json({ data: entry });
+      const entries = await listEntries({ populate: req.query.populate === 'true' });
+      res.status(200).json({ data: entries });
       return;
     }
-    if (req.method === 'PUT') {
+    if (req.method === 'POST') {
       const entryData = (req.body && req.body.data) || {};
-      const entry = await updateEntry(id, entryData);
-      res.status(200).json({ data: entry });
-      return;
-    }
-    if (req.method === 'DELETE') {
-      await deleteEntry(id);
-      res.status(200).json({ message: 'Entry deleted' });
+      const entry = await createEntry(entryData);
+      res.status(201).json({ data: entry });
       return;
     }
     res.status(405).json({ error: 'Method not allowed' });

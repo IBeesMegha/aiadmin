@@ -15,6 +15,7 @@ import {
   ChevronDown,
   Layers,
   LayoutGrid,
+  Globe,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -280,6 +281,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   icon={Shield}
                   size="sm"
                   active={path === '/admin/settings/roles'}
+                />
+              )}
+              {hasPermission('internationalization.read') && (
+                <NavLink
+                  href="/admin/settings/internationalization"
+                  label="Internationalization"
+                  icon={Globe}
+                  size="sm"
+                  active={path === '/admin/settings/internationalization'}
                 />
               )}
               <NavLink

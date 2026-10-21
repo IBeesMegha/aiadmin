@@ -800,3 +800,1338 @@ Error fetching theme settings: TypeError: Cannot read properties of undefined (r
 }
 [API Token Auth] âœ“ Read Only token - GET request allowed
 [API Token Auth] âœ“ Authorization passed - Calling handler
+ âœ“ Compiled in 11.4s (1737 modules)
+ âœ“ Compiled in 919ms (1390 modules)
+ âœ“ Compiled in 1771ms (1723 modules)
+ âœ“ Compiled in 4.5s (1737 modules)
+ âœ“ Compiled in 2.9s (1737 modules)
+ âœ“ Compiled in 2s (1739 modules)
+ â—‹ Compiling /api/languages ...
+ âœ“ Compiled /api/languages in 1596ms (442 modules)
+ â—‹ Compiling /api/auth/login ...
+ âœ“ Compiled /api/auth/login in 1378ms (459 modules)
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+ âœ“ Compiled /api/languages/[id] in 300ms (462 modules)
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+ â—‹ Compiling /admin/settings/internationalization ...
+ âœ“ Compiled /admin/settings/internationalization in 2.7s (1864 modules)
+ âœ“ Compiled in 7.4s (1395 modules)
+ âœ“ Compiled in 1537ms (1395 modules)
+ â—‹ Compiling /not-found ...
+ âœ“ Compiled /not-found in 3.2s (1854 modules)
+ âœ“ Compiled /api/languages in 238ms (462 modules)
+ â—‹ Compiling /api/collections/fons ...
+ âœ“ Compiled /api/collections/fons in 679ms (475 modules)
+ â—‹ Compiling / ...
+ âœ“ Compiled / in 1821ms (1864 modules)
+Login error: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "email"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "password"
+    ],
+    "message": "Required"
+  }
+]
+    at get error (webpack-internal:///(rsc)/./node_modules/zod/v3/types.js:134:31)
+    at ZodObject.parse (webpack-internal:///(rsc)/./node_modules/zod/v3/types.js:219:22)
+    at handler (webpack-internal:///(rsc)/./app/(backend)/api/auth/login/handler.ts:28:93)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async routeHandler (webpack-internal:///(rsc)/./lib/app-router/route-adapter.ts:162:13)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63809
+    at async eU.execute (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:53964)
+    at async eU.handle (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:65062)
+    at async doRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1333:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1555:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1463:28)
+    at async DevServer.renderPageComponent (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1856:24)
+    at async DevServer.renderToResponseImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1894:32)
+    at async DevServer.pipeImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:911:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\next-server.js:271:17)
+    at async DevServer.handleRequestImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:807:17)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:331:20
+    at async Span.traceAsyncFn (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\trace\trace.js:151:20)
+    at async DevServer.handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:328:24)
+    at async invokeRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:163:21)
+    at async handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:342:24)
+    at async requestHandlerImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:366:13)
+    at async Server.requestListener (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\start-server.js:140:13) {
+  issues: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'undefined',
+      path: [Array],
+      message: 'Required'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'undefined',
+      path: [Array],
+      message: 'Required'
+    }
+  ],
+  addIssue: [Function (anonymous)],
+  addIssues: [Function (anonymous)],
+  errors: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'undefined',
+      path: [Array],
+      message: 'Required'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'undefined',
+      path: [Array],
+      message: 'Required'
+    }
+  ]
+}
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+[Dynamic Table] Adding i18n column: fons.locale
+[Dynamic Table] Adding i18n column: fons.rootId
+[Dynamic Table] âœ“ i18n schema ensured for fons
+[Relation Engine] Virtual relation field names: []
+[Relation Engine] Input data keys: [ 'name', 'dec' ]
+[Relation Engine] Keeping field: name = I18N-TEST-SRC
+[Relation Engine] Keeping field: dec = source description
+[Relation Engine] Output data keys: [ 'name', 'dec' ]
+[Dynamic CRUD] Creating record in fons with columns: [ 'id', 'name', 'dec', 'createdAt', 'updatedAt', 'locale', 'rootId' ]
+[Dynamic CRUD] Query: 
+    INSERT INTO "fons" ("id", "name", "dec", "createdAt", "updatedAt", "locale", "rootId")
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    RETURNING *
+  
+[Dynamic CRUD] Values: [
+  'c10PMMIn6ygQAeT5h',
+  'I18N-TEST-SRC',
+  'source description',
+  2026-10-16T12:18:25.992Z,
+  2026-10-16T12:18:25.992Z,
+  'en',
+  'c10PMMIn6ygQAeT5h'
+]
+ â—‹ Compiling /api/collections/[name]/[id]/translate ...
+ âœ“ Compiled /api/collections/[name]/[id]/translate in 629ms (483 modules)
+[Dynamic Table] âœ“ i18n schema ensured for fons
+[findManyDynamic] Table: fons -> fons
+[findManyDynamic] Query: SELECT * FROM "fons" WHERE "rootId" = $1 ORDER BY "createdAt" DESC
+[findManyDynamic] Values: [ 'c10PMMIn6ygQAeT5h' ]
+ â—‹ Compiling /api/collections/fons/[id] ...
+ âœ“ Compiled /api/collections/fons/[id] in 567ms (486 modules)
+[Dynamic Table] âœ“ i18n schema ensured for fons
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+ â—‹ Compiling /api/languages/[id] ...
+ âœ“ Compiled /api/languages/[id] in 629ms (486 modules)
+[Dynamic Table] âœ“ i18n schema ensured for fons
+[Relation Engine] Virtual relation field names: []
+[Relation Engine] Input data keys: [ 'name', 'dec' ]
+[Relation Engine] Keeping field: name = I18N-TEST-SRC
+[Relation Engine] Keeping field: dec = source description
+[Relation Engine] Output data keys: [ 'name', 'dec' ]
+[Dynamic CRUD] Creating record in fons with columns: [ 'id', 'name', 'dec', 'createdAt', 'updatedAt', 'locale', 'rootId' ]
+[Dynamic CRUD] Query: 
+    INSERT INTO "fons" ("id", "name", "dec", "createdAt", "updatedAt", "locale", "rootId")
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    RETURNING *
+  
+[Dynamic CRUD] Values: [
+  'cdqzUQtUQUdEpdNu',
+  'I18N-TEST-SRC',
+  'source description',
+  2026-10-16T12:18:58.547Z,
+  2026-10-16T12:18:58.547Z,
+  'en',
+  'cdqzUQtUQUdEpdNu'
+]
+[findManyDynamic] Table: fons -> fons
+[findManyDynamic] Query: SELECT * FROM "fons" WHERE "rootId" = $1 AND "locale" = $2 ORDER BY "createdAt" DESC
+[findManyDynamic] Values: [ 'cdqzUQtUQUdEpdNu', 'fr' ]
+[Dynamic CRUD] Creating record in fons with columns: [ 'id', 'name', 'dec', 'rootId', 'locale', 'createdAt', 'updatedAt' ]
+[Dynamic CRUD] Query: 
+    INSERT INTO "fons" ("id", "name", "dec", "rootId", "locale", "createdAt", "updatedAt")
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    RETURNING *
+  
+[Dynamic CRUD] Values: [
+  'cfHDuuLwxdAHOvYU',
+  'I18N-TEST-SRC-FR',
+  'source description',
+  'cdqzUQtUQUdEpdNu',
+  'fr',
+  2026-10-16T12:18:58.820Z,
+  2026-10-16T12:18:58.820Z
+]
+[findManyDynamic] Table: fons -> fons
+[findManyDynamic] Query: SELECT * FROM "fons" WHERE "rootId" = $1 AND "locale" = $2 ORDER BY "createdAt" DESC
+[findManyDynamic] Values: [ 'cdqzUQtUQUdEpdNu', 'fr' ]
+[findManyDynamic] Table: fons -> fons
+[findManyDynamic] Query: SELECT * FROM "fons" WHERE "rootId" = $1 ORDER BY "createdAt" DESC
+[findManyDynamic] Values: [ 'cdqzUQtUQUdEpdNu' ]
+ âœ“ Compiled in 874ms (461 modules)
+ âœ“ Compiled in 18.1s (1731 modules)
+ âœ“ Compiled in 4.3s (1397 modules)
+ âœ“ Compiled in 1446ms (1397 modules)
+ âœ“ Compiled in 1910ms (1397 modules)
+ âœ“ Compiled in 1799ms (1397 modules)
+ âœ“ Compiled in 1733ms (1397 modules)
+ âœ“ Compiled in 2.4s (1397 modules)
+ âœ“ Compiled in 2.7s (1397 modules)
+ âœ“ Compiled in 6.3s (1397 modules)
+ âœ“ Compiled in 2.2s (1397 modules)
+ âœ“ Compiled in 1941ms (1397 modules)
+ âœ“ Compiled in 1418ms (1397 modules)
+ âœ“ Compiled in 5s (1397 modules)
+ âœ“ Compiled in 2.1s (1397 modules)
+ âœ“ Compiled in 4.2s (1398 modules)
+ âœ“ Compiled in 2.5s (1400 modules)
+ âœ“ Compiled in 3s (1400 modules)
+ âœ“ Compiled in 2.4s (1400 modules)
+ âœ“ Compiled in 3s (1400 modules)
+ âœ“ Compiled in 4.3s (1402 modules)
+ âœ“ Compiled in 5.6s (1402 modules)
+ âœ“ Compiled in 2.5s (1402 modules)
+ âœ“ Compiled in 3.7s (1404 modules)
+ âœ“ Compiled in 4.1s (1404 modules)
+ âœ“ Compiled in 1509ms (1404 modules)
+ â—‹ Compiling / ...
+ âœ“ Compiled / in 1063ms (352 modules)
+ â—‹ Compiling /api/auth/login ...
+ âœ“ Compiled /api/auth/login in 1741ms (454 modules)
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+ âœ“ Compiled /api/languages in 378ms (459 modules)
+ âœ“ Compiled /api/languages/[id] in 254ms (462 modules)
+ âœ“ Compiled /api/collection-types in 506ms (470 modules)
+
+=== Creating collection: i18ntest ===
+Step 1: Checking if table exists...
+Ã¢Å“â€œ Table does not exist, proceeding...
+Step 2: Creating collection metadata...
+Ã¢Å“â€œ Metadata created
+Step 3: Creating dynamic table via raw SQL...
+[Dynamic Table] Creating table: i18ntest
+[Dynamic Table] Added column: name TEXT
+[Dynamic Table] Added column: dec TEXT
+[Dynamic Table] SQL:
+
+    CREATE TABLE "i18ntest" (
+      id TEXT PRIMARY KEY,
+      "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "locale" TEXT NOT NULL DEFAULT 'en',
+      "rootId" TEXT,
+      "name" TEXT,
+      "dec" TEXT
+    )
+  
+ â¨¯ Failed to generate static paths for /api/languages/[id]:
+TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError'
+}
+[Dynamic Table] âœ“ Table i18ntest created successfully
+Ã¢Å“â€œ Dynamic table created
+Step 4: Processing relations...
+
+Ã¢Å“â€œ Collection i18ntest created successfully!
+Ã¢Å“â€œ No server restart needed - table is ready to use
+
+Step 6: Generating collection module (model/service/controller/API/admin)...
+Generated: models\i18ntest.model.ts
+Generated: app\(backend)\api\collections\i18ntest\handler.ts
+Generated: app\(backend)\api\collections\i18ntest\route.ts
+Generated: app\(backend)\api\collections\i18ntest\[id]\handler.ts
+Generated: app\(backend)\api\collections\i18ntest\[id]\route.ts
+Generated: app\(backend)\v1\api\collections\i18ntest\handler.ts
+Generated: app\(backend)\v1\api\collections\i18ntest\route.ts
+Generated: app\(backend)\v1\api\collections\i18ntest\[id]\handler.ts
+Generated: app\(backend)\v1\api\collections\i18ntest\[id]\route.ts
+Collection module generated for "i18ntest" (9 files)
+Ã¢Å“â€œ Collection module generated
+ â—‹ Compiling /api/collections/i18ntest ...
+ âœ“ Compiled /api/collections/i18ntest in 4.3s (1884 modules)
+ â—‹ Compiling /api/collections/[name] ...
+ âœ“ Compiled /api/collections/[name] in 647ms (483 modules)
+ â¨¯ Error [PageNotFoundError]: Cannot find module for page: /(backend)/api/collections/[name]/route
+    at getPagePath (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\require.js:94:15)
+    at requirePage (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\require.js:99:22)
+    at C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\load-components.js:74:84
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async loadComponentsImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\load-components.js:74:26)
+    at async Object.loadStaticPaths (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\static-paths-worker.js:23:24) {
+  type: 'PageNotFoundError',
+  code: 'ENOENT',
+  page: '/api/collections/i18ntest'
+}
+ â—‹ Compiling /_error ...
+ âœ“ Compiled /_error in 4.8s (2050 modules)
+ âœ“ Compiled /api/collection-types/[name] in 380ms (526 modules)
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/collection-types/i18ntest'
+}
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/languages/cmuy5g5f2004m10omfbtvauof'
+}
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+
+=== Creating collection: i18ntest ===
+Step 1: Checking if table exists...
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\app\(backend)\v1'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/(backend)/v1/api/collections/fons/route' in C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server for build dependencies doesn't lead to expected result 'C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\app\(backend)\v1\api\collections\fons\route.js', but to 'Error: Can't resolve '../../../../.next/server/app/(backend)/v1/api/collections/fons/route' in 'C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/(backend)/v1/api/collections/fons/route (expected C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\app\(backend)\v1\api\collections\fons\route.js)
+<w>  at file dependencies C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\export\worker.js
+<w>  at file C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\export\worker.js
+<w>  at file dependencies C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\worker.js
+<w>  at file C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\worker.js
+<w>  at file dependencies C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/(backend)/v1/api/media/[id]/route' in C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server for build dependencies doesn't lead to expected result 'C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\app\(backend)\v1\api\media\[id]\route.js', but to 'Error: Can't resolve '../../../../.next/server/app/(backend)/v1/api/media/[id]/route' in 'C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/(backend)/v1/api/media/[id]/route (expected C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\app\(backend)\v1\api\media\[id]\route.js)
+<w>  at file dependencies C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\export\worker.js
+<w>  at file C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\export\worker.js
+<w>  at file dependencies C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\worker.js
+<w>  at file C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\worker.js
+<w>  at file dependencies C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+[Relation Engine] Virtual relation field names: []
+[Relation Engine] Input data keys: [ 'name', 'locale', 'dec' ]
+[Relation Engine] Keeping field: name = Hello
+[Relation Engine] Keeping field: locale = en
+[Relation Engine] Keeping field: dec = World
+[Relation Engine] Output data keys: [ 'name', 'locale', 'dec' ]
+[Dynamic Table] âœ“ i18n schema ensured for i18ntest
+[Dynamic CRUD] Creating record in i18ntest with columns: [ 'id', 'name', 'locale', 'dec', 'createdAt', 'updatedAt', 'rootId' ]
+[Dynamic CRUD] Query: 
+    INSERT INTO "i18ntest" ("id", "name", "locale", "dec", "createdAt", "updatedAt", "rootId")
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    RETURNING *
+  
+[Dynamic CRUD] Values: [
+  'cFbuW4ctsOtra0nt',
+  'Hello',
+  'en',
+  'World',
+  2026-10-16T12:48:59.841Z,
+  2026-10-16T12:48:59.841Z,
+  'cFbuW4ctsOtra0nt'
+]
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/collection-types/i18ntest'
+}
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/collection-types/i18ntest'
+}
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/collection-types/doesnotexist'
+}
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/collection-types/i18ntest'
+}
+ â—‹ Compiling /not-found ...
+ âœ“ Compiled /not-found in 4.4s (2037 modules)
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+
+=== Deleting collection: doesnotexist ===
+Step 1: Deleting collection metadata...
+prisma:error 
+Invalid `prisma.collectionType.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+
+âœ— Deletion failed: 
+Invalid `prisma.collectionType.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+ â—‹ Compiling /api/collections/i18ntest/[id] ...
+ âœ“ Compiled /api/collections/i18ntest/[id] in 1692ms (514 modules)
+[Dynamic Table] âœ“ i18n schema ensured for i18ntest
+[I18ntest Route] Request failed Error: Entry not found
+    at httpError (webpack-internal:///(rsc)/./app/(backend)/api/collections/i18ntest/[id]/handler.ts:28:19)
+    at deleteEntry (webpack-internal:///(rsc)/./app/(backend)/api/collections/i18ntest/[id]/handler.ts:145:15)
+    at async handler (webpack-internal:///(rsc)/./app/(backend)/api/collections/i18ntest/[id]/handler.ts:187:13)
+    at async routeHandler (webpack-internal:///(rsc)/./lib/app-router/route-adapter.ts:162:13)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63809
+    at async eU.execute (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:53964)
+    at async eU.handle (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:65062)
+    at async doRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1333:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1543:40)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1463:28)
+    at async DevServer.renderPageComponent (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1856:24)
+    at async DevServer.renderToResponseImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1894:32)
+    at async DevServer.pipeImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:911:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\next-server.js:271:17)
+    at async DevServer.handleRequestImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:807:17)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:331:20
+    at async Span.traceAsyncFn (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\trace\trace.js:151:20)
+    at async DevServer.handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:328:24)
+    at async invokeRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:163:21)
+    at async handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:342:24)
+    at async requestHandlerImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:366:13)
+    at async Server.requestListener (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\start-server.js:140:13) {
+  statusCode: 404
+}
+[I18ntest Route] Request failed Error: Missing entry data
+    at httpError (webpack-internal:///(rsc)/./app/(backend)/api/collections/i18ntest/[id]/handler.ts:28:19)
+    at updateEntry (webpack-internal:///(rsc)/./app/(backend)/api/collections/i18ntest/[id]/handler.ts:122:15)
+    at handler (webpack-internal:///(rsc)/./app/(backend)/api/collections/i18ntest/[id]/handler.ts:180:33)
+    at withAuth (webpack-internal:///(rsc)/./lib/middlewares/api/auth-middleware.ts:61:16)
+    at async routeHandler (webpack-internal:///(rsc)/./lib/app-router/route-adapter.ts:162:13)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:63809
+    at async eU.execute (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:53964)
+    at async eU.handle (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:65062)
+    at async doRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1333:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1543:40)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1463:28)
+    at async DevServer.renderPageComponent (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1856:24)
+    at async DevServer.renderToResponseImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:1894:32)
+    at async DevServer.pipeImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:911:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\next-server.js:271:17)
+    at async DevServer.handleRequestImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\base-server.js:807:17)
+    at async C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:331:20
+    at async Span.traceAsyncFn (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\trace\trace.js:151:20)
+    at async DevServer.handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\dev\next-dev-server.js:328:24)
+    at async invokeRender (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:163:21)
+    at async handleRequest (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:342:24)
+    at async requestHandlerImpl (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\router-server.js:366:13)
+    at async Server.requestListener (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\lib\start-server.js:140:13) {
+  statusCode: 400
+}
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+
+=== Deleting collection: i18ntest ===
+Step 1: Deleting collection metadata...
+âœ“ Metadata deleted
+Step 2: Dropping dynamic table...
+[Dynamic Table] Dropping table: i18ntest
+[Dynamic Table] âœ“ Table i18ntest dropped successfully
+âœ“ Table dropped
+Step 3: Deleting generated collection module...
+Removed: models\i18ntest.model.ts
+Removed: app\(backend)\api\collections\i18ntest\handler.ts
+Removed: app\(backend)\api\collections\i18ntest\[id]\handler.ts
+Removed: app\(backend)\api\collections\i18ntest
+Removed: app\(backend)\v1\api\collections\i18ntest\handler.ts
+Removed: app\(backend)\v1\api\collections\i18ntest\[id]\handler.ts
+Removed: app\(backend)\v1\api\collections\i18ntest
+âœ“ Collection module deleted
+
+âœ“ Collection i18ntest deleted successfully!
+
+ âœ“ Compiled in 7.1s (2027 modules)
+ â—‹ Compiling /not-found ...
+ âœ“ Compiled /not-found in 4.9s (2032 modules)
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+ â—‹ Compiling /api/languages ...
+ âœ“ Compiled /api/languages in 1737ms (501 modules)
+ â—‹ Compiling /api/languages/[id] ...
+ âœ“ Compiled /api/languages/[id] in 540ms (504 modules)
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/languages/cmuy5g5f2004m10omfbtvauof'
+}
+ â—‹ Compiling /_error ...
+ âœ“ Compiled /_error in 1249ms (2034 modules)
+ âœ“ Compiled /api/collection-types/[name] in 270ms (513 modules)
+
+=== Deleting collection: i18ntest ===
+Step 1: Deleting collection metadata...
+prisma:error 
+Invalid `prisma.collectionType.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+
+âœ— Deletion failed: 
+Invalid `prisma.collectionType.delete()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+ â¨¯ Failed to generate static paths for /api/collection-types/[name]:
+TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError'
+}
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/languages/cmuy5g5f2004m10omfbtvauof'
+}
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/languages/cmuy5g5f2004m10omfbtvauof'
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\app\(backend)\v1'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/(backend)/v1/api/collections/fons/route' in C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server for build dependencies doesn't lead to expected result 'C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\app\(backend)\v1\api\collections\fons\route.js', but to 'Error: Can't resolve '../../../../.next/server/app/(backend)/v1/api/collections/fons/route' in 'C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/(backend)/v1/api/collections/fons/route (expected C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\app\(backend)\v1\api\collections\fons\route.js)
+<w>  at file dependencies C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\worker.js
+<w>  at file C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\worker.js
+<w>  at file dependencies C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+[AUTH] Starting authentication for: dev@example.com
+[AUTH] User found: true
+[AUTH] Authentication successful
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/languages/cmuy5g5f2004m10omfbtvauof'
+}
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/languages/cmuy5g5f2004m10omfbtvauof'
+}
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/languages/cmuy5g5f2004m10omfbtvauof'
+}
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/languages/cmuy5g5f2004m10omfbtvauof'
+}
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/languages/cmuy5g5f2004m10omfbtvauof'
+}
+ â¨¯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/lib/timespan.js:2:10)
+    at (rsc)/./node_modules/jsonwebtoken/lib/timespan.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:100:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/verify.js:6:18)
+    at (rsc)/./node_modules/jsonwebtoken/verify.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:130:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(rsc)/./node_modules/jsonwebtoken/index.js:4:13)
+    at (rsc)/./node_modules/jsonwebtoken/index.js (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\vendor-chunks\jsonwebtoken.js:30:1)
+    at __webpack_require__ (C:\Users\ibees\OneDrive - Interactive Bees Pvt Ltd\Documents\ssmed\ssmedAI\.next\server\webpack-runtime.js:33:42) {
+  type: 'TypeError',
+  page: '/api/languages/cmuy5g5f2004m10omfbtvauof'
+}
+[?25h
+ 
+ >   n e x t j s - c m s @ 1 . 0 . 0   d e v  
+ >   n e x t   d e v  
+  
+       “û “%  N e x t . j s   1 4 . 1 . 0  
+       -   L o c a l :                 h t t p : / / l o c a l h o s t : 3 0 0 0  
+       -   E n v i r o n m e n t s :   . e n v  
+  
+   “£ ô   R e a d y   i n   6 . 1 s  
+   “ù ï   C o m p i l i n g   / a p i / a u t h / l o g i n   . . .  
+   “£ ô   C o m p i l e d   / a p i / a u t h / l o g i n   i n   1 3 8 8 m s   ( 1 2 2   m o d u l e s )  
+ [ A U T H ]   S t a r t i n g   a u t h e n t i c a t i o n   f o r :   d e v @ e x a m p l e . c o m  
+ [ A U T H ]   U s e r   f o u n d :   t r u e  
+ [ A U T H ]   A u t h e n t i c a t i o n   s u c c e s s f u l  
+   “ù ï   C o m p i l i n g   / a p i / l a n g u a g e s   . . .  
+   “£ ô   C o m p i l e d   / a p i / l a n g u a g e s   i n   1 1 1 3 m s   ( 1 2 7   m o d u l e s )  
+   “£ ô   C o m p i l e d   / a p i / l a n g u a g e s / [ i d ]   i n   2 1 1 m s   ( 1 3 0   m o d u l e s )  
+ [ A U T H ]   S t a r t i n g   a u t h e n t i c a t i o n   f o r :   d e v @ e x a m p l e . c o m  
+ [ A U T H ]   U s e r   f o u n d :   t r u e  
+ [ A U T H ]   A u t h e n t i c a t i o n   s u c c e s s f u l  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n - t y p e s   i n   3 6 2 m s   ( 1 3 8   m o d u l e s )  
+  
+ = = =   C r e a t i n g   c o l l e c t i o n :   i 1 8 n t e s t   = = =  
+ S t e p   1 :   C h e c k i n g   i f   t a b l e   e x i s t s . . .  
+ %ó <%ô “Ç £   T a b l e   d o e s   n o t   e x i s t ,   p r o c e e d i n g . . .  
+ S t e p   2 :   C r e a t i n g   c o l l e c t i o n   m e t a d a t a . . .  
+ %ó <%ô “Ç £   M e t a d a t a   c r e a t e d  
+ S t e p   3 :   C r e a t i n g   d y n a m i c   t a b l e   v i a   r a w   S Q L . . .  
+ [ D y n a m i c   T a b l e ]   C r e a t i n g   t a b l e :   i 1 8 n t e s t  
+ [ D y n a m i c   T a b l e ]   A d d e d   c o l u m n :   n a m e   T E X T  
+ [ D y n a m i c   T a b l e ]   A d d e d   c o l u m n :   d e c   T E X T  
+ [ D y n a m i c   T a b l e ]   S Q L :  
+  
+         C R E A T E   T A B L E   " i 1 8 n t e s t "   (  
+             i d   T E X T   P R I M A R Y   K E Y ,  
+             " c r e a t e d A t "   T I M E S T A M P ( 3 )   N O T   N U L L   D E F A U L T   C U R R E N T _ T I M E S T A M P ,  
+             " u p d a t e d A t "   T I M E S T A M P ( 3 )   N O T   N U L L   D E F A U L T   C U R R E N T _ T I M E S T A M P ,  
+             " l o c a l e "   T E X T   N O T   N U L L   D E F A U L T   ' e n ' ,  
+             " r o o t I d "   T E X T ,  
+             " n a m e "   T E X T ,  
+             " d e c "   T E X T  
+         )  
+      
+ [ D y n a m i c   T a b l e ]   “£ ô   T a b l e   i 1 8 n t e s t   c r e a t e d   s u c c e s s f u l l y  
+ %ó <%ô “Ç £   D y n a m i c   t a b l e   c r e a t e d  
+ S t e p   4 :   P r o c e s s i n g   r e l a t i o n s . . .  
+  
+ %ó <%ô “Ç £   C o l l e c t i o n   i 1 8 n t e s t   c r e a t e d   s u c c e s s f u l l y !  
+ %ó <%ô “Ç £   N o   s e r v e r   r e s t a r t   n e e d e d   -   t a b l e   i s   r e a d y   t o   u s e  
+  
+ S t e p   6 :   G e n e r a t i n g   c o l l e c t i o n   m o d u l e   ( m o d e l / s e r v i c e / c o n t r o l l e r / A P I / a d m i n ) . . .  
+ G e n e r a t e d :   m o d e l s \ i 1 8 n t e s t . m o d e l . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ r o u t e . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ r o u t e . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ r o u t e . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ r o u t e . t s  
+ C o l l e c t i o n   m o d u l e   g e n e r a t e d   f o r   " i 1 8 n t e s t "   ( 9   f i l e s )  
+ %ó <%ô “Ç £   C o l l e c t i o n   m o d u l e   g e n e r a t e d  
+   “ù ï   C o m p i l i n g   / a p i / c o l l e c t i o n s / i 1 8 n t e s t   . . .  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n s / i 1 8 n t e s t   i n   3 . 7 s   ( 3 3 8   m o d u l e s )  
+ [ D y n a m i c   T a b l e ]   “£ ô   i 1 8 n   s c h e m a   e n s u r e d   f o r   i 1 8 n t e s t  
+ [ R e l a t i o n   E n g i n e ]   V i r t u a l   r e l a t i o n   f i e l d   n a m e s :   [ ]  
+ [ R e l a t i o n   E n g i n e ]   I n p u t   d a t a   k e y s :   [   ' n a m e ' ,   ' l o c a l e ' ,   ' d e c '   ]  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   n a m e   =   H e l l o  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   l o c a l e   =   e n  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   d e c   =   W o r l d  
+ [ R e l a t i o n   E n g i n e ]   O u t p u t   d a t a   k e y s :   [   ' n a m e ' ,   ' l o c a l e ' ,   ' d e c '   ]  
+ [ D y n a m i c   C R U D ]   C r e a t i n g   r e c o r d   i n   i 1 8 n t e s t   w i t h   c o l u m n s :   [   ' i d ' ,   ' n a m e ' ,   ' l o c a l e ' ,   ' d e c ' ,   ' c r e a t e d A t ' ,   ' u p d a t e d A t ' ,   ' r o o t I d '   ]  
+ [ D y n a m i c   C R U D ]   Q u e r y :    
+         I N S E R T   I N T O   " i 1 8 n t e s t "   ( " i d " ,   " n a m e " ,   " l o c a l e " ,   " d e c " ,   " c r e a t e d A t " ,   " u p d a t e d A t " ,   " r o o t I d " )  
+         V A L U E S   ( $ 1 ,   $ 2 ,   $ 3 ,   $ 4 ,   $ 5 ,   $ 6 ,   $ 7 )  
+         R E T U R N I N G   *  
+      
+ [ D y n a m i c   C R U D ]   V a l u e s :   [  
+     ' c K 3 1 b E d 9 R 6 V v z c v k ' ,  
+     ' H e l l o ' ,  
+     ' e n ' ,  
+     ' W o r l d ' ,  
+     2 0 2 6 - 1 0 - 1 6 T 1 3 : 0 3 : 1 8 . 0 8 1 Z ,  
+     2 0 2 6 - 1 0 - 1 6 T 1 3 : 0 3 : 1 8 . 0 8 1 Z ,  
+     ' c K 3 1 b E d 9 R 6 V v z c v k '  
+ ]  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n s / [ n a m e ] / [ i d ] / t r a n s l a t e   i n   1 8 1 m s   ( 1 5 2   m o d u l e s )  
+ [ D y n a m i c   T a b l e ]   “£ ô   i 1 8 n   s c h e m a   e n s u r e d   f o r   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   T a b l e :   i 1 8 n t e s t   - >   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   Q u e r y :   S E L E C T   *   F R O M   " i 1 8 n t e s t "   W H E R E   " r o o t I d "   =   $ 1   O R D E R   B Y   " c r e a t e d A t "   D E S C  
+ [ f i n d M a n y D y n a m i c ]   V a l u e s :   [   ' c K 3 1 b E d 9 R 6 V v z c v k '   ]  
+ [ f i n d M a n y D y n a m i c ]   T a b l e :   i 1 8 n t e s t   - >   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   Q u e r y :   S E L E C T   *   F R O M   " i 1 8 n t e s t "   W H E R E   " r o o t I d "   =   $ 1   A N D   " l o c a l e "   =   $ 2   O R D E R   B Y   " c r e a t e d A t "   D E S C  
+ [ f i n d M a n y D y n a m i c ]   V a l u e s :   [   ' c K 3 1 b E d 9 R 6 V v z c v k ' ,   ' f r '   ]  
+ [ D y n a m i c   C R U D ]   C r e a t i n g   r e c o r d   i n   i 1 8 n t e s t   w i t h   c o l u m n s :   [   ' i d ' ,   ' n a m e ' ,   ' d e c ' ,   ' r o o t I d ' ,   ' l o c a l e ' ,   ' c r e a t e d A t ' ,   ' u p d a t e d A t '   ]  
+ [ D y n a m i c   C R U D ]   Q u e r y :    
+         I N S E R T   I N T O   " i 1 8 n t e s t "   ( " i d " ,   " n a m e " ,   " d e c " ,   " r o o t I d " ,   " l o c a l e " ,   " c r e a t e d A t " ,   " u p d a t e d A t " )  
+         V A L U E S   ( $ 1 ,   $ 2 ,   $ 3 ,   $ 4 ,   $ 5 ,   $ 6 ,   $ 7 )  
+         R E T U R N I N G   *  
+      
+ [ D y n a m i c   C R U D ]   V a l u e s :   [  
+     ' c p A 8 r g d E 1 r 2 9 D G o ' ,  
+     ' H e l l o ' ,  
+     ' W o r l d ' ,  
+     ' c K 3 1 b E d 9 R 6 V v z c v k ' ,  
+     ' f r ' ,  
+     2 0 2 6 - 1 0 - 1 6 T 1 3 : 0 3 : 1 9 . 6 5 1 Z ,  
+     2 0 2 6 - 1 0 - 1 6 T 1 3 : 0 3 : 1 9 . 6 5 1 Z  
+ ]  
+ [ f i n d M a n y D y n a m i c ]   T a b l e :   i 1 8 n t e s t   - >   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   Q u e r y :   S E L E C T   *   F R O M   " i 1 8 n t e s t "   W H E R E   " r o o t I d "   =   $ 1   O R D E R   B Y   " c r e a t e d A t "   D E S C  
+ [ f i n d M a n y D y n a m i c ]   V a l u e s :   [   ' c K 3 1 b E d 9 R 6 V v z c v k '   ]  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n s / i 1 8 n t e s t / [ i d ]   i n   2 5 1 m s   ( 1 5 5   m o d u l e s )  
+ [ R e l a t i o n   E n g i n e ]   V i r t u a l   r e l a t i o n   f i e l d   n a m e s :   [ ]  
+ [ R e l a t i o n   E n g i n e ]   I n p u t   d a t a   k e y s :   [   ' n a m e '   ]  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   n a m e   =   B o n j o u r  
+ [ R e l a t i o n   E n g i n e ]   O u t p u t   d a t a   k e y s :   [   ' n a m e '   ]  
+ [ D y n a m i c   T a b l e ]   “£ ô   i 1 8 n   s c h e m a   e n s u r e d   f o r   i 1 8 n t e s t  
+ [ D y n a m i c   C R U D ]   U p d a t i n g   r e c o r d   i n   i 1 8 n t e s t   w i t h   c o l u m n s :   [   ' n a m e '   ]  
+ [ D y n a m i c   C R U D ]   Q u e r y :    
+         U P D A T E   " i 1 8 n t e s t "  
+         S E T   " n a m e "   =   $ 1 ,   " u p d a t e d A t "   =   N O W ( )  
+         W H E R E   i d   =   $ 2  
+         R E T U R N I N G   *  
+      
+ [ D y n a m i c   C R U D ]   V a l u e s :   [   ' B o n j o u r '   ]  
+ [ R e l a t i o n   P o p u l a t e ]   F o u n d   0   r e l a t i o n   f i e l d s   i n   i 1 8 n t e s t  
+ [ R e l a t i o n   P o p u l a t e ]   F o u n d   0   r e l a t i o n   f i e l d s   i n   i 1 8 n t e s t  
+ [ R e l a t i o n   E n g i n e ]   V i r t u a l   r e l a t i o n   f i e l d   n a m e s :   [ ]  
+ [ R e l a t i o n   E n g i n e ]   I n p u t   d a t a   k e y s :   [   ' r o o t I d ' ,   ' n a m e ' ,   ' l o c a l e '   ]  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   r o o t I d   =   h a c k e d - r o o t  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   n a m e   =   B o n j o u r 2  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   l o c a l e   =   e n  
+ [ R e l a t i o n   E n g i n e ]   O u t p u t   d a t a   k e y s :   [   ' r o o t I d ' ,   ' n a m e ' ,   ' l o c a l e '   ]  
+ [ D y n a m i c   C R U D ]   U p d a t i n g   r e c o r d   i n   i 1 8 n t e s t   w i t h   c o l u m n s :   [   ' n a m e '   ]  
+ [ D y n a m i c   C R U D ]   Q u e r y :    
+         U P D A T E   " i 1 8 n t e s t "  
+         S E T   " n a m e "   =   $ 1 ,   " u p d a t e d A t "   =   N O W ( )  
+         W H E R E   i d   =   $ 2  
+         R E T U R N I N G   *  
+      
+ [ D y n a m i c   C R U D ]   V a l u e s :   [   ' B o n j o u r 2 '   ]  
+ [ R e l a t i o n   P o p u l a t e ]   F o u n d   0   r e l a t i o n   f i e l d s   i n   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   T a b l e :   i 1 8 n t e s t   - >   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   Q u e r y :   S E L E C T   *   F R O M   " i 1 8 n t e s t "   W H E R E   " r o o t I d "   =   $ 1   A N D   " l o c a l e "   =   $ 2   O R D E R   B Y   " c r e a t e d A t "   D E S C  
+ [ f i n d M a n y D y n a m i c ]   V a l u e s :   [   ' c K 3 1 b E d 9 R 6 V v z c v k ' ,   ' f r '   ]  
+   “ù ï   C o m p i l i n g   / a d m i n / c o l l e c t i o n s / [ n a m e ]   . . .  
+   “£ ô   C o m p i l e d   / a d m i n / c o l l e c t i o n s / [ n a m e ]   i n   1 9 . 8 s   ( 7 4 8   m o d u l e s )  
+   “ù ï   C o m p i l i n g   / a p i / c o l l e c t i o n - t y p e s / [ n a m e ]   . . .  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n - t y p e s / [ n a m e ]   i n   8 . 5 s   ( 4 3 3   m o d u l e s )  
+  
+ = = =   D e l e t i n g   c o l l e c t i o n :   i 1 8 n t e s t   = = =  
+ S t e p   1 :   D e l e t i n g   c o l l e c t i o n   m e t a d a t a . . .  
+ “£ ô   M e t a d a t a   d e l e t e d  
+ S t e p   2 :   D r o p p i n g   d y n a m i c   t a b l e . . .  
+ [ D y n a m i c   T a b l e ]   D r o p p i n g   t a b l e :   i 1 8 n t e s t  
+ [ D y n a m i c   T a b l e ]   “£ ô   T a b l e   i 1 8 n t e s t   d r o p p e d   s u c c e s s f u l l y  
+ “£ ô   T a b l e   d r o p p e d  
+ S t e p   3 :   D e l e t i n g   g e n e r a t e d   c o l l e c t i o n   m o d u l e . . .  
+ R e m o v e d :   m o d e l s \ i 1 8 n t e s t . m o d e l . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t  
+ “£ ô   C o l l e c t i o n   m o d u l e   d e l e t e d  
+  
+ “£ ô   C o l l e c t i o n   i 1 8 n t e s t   d e l e t e d   s u c c e s s f u l l y !  
+  
+   “£ ô   C o m p i l e d   i n   2 . 6 s   ( 7 2 6   m o d u l e s )  
+ [ A U T H ]   S t a r t i n g   a u t h e n t i c a t i o n   f o r :   d e v @ e x a m p l e . c o m  
+ [ A U T H ]   U s e r   f o u n d :   t r u e  
+ [ A U T H ]   A u t h e n t i c a t i o n   s u c c e s s f u l  
+   “ù ï   C o m p i l i n g   / a d m i n / s e t t i n g s / i n t e r n a t i o n a l i z a t i o n   . . .  
+   “£ ô   C o m p i l e d   / a d m i n / s e t t i n g s / i n t e r n a t i o n a l i z a t i o n   i n   1 5 9 6 m s   ( 7 1 4   m o d u l e s )  
+   “ù ï   C o m p i l i n g   / n o t - f o u n d   . . .  
+   “£ ô   C o m p i l e d   / n o t - f o u n d   i n   1 5 9 6 m s   ( 7 1 9   m o d u l e s )  
+   “ù ï   C o m p i l i n g   / a d m i n / l o g i n   . . .  
+   “£ ô   C o m p i l e d   / a d m i n / l o g i n   i n   2 . 5 s   ( 7 5 9   m o d u l e s )  
+ [ A U T H ]   S t a r t i n g   a u t h e n t i c a t i o n   f o r :   d e v @ e x a m p l e . c o m  
+ [ A U T H ]   U s e r   f o u n d :   t r u e  
+ [ A U T H ]   A u t h e n t i c a t i o n   s u c c e s s f u l  
+   “ù ï   C o m p i l i n g   / a d m i n / c o l l e c t i o n s / [ n a m e ] / n e w   . . .  
+   “£ ô   C o m p i l e d   / a d m i n / c o l l e c t i o n s / [ n a m e ] / n e w   i n   6 0 . 8 s   ( 2 7 5 1   m o d u l e s )  
+   “ù ï   C o m p i l i n g   / a d m i n / c o l l e c t i o n s / [ n a m e ] / [ i d ]   . . .  
+   “£ ô   C o m p i l e d   / a d m i n / c o l l e c t i o n s / [ n a m e ] / [ i d ]   i n   1 7 . 9 s   ( 2 6 1 3   m o d u l e s )  
+   “ù ï   C o m p i l i n g   / a p i / a u t h / l o g i n   . . .  
+   “£ ô   C o m p i l e d   / a p i / a u t h / l o g i n   i n   4 . 2 s   ( 1 4 0 1   m o d u l e s )  
+ [ A U T H ]   S t a r t i n g   a u t h e n t i c a t i o n   f o r :   d e v @ e x a m p l e . c o m  
+ [ A U T H ]   U s e r   f o u n d :   t r u e  
+ [ A U T H ]   A u t h e n t i c a t i o n   s u c c e s s f u l  
+   “ù ï   C o m p i l i n g   / a p i / l a n g u a g e s   . . .  
+   “£ ô   C o m p i l e d   / a p i / l a n g u a g e s   i n   1 3 8 7 m s   ( 1 4 0 6   m o d u l e s )  
+   “ù ï   C o m p i l i n g   / a p i / l a n g u a g e s / [ i d ]   . . .  
+   “£ ô   C o m p i l e d   / a p i / l a n g u a g e s / [ i d ]   i n   1 0 6 1 m s   ( 1 4 0 9   m o d u l e s )  
+   “ù ï   C o m p i l i n g   / a p i / c o l l e c t i o n - t y p e s   . . .  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n - t y p e s   i n   8 . 7 s   ( 1 4 1 7   m o d u l e s )  
+  
+ = = =   C r e a t i n g   c o l l e c t i o n :   i 1 8 n t e s t   = = =  
+ S t e p   1 :   C h e c k i n g   i f   t a b l e   e x i s t s . . .  
+ %ó <%ô “Ç £   T a b l e   d o e s   n o t   e x i s t ,   p r o c e e d i n g . . .  
+ S t e p   2 :   C r e a t i n g   c o l l e c t i o n   m e t a d a t a . . .  
+ %ó <%ô “Ç £   M e t a d a t a   c r e a t e d  
+ S t e p   3 :   C r e a t i n g   d y n a m i c   t a b l e   v i a   r a w   S Q L . . .  
+ [ D y n a m i c   T a b l e ]   C r e a t i n g   t a b l e :   i 1 8 n t e s t  
+ [ D y n a m i c   T a b l e ]   A d d e d   c o l u m n :   n a m e   T E X T  
+ [ D y n a m i c   T a b l e ]   A d d e d   c o l u m n :   d e c   T E X T  
+ [ D y n a m i c   T a b l e ]   S Q L :  
+  
+         C R E A T E   T A B L E   " i 1 8 n t e s t "   (  
+             i d   T E X T   P R I M A R Y   K E Y ,  
+             " c r e a t e d A t "   T I M E S T A M P ( 3 )   N O T   N U L L   D E F A U L T   C U R R E N T _ T I M E S T A M P ,  
+             " u p d a t e d A t "   T I M E S T A M P ( 3 )   N O T   N U L L   D E F A U L T   C U R R E N T _ T I M E S T A M P ,  
+             " l o c a l e "   T E X T   N O T   N U L L   D E F A U L T   ' e n ' ,  
+             " r o o t I d "   T E X T ,  
+             " n a m e "   T E X T ,  
+             " d e c "   T E X T  
+         )  
+      
+ [ D y n a m i c   T a b l e ]   “£ ô   T a b l e   i 1 8 n t e s t   c r e a t e d   s u c c e s s f u l l y  
+ %ó <%ô “Ç £   D y n a m i c   t a b l e   c r e a t e d  
+ S t e p   4 :   P r o c e s s i n g   r e l a t i o n s . . .  
+  
+ %ó <%ô “Ç £   C o l l e c t i o n   i 1 8 n t e s t   c r e a t e d   s u c c e s s f u l l y !  
+ %ó <%ô “Ç £   N o   s e r v e r   r e s t a r t   n e e d e d   -   t a b l e   i s   r e a d y   t o   u s e  
+  
+ S t e p   6 :   G e n e r a t i n g   c o l l e c t i o n   m o d u l e   ( m o d e l / s e r v i c e / c o n t r o l l e r / A P I / a d m i n ) . . .  
+ G e n e r a t e d :   m o d e l s \ i 1 8 n t e s t . m o d e l . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ r o u t e . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ r o u t e . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ r o u t e . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ r o u t e . t s  
+ C o l l e c t i o n   m o d u l e   g e n e r a t e d   f o r   " i 1 8 n t e s t "   ( 9   f i l e s )  
+ %ó <%ô “Ç £   C o l l e c t i o n   m o d u l e   g e n e r a t e d  
+   “ù ï   C o m p i l i n g   / a p i / c o l l e c t i o n s / i 1 8 n t e s t   . . .  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n s / i 1 8 n t e s t   i n   2 1 s   ( 1 4 7 4   m o d u l e s )  
+ [ D y n a m i c   T a b l e ]   “£ ô   i 1 8 n   s c h e m a   e n s u r e d   f o r   i 1 8 n t e s t  
+ [ R e l a t i o n   E n g i n e ]   V i r t u a l   r e l a t i o n   f i e l d   n a m e s :   [ ]  
+ [ R e l a t i o n   E n g i n e ]   I n p u t   d a t a   k e y s :   [   ' n a m e ' ,   ' l o c a l e ' ,   ' d e c '   ]  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   n a m e   =   H e l l o  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   l o c a l e   =   e n  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   d e c   =   W o r l d  
+ [ R e l a t i o n   E n g i n e ]   O u t p u t   d a t a   k e y s :   [   ' n a m e ' ,   ' l o c a l e ' ,   ' d e c '   ]  
+ [ D y n a m i c   C R U D ]   C r e a t i n g   r e c o r d   i n   i 1 8 n t e s t   w i t h   c o l u m n s :   [   ' i d ' ,   ' n a m e ' ,   ' l o c a l e ' ,   ' d e c ' ,   ' c r e a t e d A t ' ,   ' u p d a t e d A t ' ,   ' r o o t I d '   ]  
+ [ D y n a m i c   C R U D ]   Q u e r y :    
+         I N S E R T   I N T O   " i 1 8 n t e s t "   ( " i d " ,   " n a m e " ,   " l o c a l e " ,   " d e c " ,   " c r e a t e d A t " ,   " u p d a t e d A t " ,   " r o o t I d " )  
+         V A L U E S   ( $ 1 ,   $ 2 ,   $ 3 ,   $ 4 ,   $ 5 ,   $ 6 ,   $ 7 )  
+         R E T U R N I N G   *  
+      
+ [ D y n a m i c   C R U D ]   V a l u e s :   [  
+     ' c I 5 G 5 p n k l S S N 5 U u Y o ' ,  
+     ' H e l l o ' ,  
+     ' e n ' ,  
+     ' W o r l d ' ,  
+     2 0 2 6 - 1 0 - 1 6 T 1 3 : 0 8 : 1 0 . 9 3 1 Z ,  
+     2 0 2 6 - 1 0 - 1 6 T 1 3 : 0 8 : 1 0 . 9 3 1 Z ,  
+     ' c I 5 G 5 p n k l S S N 5 U u Y o '  
+ ]  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n s / [ n a m e ] / [ i d ] / t r a n s l a t e   i n   4 2 0 m s   ( 1 5 2   m o d u l e s )  
+ [ D y n a m i c   T a b l e ]   “£ ô   i 1 8 n   s c h e m a   e n s u r e d   f o r   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   T a b l e :   i 1 8 n t e s t   - >   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   Q u e r y :   S E L E C T   *   F R O M   " i 1 8 n t e s t "   W H E R E   " r o o t I d "   =   $ 1   O R D E R   B Y   " c r e a t e d A t "   D E S C  
+ [ f i n d M a n y D y n a m i c ]   V a l u e s :   [   ' c I 5 G 5 p n k l S S N 5 U u Y o '   ]  
+ [ f i n d M a n y D y n a m i c ]   T a b l e :   i 1 8 n t e s t   - >   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   Q u e r y :   S E L E C T   *   F R O M   " i 1 8 n t e s t "   W H E R E   " r o o t I d "   =   $ 1   A N D   " l o c a l e "   =   $ 2   O R D E R   B Y   " c r e a t e d A t "   D E S C  
+ [ f i n d M a n y D y n a m i c ]   V a l u e s :   [   ' c I 5 G 5 p n k l S S N 5 U u Y o ' ,   ' f r '   ]  
+ [ D y n a m i c   C R U D ]   C r e a t i n g   r e c o r d   i n   i 1 8 n t e s t   w i t h   c o l u m n s :   [   ' i d ' ,   ' n a m e ' ,   ' d e c ' ,   ' r o o t I d ' ,   ' l o c a l e ' ,   ' c r e a t e d A t ' ,   ' u p d a t e d A t '   ]  
+ [ D y n a m i c   C R U D ]   Q u e r y :    
+         I N S E R T   I N T O   " i 1 8 n t e s t "   ( " i d " ,   " n a m e " ,   " d e c " ,   " r o o t I d " ,   " l o c a l e " ,   " c r e a t e d A t " ,   " u p d a t e d A t " )  
+         V A L U E S   ( $ 1 ,   $ 2 ,   $ 3 ,   $ 4 ,   $ 5 ,   $ 6 ,   $ 7 )  
+         R E T U R N I N G   *  
+      
+ [ D y n a m i c   C R U D ]   V a l u e s :   [  
+     ' c O 7 Z v q W Y R E Z i P j n H ' ,  
+     ' H e l l o ' ,  
+     ' W o r l d ' ,  
+     ' c I 5 G 5 p n k l S S N 5 U u Y o ' ,  
+     ' f r ' ,  
+     2 0 2 6 - 1 0 - 1 6 T 1 3 : 0 8 : 1 3 . 2 7 4 Z ,  
+     2 0 2 6 - 1 0 - 1 6 T 1 3 : 0 8 : 1 3 . 2 7 4 Z  
+ ]  
+ [ f i n d M a n y D y n a m i c ]   T a b l e :   i 1 8 n t e s t   - >   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   Q u e r y :   S E L E C T   *   F R O M   " i 1 8 n t e s t "   W H E R E   " r o o t I d "   =   $ 1   O R D E R   B Y   " c r e a t e d A t "   D E S C  
+ [ f i n d M a n y D y n a m i c ]   V a l u e s :   [   ' c I 5 G 5 p n k l S S N 5 U u Y o '   ]  
+   “ù ï   C o m p i l i n g   / a p i / c o l l e c t i o n s / i 1 8 n t e s t / [ i d ]   . . .  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n s / i 1 8 n t e s t / [ i d ]   i n   8 0 9 m s   ( 1 5 5   m o d u l e s )  
+ [ R e l a t i o n   E n g i n e ]   V i r t u a l   r e l a t i o n   f i e l d   n a m e s :   [ ]  
+ [ R e l a t i o n   E n g i n e ]   I n p u t   d a t a   k e y s :   [   ' n a m e '   ]  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   n a m e   =   B o n j o u r  
+ [ R e l a t i o n   E n g i n e ]   O u t p u t   d a t a   k e y s :   [   ' n a m e '   ]  
+ [ D y n a m i c   T a b l e ]   “£ ô   i 1 8 n   s c h e m a   e n s u r e d   f o r   i 1 8 n t e s t  
+ [ D y n a m i c   C R U D ]   U p d a t i n g   r e c o r d   i n   i 1 8 n t e s t   w i t h   c o l u m n s :   [   ' n a m e '   ]  
+ [ D y n a m i c   C R U D ]   Q u e r y :    
+         U P D A T E   " i 1 8 n t e s t "  
+         S E T   " n a m e "   =   $ 1 ,   " u p d a t e d A t "   =   N O W ( )  
+         W H E R E   i d   =   $ 2  
+         R E T U R N I N G   *  
+      
+ [ D y n a m i c   C R U D ]   V a l u e s :   [   ' B o n j o u r '   ]  
+ [ R e l a t i o n   P o p u l a t e ]   F o u n d   0   r e l a t i o n   f i e l d s   i n   i 1 8 n t e s t  
+ [ R e l a t i o n   P o p u l a t e ]   F o u n d   0   r e l a t i o n   f i e l d s   i n   i 1 8 n t e s t  
+ [ R e l a t i o n   E n g i n e ]   V i r t u a l   r e l a t i o n   f i e l d   n a m e s :   [ ]  
+ [ R e l a t i o n   E n g i n e ]   I n p u t   d a t a   k e y s :   [   ' r o o t I d ' ,   ' n a m e ' ,   ' l o c a l e '   ]  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   r o o t I d   =   h a c k e d - r o o t  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   n a m e   =   B o n j o u r 2  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   l o c a l e   =   e n  
+ [ R e l a t i o n   E n g i n e ]   O u t p u t   d a t a   k e y s :   [   ' r o o t I d ' ,   ' n a m e ' ,   ' l o c a l e '   ]  
+ [ D y n a m i c   C R U D ]   U p d a t i n g   r e c o r d   i n   i 1 8 n t e s t   w i t h   c o l u m n s :   [   ' n a m e '   ]  
+ [ D y n a m i c   C R U D ]   Q u e r y :    
+         U P D A T E   " i 1 8 n t e s t "  
+         S E T   " n a m e "   =   $ 1 ,   " u p d a t e d A t "   =   N O W ( )  
+         W H E R E   i d   =   $ 2  
+         R E T U R N I N G   *  
+      
+ [ D y n a m i c   C R U D ]   V a l u e s :   [   ' B o n j o u r 2 '   ]  
+ [ R e l a t i o n   P o p u l a t e ]   F o u n d   0   r e l a t i o n   f i e l d s   i n   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   T a b l e :   i 1 8 n t e s t   - >   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   Q u e r y :   S E L E C T   *   F R O M   " i 1 8 n t e s t "   W H E R E   " r o o t I d "   =   $ 1   A N D   " l o c a l e "   =   $ 2   O R D E R   B Y   " c r e a t e d A t "   D E S C  
+ [ f i n d M a n y D y n a m i c ]   V a l u e s :   [   ' c I 5 G 5 p n k l S S N 5 U u Y o ' ,   ' f r '   ]  
+   “ù ï   C o m p i l i n g   / a d m i n / c o l l e c t i o n s / [ n a m e ]   . . .  
+   “£ ô   C o m p i l e d   / a d m i n / c o l l e c t i o n s / [ n a m e ]   i n   4 . 6 s   ( 4 3 0   m o d u l e s )  
+   “ù ï   C o m p i l i n g   / a p i / c o l l e c t i o n - t y p e s / [ n a m e ]   . . .  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n - t y p e s / [ n a m e ]   i n   2 . 3 s   ( 4 0 5   m o d u l e s )  
+  
+ = = =   D e l e t i n g   c o l l e c t i o n :   i 1 8 n t e s t   = = =  
+ S t e p   1 :   D e l e t i n g   c o l l e c t i o n   m e t a d a t a . . .  
+ “£ ô   M e t a d a t a   d e l e t e d  
+ S t e p   2 :   D r o p p i n g   d y n a m i c   t a b l e . . .  
+ [ D y n a m i c   T a b l e ]   D r o p p i n g   t a b l e :   i 1 8 n t e s t  
+ [ D y n a m i c   T a b l e ]   “£ ô   T a b l e   i 1 8 n t e s t   d r o p p e d   s u c c e s s f u l l y  
+ “£ ô   T a b l e   d r o p p e d  
+ S t e p   3 :   D e l e t i n g   g e n e r a t e d   c o l l e c t i o n   m o d u l e . . .  
+ R e m o v e d :   m o d e l s \ i 1 8 n t e s t . m o d e l . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t  
+ “£ ô   C o l l e c t i o n   m o d u l e   d e l e t e d  
+  
+ “£ ô   C o l l e c t i o n   i 1 8 n t e s t   d e l e t e d   s u c c e s s f u l l y !  
+  
+   “ù ï   C o m p i l i n g   / a p i / l a n g u a g e s / [ i d ]   . . .  
+   “£ ô   C o m p i l e d   / a p i / l a n g u a g e s / [ i d ]   i n   1 0 . 6 s   ( 1 7 2 3   m o d u l e s )  
+   “ù ï   C o m p i l i n g   / a p i / a u t h / l o g i n   . . .  
+   “£ ô   C o m p i l e d   / a p i / a u t h / l o g i n   i n   2 . 5 s   ( 4 0 9   m o d u l e s )  
+ [ A U T H ]   S t a r t i n g   a u t h e n t i c a t i o n   f o r :   d e v @ e x a m p l e . c o m  
+ [ A U T H ]   U s e r   f o u n d :   t r u e  
+ [ A U T H ]   A u t h e n t i c a t i o n   s u c c e s s f u l  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n - t y p e s   i n   4 4 7 m s   ( 4 1 2   m o d u l e s )  
+  
+ = = =   C r e a t i n g   c o l l e c t i o n :   i 1 8 n t e s t   = = =  
+ S t e p   1 :   C h e c k i n g   i f   t a b l e   e x i s t s . . .  
+ %ó <%ô “Ç £   T a b l e   d o e s   n o t   e x i s t ,   p r o c e e d i n g . . .  
+ S t e p   2 :   C r e a t i n g   c o l l e c t i o n   m e t a d a t a . . .  
+ %ó <%ô “Ç £   M e t a d a t a   c r e a t e d  
+ S t e p   3 :   C r e a t i n g   d y n a m i c   t a b l e   v i a   r a w   S Q L . . .  
+ [ D y n a m i c   T a b l e ]   C r e a t i n g   t a b l e :   i 1 8 n t e s t  
+ [ D y n a m i c   T a b l e ]   A d d e d   c o l u m n :   n a m e   T E X T  
+ [ D y n a m i c   T a b l e ]   A d d e d   c o l u m n :   d e c   T E X T  
+ [ D y n a m i c   T a b l e ]   S Q L :  
+  
+         C R E A T E   T A B L E   " i 1 8 n t e s t "   (  
+             i d   T E X T   P R I M A R Y   K E Y ,  
+             " c r e a t e d A t "   T I M E S T A M P ( 3 )   N O T   N U L L   D E F A U L T   C U R R E N T _ T I M E S T A M P ,  
+             " u p d a t e d A t "   T I M E S T A M P ( 3 )   N O T   N U L L   D E F A U L T   C U R R E N T _ T I M E S T A M P ,  
+             " l o c a l e "   T E X T   N O T   N U L L   D E F A U L T   ' e n ' ,  
+             " r o o t I d "   T E X T ,  
+             " n a m e "   T E X T ,  
+             " d e c "   T E X T  
+         )  
+      
+ [ D y n a m i c   T a b l e ]   “£ ô   T a b l e   i 1 8 n t e s t   c r e a t e d   s u c c e s s f u l l y  
+ %ó <%ô “Ç £   D y n a m i c   t a b l e   c r e a t e d  
+ S t e p   4 :   P r o c e s s i n g   r e l a t i o n s . . .  
+  
+ %ó <%ô “Ç £   C o l l e c t i o n   i 1 8 n t e s t   c r e a t e d   s u c c e s s f u l l y !  
+ %ó <%ô “Ç £   N o   s e r v e r   r e s t a r t   n e e d e d   -   t a b l e   i s   r e a d y   t o   u s e  
+  
+ S t e p   6 :   G e n e r a t i n g   c o l l e c t i o n   m o d u l e   ( m o d e l / s e r v i c e / c o n t r o l l e r / A P I / a d m i n ) . . .  
+ G e n e r a t e d :   m o d e l s \ i 1 8 n t e s t . m o d e l . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ r o u t e . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ r o u t e . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ r o u t e . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ r o u t e . t s  
+ C o l l e c t i o n   m o d u l e   g e n e r a t e d   f o r   " i 1 8 n t e s t "   ( 9   f i l e s )  
+ %ó <%ô “Ç £   C o l l e c t i o n   m o d u l e   g e n e r a t e d  
+   “£ ô   C o m p i l e d   i n   5 . 3 s   ( 1 4 6 3   m o d u l e s )  
+   “ù ï   C o m p i l i n g   / a d m i n / c o l l e c t i o n s / [ n a m e ]   . . .  
+   “£ ô   C o m p i l e d   / a d m i n / c o l l e c t i o n s / [ n a m e ]   i n   9 7 9 m s   ( 4 1 2   m o d u l e s )  
+  
+ = = =   D e l e t i n g   c o l l e c t i o n :   i 1 8 n t e s t   = = =  
+ S t e p   1 :   D e l e t i n g   c o l l e c t i o n   m e t a d a t a . . .  
+ “£ ô   M e t a d a t a   d e l e t e d  
+ S t e p   2 :   D r o p p i n g   d y n a m i c   t a b l e . . .  
+ [ D y n a m i c   T a b l e ]   D r o p p i n g   t a b l e :   i 1 8 n t e s t  
+ [ D y n a m i c   T a b l e ]   “£ ô   T a b l e   i 1 8 n t e s t   d r o p p e d   s u c c e s s f u l l y  
+ “£ ô   T a b l e   d r o p p e d  
+ S t e p   3 :   D e l e t i n g   g e n e r a t e d   c o l l e c t i o n   m o d u l e . . .  
+ R e m o v e d :   m o d e l s \ i 1 8 n t e s t . m o d e l . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t  
+ “£ ô   C o l l e c t i o n   m o d u l e   d e l e t e d  
+  
+ “£ ô   C o l l e c t i o n   i 1 8 n t e s t   d e l e t e d   s u c c e s s f u l l y !  
+  
+   “£ ô   C o m p i l e d   i n   1 0 . 2 s   ( 1 7 3 4   m o d u l e s )  
+ [ A U T H ]   S t a r t i n g   a u t h e n t i c a t i o n   f o r :   d e v @ e x a m p l e . c o m  
+ [ A U T H ]   U s e r   f o u n d :   t r u e  
+ [ A U T H ]   A u t h e n t i c a t i o n   s u c c e s s f u l  
+   “ù ï   C o m p i l i n g   / a p i / l a n g u a g e s   . . .  
+   “£ ô   C o m p i l e d   / a p i / l a n g u a g e s   i n   1 0 9 7 m s   ( 4 1 3   m o d u l e s )  
+   “£ ô   C o m p i l e d   / a p i / l a n g u a g e s / [ i d ]   i n   5 5 1 m s   ( 4 1 6   m o d u l e s )  
+  
+ = = =   C r e a t i n g   c o l l e c t i o n :   i 1 8 n t e s t   = = =  
+ S t e p   1 :   C h e c k i n g   i f   t a b l e   e x i s t s . . .  
+ %ó <%ô “Ç £   T a b l e   d o e s   n o t   e x i s t ,   p r o c e e d i n g . . .  
+ S t e p   2 :   C r e a t i n g   c o l l e c t i o n   m e t a d a t a . . .  
+ %ó <%ô “Ç £   M e t a d a t a   c r e a t e d  
+ S t e p   3 :   C r e a t i n g   d y n a m i c   t a b l e   v i a   r a w   S Q L . . .  
+ [ D y n a m i c   T a b l e ]   C r e a t i n g   t a b l e :   i 1 8 n t e s t  
+ [ D y n a m i c   T a b l e ]   A d d e d   c o l u m n :   n a m e   T E X T  
+ [ D y n a m i c   T a b l e ]   A d d e d   c o l u m n :   d e c   T E X T  
+ [ D y n a m i c   T a b l e ]   S Q L :  
+  
+         C R E A T E   T A B L E   " i 1 8 n t e s t "   (  
+             i d   T E X T   P R I M A R Y   K E Y ,  
+             " c r e a t e d A t "   T I M E S T A M P ( 3 )   N O T   N U L L   D E F A U L T   C U R R E N T _ T I M E S T A M P ,  
+             " u p d a t e d A t "   T I M E S T A M P ( 3 )   N O T   N U L L   D E F A U L T   C U R R E N T _ T I M E S T A M P ,  
+             " l o c a l e "   T E X T   N O T   N U L L   D E F A U L T   ' e n ' ,  
+             " r o o t I d "   T E X T ,  
+             " n a m e "   T E X T ,  
+             " d e c "   T E X T  
+         )  
+      
+ [ D y n a m i c   T a b l e ]   “£ ô   T a b l e   i 1 8 n t e s t   c r e a t e d   s u c c e s s f u l l y  
+ %ó <%ô “Ç £   D y n a m i c   t a b l e   c r e a t e d  
+ S t e p   4 :   P r o c e s s i n g   r e l a t i o n s . . .  
+  
+ %ó <%ô “Ç £   C o l l e c t i o n   i 1 8 n t e s t   c r e a t e d   s u c c e s s f u l l y !  
+ %ó <%ô “Ç £   N o   s e r v e r   r e s t a r t   n e e d e d   -   t a b l e   i s   r e a d y   t o   u s e  
+  
+ S t e p   6 :   G e n e r a t i n g   c o l l e c t i o n   m o d u l e   ( m o d e l / s e r v i c e / c o n t r o l l e r / A P I / a d m i n ) . . .  
+ G e n e r a t e d :   m o d e l s \ i 1 8 n t e s t . m o d e l . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ r o u t e . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ r o u t e . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ r o u t e . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ G e n e r a t e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ r o u t e . t s  
+ C o l l e c t i o n   m o d u l e   g e n e r a t e d   f o r   " i 1 8 n t e s t "   ( 9   f i l e s )  
+ %ó <%ô “Ç £   C o l l e c t i o n   m o d u l e   g e n e r a t e d  
+   “ù ï   C o m p i l i n g   / a p i / c o l l e c t i o n s / i 1 8 n t e s t   . . .  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n s / i 1 8 n t e s t   i n   8 . 8 s   ( 1 7 5 2   m o d u l e s )  
+ [ D y n a m i c   T a b l e ]   “£ ô   i 1 8 n   s c h e m a   e n s u r e d   f o r   i 1 8 n t e s t  
+ [ R e l a t i o n   E n g i n e ]   V i r t u a l   r e l a t i o n   f i e l d   n a m e s :   [ ]  
+ [ R e l a t i o n   E n g i n e ]   I n p u t   d a t a   k e y s :   [   ' n a m e ' ,   ' l o c a l e ' ,   ' d e c '   ]  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   n a m e   =   H e l l o  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   l o c a l e   =   e n  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   d e c   =   W o r l d  
+ [ R e l a t i o n   E n g i n e ]   O u t p u t   d a t a   k e y s :   [   ' n a m e ' ,   ' l o c a l e ' ,   ' d e c '   ]  
+ [ D y n a m i c   C R U D ]   C r e a t i n g   r e c o r d   i n   i 1 8 n t e s t   w i t h   c o l u m n s :   [   ' i d ' ,   ' n a m e ' ,   ' l o c a l e ' ,   ' d e c ' ,   ' c r e a t e d A t ' ,   ' u p d a t e d A t ' ,   ' r o o t I d '   ]  
+ [ D y n a m i c   C R U D ]   Q u e r y :    
+         I N S E R T   I N T O   " i 1 8 n t e s t "   ( " i d " ,   " n a m e " ,   " l o c a l e " ,   " d e c " ,   " c r e a t e d A t " ,   " u p d a t e d A t " ,   " r o o t I d " )  
+         V A L U E S   ( $ 1 ,   $ 2 ,   $ 3 ,   $ 4 ,   $ 5 ,   $ 6 ,   $ 7 )  
+         R E T U R N I N G   *  
+      
+ [ D y n a m i c   C R U D ]   V a l u e s :   [  
+     ' c L R B U 5 t e d C j k o z u q J ' ,  
+     ' H e l l o ' ,  
+     ' e n ' ,  
+     ' W o r l d ' ,  
+     2 0 2 6 - 1 0 - 1 6 T 1 3 : 1 1 : 1 2 . 1 3 4 Z ,  
+     2 0 2 6 - 1 0 - 1 6 T 1 3 : 1 1 : 1 2 . 1 3 4 Z ,  
+     ' c L R B U 5 t e d C j k o z u q J '  
+ ]  
+   “ù ï   C o m p i l i n g   / a p i / c o l l e c t i o n s / [ n a m e ] / [ i d ] / t r a n s l a t e   . . .  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n s / [ n a m e ] / [ i d ] / t r a n s l a t e   i n   5 7 5 m s   ( 1 5 5   m o d u l e s )  
+ [ D y n a m i c   T a b l e ]   “£ ô   i 1 8 n   s c h e m a   e n s u r e d   f o r   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   T a b l e :   i 1 8 n t e s t   - >   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   Q u e r y :   S E L E C T   *   F R O M   " i 1 8 n t e s t "   W H E R E   " r o o t I d "   =   $ 1   O R D E R   B Y   " c r e a t e d A t "   D E S C  
+ [ f i n d M a n y D y n a m i c ]   V a l u e s :   [   ' c L R B U 5 t e d C j k o z u q J '   ]  
+ [ f i n d M a n y D y n a m i c ]   T a b l e :   i 1 8 n t e s t   - >   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   Q u e r y :   S E L E C T   *   F R O M   " i 1 8 n t e s t "   W H E R E   " r o o t I d "   =   $ 1   A N D   " l o c a l e "   =   $ 2   O R D E R   B Y   " c r e a t e d A t "   D E S C  
+ [ f i n d M a n y D y n a m i c ]   V a l u e s :   [   ' c L R B U 5 t e d C j k o z u q J ' ,   ' f r '   ]  
+ [ D y n a m i c   C R U D ]   C r e a t i n g   r e c o r d   i n   i 1 8 n t e s t   w i t h   c o l u m n s :   [   ' i d ' ,   ' n a m e ' ,   ' d e c ' ,   ' r o o t I d ' ,   ' l o c a l e ' ,   ' c r e a t e d A t ' ,   ' u p d a t e d A t '   ]  
+ [ D y n a m i c   C R U D ]   Q u e r y :    
+         I N S E R T   I N T O   " i 1 8 n t e s t "   ( " i d " ,   " n a m e " ,   " d e c " ,   " r o o t I d " ,   " l o c a l e " ,   " c r e a t e d A t " ,   " u p d a t e d A t " )  
+         V A L U E S   ( $ 1 ,   $ 2 ,   $ 3 ,   $ 4 ,   $ 5 ,   $ 6 ,   $ 7 )  
+         R E T U R N I N G   *  
+      
+ [ D y n a m i c   C R U D ]   V a l u e s :   [  
+     ' c F U N U C e v O G 3 z Z 9 A g 5 ' ,  
+     ' H e l l o ' ,  
+     ' W o r l d ' ,  
+     ' c L R B U 5 t e d C j k o z u q J ' ,  
+     ' f r ' ,  
+     2 0 2 6 - 1 0 - 1 6 T 1 3 : 1 1 : 1 4 . 1 1 1 Z ,  
+     2 0 2 6 - 1 0 - 1 6 T 1 3 : 1 1 : 1 4 . 1 1 1 Z  
+ ]  
+ [ f i n d M a n y D y n a m i c ]   T a b l e :   i 1 8 n t e s t   - >   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   Q u e r y :   S E L E C T   *   F R O M   " i 1 8 n t e s t "   W H E R E   " r o o t I d "   =   $ 1   O R D E R   B Y   " c r e a t e d A t "   D E S C  
+ [ f i n d M a n y D y n a m i c ]   V a l u e s :   [   ' c L R B U 5 t e d C j k o z u q J '   ]  
+   “ù ï   C o m p i l i n g   / a p i / c o l l e c t i o n s / i 1 8 n t e s t / [ i d ]   . . .  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n s / i 1 8 n t e s t / [ i d ]   i n   7 3 4 m s   ( 1 5 8   m o d u l e s )  
+ [ R e l a t i o n   E n g i n e ]   V i r t u a l   r e l a t i o n   f i e l d   n a m e s :   [ ]  
+ [ R e l a t i o n   E n g i n e ]   I n p u t   d a t a   k e y s :   [   ' n a m e '   ]  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   n a m e   =   B o n j o u r  
+ [ R e l a t i o n   E n g i n e ]   O u t p u t   d a t a   k e y s :   [   ' n a m e '   ]  
+ [ D y n a m i c   T a b l e ]   “£ ô   i 1 8 n   s c h e m a   e n s u r e d   f o r   i 1 8 n t e s t  
+ [ D y n a m i c   C R U D ]   U p d a t i n g   r e c o r d   i n   i 1 8 n t e s t   w i t h   c o l u m n s :   [   ' n a m e '   ]  
+ [ D y n a m i c   C R U D ]   Q u e r y :    
+         U P D A T E   " i 1 8 n t e s t "  
+         S E T   " n a m e "   =   $ 1 ,   " u p d a t e d A t "   =   N O W ( )  
+         W H E R E   i d   =   $ 2  
+         R E T U R N I N G   *  
+      
+ [ D y n a m i c   C R U D ]   V a l u e s :   [   ' B o n j o u r '   ]  
+ [ R e l a t i o n   P o p u l a t e ]   F o u n d   0   r e l a t i o n   f i e l d s   i n   i 1 8 n t e s t  
+ [ R e l a t i o n   P o p u l a t e ]   F o u n d   0   r e l a t i o n   f i e l d s   i n   i 1 8 n t e s t  
+ [ R e l a t i o n   E n g i n e ]   V i r t u a l   r e l a t i o n   f i e l d   n a m e s :   [ ]  
+ [ R e l a t i o n   E n g i n e ]   I n p u t   d a t a   k e y s :   [   ' r o o t I d ' ,   ' n a m e ' ,   ' l o c a l e '   ]  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   r o o t I d   =   h a c k e d - r o o t  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   n a m e   =   B o n j o u r 2  
+ [ R e l a t i o n   E n g i n e ]   K e e p i n g   f i e l d :   l o c a l e   =   e n  
+ [ R e l a t i o n   E n g i n e ]   O u t p u t   d a t a   k e y s :   [   ' r o o t I d ' ,   ' n a m e ' ,   ' l o c a l e '   ]  
+ [ D y n a m i c   C R U D ]   U p d a t i n g   r e c o r d   i n   i 1 8 n t e s t   w i t h   c o l u m n s :   [   ' n a m e '   ]  
+ [ D y n a m i c   C R U D ]   Q u e r y :    
+         U P D A T E   " i 1 8 n t e s t "  
+         S E T   " n a m e "   =   $ 1 ,   " u p d a t e d A t "   =   N O W ( )  
+         W H E R E   i d   =   $ 2  
+         R E T U R N I N G   *  
+      
+ [ D y n a m i c   C R U D ]   V a l u e s :   [   ' B o n j o u r 2 '   ]  
+ [ R e l a t i o n   P o p u l a t e ]   F o u n d   0   r e l a t i o n   f i e l d s   i n   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   T a b l e :   i 1 8 n t e s t   - >   i 1 8 n t e s t  
+ [ f i n d M a n y D y n a m i c ]   Q u e r y :   S E L E C T   *   F R O M   " i 1 8 n t e s t "   W H E R E   " r o o t I d "   =   $ 1   A N D   " l o c a l e "   =   $ 2   O R D E R   B Y   " c r e a t e d A t "   D E S C  
+ [ f i n d M a n y D y n a m i c ]   V a l u e s :   [   ' c L R B U 5 t e d C j k o z u q J ' ,   ' f r '   ]  
+   “ù ï   C o m p i l i n g   / a d m i n / c o l l e c t i o n s / [ n a m e ]   . . .  
+   “£ ô   C o m p i l e d   / a d m i n / c o l l e c t i o n s / [ n a m e ]   i n   7 9 9 m s   ( 4 3 3   m o d u l e s )  
+   “ù ï   C o m p i l i n g   / a d m i n / c o l l e c t i o n s / [ n a m e ] / n e w   . . .  
+   “£ ô   C o m p i l e d   / a d m i n / c o l l e c t i o n s / [ n a m e ] / n e w   i n   7 . 6 s   ( 1 4 4 2   m o d u l e s )  
+   “ù ï   C o m p i l i n g   / a d m i n / c o l l e c t i o n s / [ n a m e ] / [ i d ]   . . .  
+   “£ ô   C o m p i l e d   / a d m i n / c o l l e c t i o n s / [ n a m e ] / [ i d ]   i n   1 5 5 8 m s   ( 1 4 4 7   m o d u l e s )  
+   “ù ï   C o m p i l i n g   / a p i / c o l l e c t i o n - t y p e s / [ n a m e ]   . . .  
+   “£ ô   C o m p i l e d   / a p i / c o l l e c t i o n - t y p e s / [ n a m e ]   i n   1 3 4 5 m s   ( 1 4 5 0   m o d u l e s )  
+  
+ = = =   D e l e t i n g   c o l l e c t i o n :   i 1 8 n t e s t   = = =  
+ S t e p   1 :   D e l e t i n g   c o l l e c t i o n   m e t a d a t a . . .  
+ “£ ô   M e t a d a t a   d e l e t e d  
+ S t e p   2 :   D r o p p i n g   d y n a m i c   t a b l e . . .  
+ [ D y n a m i c   T a b l e ]   D r o p p i n g   t a b l e :   i 1 8 n t e s t  
+ [ D y n a m i c   T a b l e ]   “£ ô   T a b l e   i 1 8 n t e s t   d r o p p e d   s u c c e s s f u l l y  
+ “£ ô   T a b l e   d r o p p e d  
+ S t e p   3 :   D e l e t i n g   g e n e r a t e d   c o l l e c t i o n   m o d u l e . . .  
+ R e m o v e d :   m o d e l s \ i 1 8 n t e s t . m o d e l . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t \ [ i d ] \ h a n d l e r . t s  
+ R e m o v e d :   a p p \ ( b a c k e n d ) \ v 1 \ a p i \ c o l l e c t i o n s \ i 1 8 n t e s t  
+ “£ ô   C o l l e c t i o n   m o d u l e   d e l e t e d  
+  
+ “£ ô   C o l l e c t i o n   i 1 8 n t e s t   d e l e t e d   s u c c e s s f u l l y !  
+  
+   “£ ô   C o m p i l e d   i n   4 . 4 s   ( 2 7 6 4   m o d u l e s )  
+  
+ >   n e x t j s - c m s @ 1 . 0 . 0   d e v  
+ >   n e x t   d e v  
+  
+       “û “%  N e x t . j s   1 4 . 1 . 0  
+       -   L o c a l :                 h t t p : / / l o c a l h o s t : 3 0 0 0  
+       -   E n v i r o n m e n t s :   . e n v  
+  
+   “£ ô   R e a d y   i n   5 . 6 s  
+   “ù ï   C o m p i l i n g   / a p i / a u t h / l o g i n   . . .  
+   “£ ô   C o m p i l e d   / a p i / a u t h / l o g i n   i n   1 9 1 7 m s   ( 1 2 2   m o d u l e s )  
+ [ A U T H ]   S t a r t i n g   a u t h e n t i c a t i o n   f o r :   d e v @ e x a m p l e . c o m  
+ [ A U T H ]   U s e r   f o u n d :   t r u e  
+ [ A U T H ]   A u t h e n t i c a t i o n   s u c c e s s f u l  
+ 

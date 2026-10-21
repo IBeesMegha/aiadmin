@@ -3,8 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { Layout } from '@/components/admin/Layout';
 import { DynamicForm } from '@/components/admin/DynamicForm';
+import { LanguageSelect } from '@/components/admin/LanguageSelect';
+import { CreateTranslationDialog } from '@/components/admin/CreateTranslationDialog';
+import { useActiveLanguages } from '@/hooks/useActiveLanguages';
+import { fetchTranslations, createEntryTranslation } from '@/lib/content-i18n-client';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Languages } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { fetchWithAuth } from '@/lib/api-client';
@@ -15,29 +19,47 @@ export default function EditCollectionEntry() {
   const name = params?.name as string;
   const id = params?.id as string;
 
+  const { languages } = useActiveLanguages();
+
   const [collectionType, setCollectionType] = useState<any>(null);
   const [entry, setEntry] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [serverError, setServerError] = useState<{ field: string; message: string } | null>(null);
+  const [selectedLocale, setSelectedLocale] = useState('en');
+  const [translationsByLocale, setTranslationsByLocale] = useState<Record<string, string>>({});
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [creatingLocale, setCreatingLocale] = useState<string | null>(null);
 
   useEffect(() => {
     if (name && id) {
       fetchData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, id]);
 
   const fetchData = async () => {
     try {
-      const [typeRes, entryRes] = await Promise.all([
+      const [typeRes, entryRes, translationData] = await Promise.all([
         fetchWithAuth(`/api/collection-types/${name}`),
         fetchWithAuth(`/api/collections/${name}/${id}`),
+        fetchTranslations(name, id).catch(() => null),
       ]);
 
       const typeData = await typeRes.json();
       const entryData = await entryRes.json();
 
       setCollectionType(typeData.data);
-      
+
+      if (translationData) {
+        const map: Record<string, string> = {};
+        translationData.translations.forEach((translation) => {
+          map[translation.locale] = translation.id;
+        });
+        setTranslationsByLocale(map);
+      }
+
+      setSelectedLocale(entryData.data?.locale || 'en');
+
       // Format dates for HTML date inputs (YYYY-MM-DD)
       // Also handle JSON fields for media
       // Also handle relation fields - extract IDs from populated objects
@@ -234,6 +256,37 @@ export default function EditCollectionEntry() {
     }
   };
 
+  const handleLanguageChange = (code: string) => {
+    if (code === selectedLocale) return;
+
+    const existingId = translationsByLocale[code];
+    if (existingId) {
+      // Open the existing translation.
+      router.push(`/admin/collections/${name}/${existingId}`);
+      return;
+    }
+
+    // No translation yet - let the user create one.
+    setDialogOpen(true);
+  };
+
+  const handleCreateTranslation = async (locale: string) => {
+    setCreatingLocale(locale);
+    const toastId = toast.loading('Creating translation...');
+
+    try {
+      const created = await createEntryTranslation(name, id, locale);
+      toast.success('Translation created', { id: toastId });
+      setDialogOpen(false);
+      // Open the newly created translation for editing.
+      router.push(`/admin/collections/${name}/${created.id}`);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create translation', { id: toastId });
+    } finally {
+      setCreatingLocale(null);
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -263,11 +316,47 @@ export default function EditCollectionEntry() {
           <span>Back to {collectionType.displayName}</span>
         </Link>
 
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Edit {collectionType.displayName}
-          </h1>
+        <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Edit {collectionType.displayName}
+            </h1>
+            {languages.length > 0 && (
+              <div className="flex items-center gap-1 mt-2">
+                {languages
+                  .filter((language) => translationsByLocale[language.code])
+                  .map((language) => (
+                    <span
+                      key={language.code}
+                      title={language.name}
+                      className={`text-lg leading-none px-1 rounded ${
+                        language.code === selectedLocale ? 'ring-2 ring-blue-400' : ''
+                      }`}
+                      aria-hidden
+                    >
+                      {language.flag || '🏳️'}
+                    </span>
+                  ))}
+              </div>
+            )}
+          </div>
           <div className="flex items-center space-x-4">
+            {languages.length > 0 && (
+              <LanguageSelect
+                languages={languages}
+                value={selectedLocale}
+                onChange={handleLanguageChange}
+                translationCodes={Object.keys(translationsByLocale)}
+                label="Language"
+              />
+            )}
+            <button
+              onClick={() => setDialogOpen(true)}
+              className="flex items-center space-x-2 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
+            >
+              <Languages size={18} />
+              <span>Create translation</span>
+            </button>
             <button
               onClick={handlePublish}
               className={`px-4 py-2 rounded-lg ${
@@ -293,6 +382,15 @@ export default function EditCollectionEntry() {
           />
         </div>
       </div>
+
+      <CreateTranslationDialog
+        open={dialogOpen}
+        languages={languages}
+        existingCodes={Object.keys(translationsByLocale)}
+        onClose={() => setDialogOpen(false)}
+        onSelect={handleCreateTranslation}
+        creatingLocale={creatingLocale}
+      />
     </Layout>
   );
 }

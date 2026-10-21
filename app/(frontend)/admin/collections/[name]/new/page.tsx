@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { Layout } from '@/components/admin/Layout';
 import { DynamicForm } from '@/components/admin/DynamicForm';
+import { LanguageSelect } from '@/components/admin/LanguageSelect';
+import { useActiveLanguages } from '@/hooks/useActiveLanguages';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -14,9 +16,12 @@ export default function NewCollectionEntry() {
   const params = useParams();
   const name = params?.name as string;
 
+  const { languages } = useActiveLanguages();
+
   const [collectionType, setCollectionType] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [serverError, setServerError] = useState<{ field: string; message: string } | null>(null);
+  const [selectedLocale, setSelectedLocale] = useState('en');
 
   const fetchCollectionType = async () => {
     try {
@@ -53,7 +58,10 @@ export default function NewCollectionEntry() {
       
       console.log('[Create Form] Original data:', data);
       console.log('[Create Form] Cleaned data:', cleanedData);
-      
+
+      // Attach the language selected in the dropdown (defaults to English).
+      cleanedData.locale = selectedLocale;
+
       const response = await fetchWithAuth(`/api/collections/${name}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -127,6 +135,14 @@ export default function NewCollectionEntry() {
           <h1 className="text-3xl font-bold text-gray-900">
             Create New {collectionType.displayName}
           </h1>
+          {languages.length > 0 && (
+            <LanguageSelect
+              languages={languages}
+              value={selectedLocale}
+              onChange={setSelectedLocale}
+              label="Language"
+            />
+          )}
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">

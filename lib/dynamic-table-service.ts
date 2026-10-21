@@ -14,6 +14,27 @@ import { prisma } from './prisma';
 import { Field, RelationMetadata } from './types';
 
 /**
+ * Internationalization columns that every dynamic content table carries.
+ *
+ * - `locale`  language code of the entry (defaults to English)
+ * - `rootId`  shared identifier across every translation of the same entry
+ *
+ * These are "logical" columns managed entirely at runtime (raw SQL): they are
+ * never added to the Prisma schema or to Prisma migrations.
+ */
+export const I18N_LOCALE_COLUMN = 'locale';
+export const I18N_ROOT_ID_COLUMN = 'rootId';
+
+/** Default language code used for newly created entries when none is supplied. */
+export const DEFAULT_CONTENT_LOCALE = 'en';
+
+/**
+ * In-process cache of tables whose i18n columns have already been ensured.
+ * Avoids repeating the cheap catalog checks on every CRUD call.
+ */
+const i18nEnsuredTables = new Set<string>();
+
+/**
  * Validate table/column name to prevent SQL injection
  * Only allows alphanumeric characters and underscores
  */
@@ -138,6 +159,8 @@ export async function createDynamicTable(
     'id TEXT PRIMARY KEY',
     '"createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP',
     '"updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP',
+    `"${I18N_LOCALE_COLUMN}" TEXT NOT NULL DEFAULT '${DEFAULT_CONTENT_LOCALE}'`,
+    `"${I18N_ROOT_ID_COLUMN}" TEXT`,
   ];
 
   // Add custom fields
@@ -201,6 +224,17 @@ export async function createDynamicTable(
   await prisma.$executeRawUnsafe(
     `CREATE INDEX "${tableName}_createdAt_idx" ON "${tableName}" ("createdAt" DESC)`
   );
+
+  // Indexes backing translations (rootId lookups) and duplicate prevention
+  await prisma.$executeRawUnsafe(
+    `CREATE INDEX "${tableName}_rootId_idx" ON "${tableName}" ("rootId")`
+  );
+  await prisma.$executeRawUnsafe(
+    `CREATE UNIQUE INDEX "${tableName}_rootId_locale_key" ON "${tableName}" ("rootId", "locale")`
+  );
+
+  // Table is brand new - its i18n columns are already in place.
+  i18nEnsuredTables.add(tableName);
 
   console.log(`[Dynamic Table] ✓ Table ${tableName} created successfully`);
 }
@@ -346,6 +380,19 @@ export async function renameDynamicTable(
     );
   }
 
+  for (const suffix of ['_rootId_idx', '_rootId_locale_key']) {
+    try {
+      await prisma.$executeRawUnsafe(
+        `ALTER INDEX "${oldTable}${suffix}" RENAME TO "${newTable}${suffix}"`
+      );
+    } catch (error: any) {
+      console.warn(
+        `[Dynamic Table] Could not rename index ${oldTable}${suffix}:`,
+        error.message
+      );
+    }
+  }
+
   console.log(`[Dynamic Table] ✓ Table renamed to ${newTable}`);
 }
 
@@ -400,6 +447,75 @@ export async function getTableColumns(tableName: string): Promise<Array<{
 }
 
 /**
+ * Ensure a dynamic content table carries the internationalization columns.
+ *
+ * This is the safe, non-destructive migration for already-existing tables:
+ *   - adds `locale` (TEXT NOT NULL DEFAULT 'en') when missing
+ *   - adds `rootId` (TEXT) when missing
+ *   - backfills `rootId = id` for every existing row so each existing entry
+ *     becomes the root of its own translation group (existing data untouched)
+ *   - creates an index on `rootId` and a UNIQUE index on (`rootId`, `locale`)
+ *     so a content type can never hold two entries with the same translation
+ *     group + language
+ *
+ * It is idempotent and cached per process, so it is safe to call from hot paths.
+ */
+export async function ensureContentI18nSchema(
+  collectionName: string
+): Promise<void> {
+  const tableName = sanitizeTableName(collectionName);
+
+  if (!validateSqlIdentifier(tableName)) {
+    throw new Error(`Invalid table name: ${collectionName}`);
+  }
+
+  if (i18nEnsuredTables.has(tableName)) return;
+  if (!(await tableExists(tableName))) return;
+
+  const existingColumns = await getTableColumns(tableName);
+  const existingNames = new Set(existingColumns.map((col) => col.column_name));
+
+  if (!existingNames.has(I18N_LOCALE_COLUMN)) {
+    console.log(`[Dynamic Table] Adding i18n column: ${tableName}.${I18N_LOCALE_COLUMN}`);
+    await prisma.$executeRawUnsafe(
+      `ALTER TABLE "${tableName}" ADD COLUMN "${I18N_LOCALE_COLUMN}" TEXT NOT NULL DEFAULT '${DEFAULT_CONTENT_LOCALE}'`
+    );
+  }
+
+  if (!existingNames.has(I18N_ROOT_ID_COLUMN)) {
+    console.log(`[Dynamic Table] Adding i18n column: ${tableName}.${I18N_ROOT_ID_COLUMN}`);
+    await prisma.$executeRawUnsafe(
+      `ALTER TABLE "${tableName}" ADD COLUMN "${I18N_ROOT_ID_COLUMN}" TEXT`
+    );
+  }
+
+  // Backfill: every existing entry becomes the root of its own translation group.
+  await prisma.$executeRawUnsafe(
+    `UPDATE "${tableName}" SET "${I18N_ROOT_ID_COLUMN}" = id WHERE "${I18N_ROOT_ID_COLUMN}" IS NULL`
+  );
+
+  await prisma.$executeRawUnsafe(
+    `CREATE INDEX IF NOT EXISTS "${tableName}_rootId_idx" ON "${tableName}" ("${I18N_ROOT_ID_COLUMN}")`
+  );
+
+  try {
+    await prisma.$executeRawUnsafe(
+      `CREATE UNIQUE INDEX IF NOT EXISTS "${tableName}_rootId_locale_key" ON "${tableName}" ("${I18N_ROOT_ID_COLUMN}", "${I18N_LOCALE_COLUMN}")`
+    );
+  } catch (error: any) {
+    // If legacy data already violates the constraint we keep the data intact
+    // (non-destructive) and surface the problem instead of failing the request.
+    console.error(
+      `[Dynamic Table] Could not create unique (rootId, locale) index on ${tableName}:`,
+      error.message
+    );
+  }
+
+  i18nEnsuredTables.add(tableName);
+  console.log(`[Dynamic Table] ✓ i18n schema ensured for ${tableName}`);
+}
+
+/**
  * Sync table schema with collection type fields
  * Adds missing columns and removes extra columns
  */
@@ -411,6 +527,10 @@ export async function syncTableSchema(
 
   console.log(`[Dynamic Table] Syncing schema for: ${tableName}`);
 
+  // Guarantee the runtime i18n columns exist before we compare columns, so
+  // they are never treated as obsolete and removed.
+  await ensureContentI18nSchema(tableName);
+
   // Get existing columns
   const existingColumns = await getTableColumns(tableName);
   const existingColumnNames = new Set(
@@ -418,7 +538,18 @@ export async function syncTableSchema(
   );
 
   // Core columns that should always exist and should never be removed
-  const coreColumns = new Set(['id', 'createdAt', 'updatedAt', 'translationGroupId', 'lang', 'localeStatus']);
+  const coreColumns = new Set([
+    'id',
+    'createdAt',
+    'updatedAt',
+    I18N_LOCALE_COLUMN,
+    I18N_ROOT_ID_COLUMN,
+    // Legacy i18n columns from a previous storage design - kept so they are
+    // never dropped if present in an older table.
+    'translationGroupId',
+    'lang',
+    'localeStatus',
+  ]);
 
   // Determine which columns should exist based on fields
   const expectedColumns = new Set<string>(Array.from(coreColumns));

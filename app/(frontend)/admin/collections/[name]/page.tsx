@@ -1,11 +1,16 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Layout } from '@/components/admin/Layout';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Plus, Edit, Trash2, GripVertical, X, Settings, Download } from 'lucide-react';
+import { Plus, Edit, Trash2, GripVertical, X, Settings, Download, Languages } from 'lucide-react';
 import { ColumnConfigModal } from '@/components/admin/ColumnConfigModal';
+import { LanguageSelect } from '@/components/admin/LanguageSelect';
+import { CreateTranslationDialog } from '@/components/admin/CreateTranslationDialog';
+import { useActiveLanguages } from '@/hooks/useActiveLanguages';
+import { createEntryTranslation } from '@/lib/content-i18n-client';
+import { fetchWithAuth } from '@/lib/api-client';
 import toast from 'react-hot-toast';
 import {
   DndContext,
@@ -43,9 +48,11 @@ interface SortableRowProps {
   collectionType: any;
   isSelected: boolean;
   onSelect: (id: string, checked: boolean) => void;
+  translationFlags: { code: string; flag: string | null; name: string }[];
+  onCreateTranslation: () => void;
 }
 
-const SortableRow: React.FC<SortableRowProps> = ({ entry, index, name, fields, onDelete, onImageClick, visibleColumns, collectionType, isSelected, onSelect }) => {
+const SortableRow: React.FC<SortableRowProps> = ({ entry, index, name, fields, onDelete, onImageClick, visibleColumns, collectionType, isSelected, onSelect, translationFlags, onCreateTranslation }) => {
   const {
     attributes,
     listeners,
@@ -361,9 +368,32 @@ const SortableRow: React.FC<SortableRowProps> = ({ entry, index, name, fields, o
         );
       })}
 
+      {/* Translations */}
+      <td className="px-4 py-4 w-32">
+        <div className="flex items-center gap-1">
+          {translationFlags.map((translation) => (
+            <span
+              key={translation.code}
+              title={translation.name}
+              className="text-lg leading-none"
+              aria-hidden
+            >
+              {translation.flag || '🏳️'}
+            </span>
+          ))}
+        </div>
+      </td>
+
       {/* Actions */}
       <td className="px-4 py-4 text-right w-24">
         <div className="flex items-center justify-end space-x-2">
+          <button
+            onClick={onCreateTranslation}
+            className="text-gray-600 hover:text-blue-600"
+            title="Create translation"
+          >
+            <Languages size={18} />
+          </button>
           <Link
             href={`/admin/collections/${name}/${entry.id}`}
             className="text-blue-600 hover:text-blue-900"
@@ -523,9 +553,15 @@ const ImageLightbox: React.FC<ImageLightboxProps> = ({ images, currentIndex, onC
 
 export default function CollectionList() {
   const params = useParams();
+  const router = useRouter();
   const name = params?.name as string;
 
+  const { languages } = useActiveLanguages();
+
   const [collectionType, setCollectionType] = useState<any>(null);
+  const [rawEntries, setRawEntries] = useState<any[]>([]);
+  const [translationGroups, setTranslationGroups] = useState<Map<string, Map<string, any>>>(new Map());
+  const [selectedLocale, setSelectedLocale] = useState('en');
   const [entries, setEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [lightboxImages, setLightboxImages] = useState<string[] | null>(null);
@@ -534,6 +570,44 @@ export default function CollectionList() {
   const [columnConfig, setColumnConfig] = useState<ColumnConfig[]>([]);
   const [selectedEntries, setSelectedEntries] = useState<Set<string>>(new Set());
   const [showExportMenu, setShowExportMenu] = useState(false);
+  const [translationDialog, setTranslationDialog] = useState<{ entryId: string; existingCodes: string[] } | null>(null);
+  const [creatingLocale, setCreatingLocale] = useState<string | null>(null);
+
+  // Locales that appear anywhere in the collection (used for header badges).
+  const availableLocales = useMemo(
+    () => Array.from(new Set(rawEntries.map((entry) => entry.locale || 'en'))),
+    [rawEntries]
+  );
+
+  /**
+   * Group entries by their translation root. Each group maps a locale to the
+   * entry holding that language, so the list can show one row per content item
+   * in the selected language and which languages it has been translated to.
+   */
+  const buildTranslationGroups = (list: any[]): Map<string, Map<string, any>> => {
+    const groups = new Map<string, Map<string, any>>();
+    for (const entry of list) {
+      const rootId = entry.rootId || entry.id;
+      const locale = entry.locale || 'en';
+      if (!groups.has(rootId)) groups.set(rootId, new Map());
+      const byLocale = groups.get(rootId)!;
+      if (!byLocale.has(locale)) byLocale.set(locale, entry);
+    }
+    return groups;
+  };
+
+  const translationCodesFor = (entry: any): string[] => {
+    const rootId = entry.rootId || entry.id;
+    const group = translationGroups.get(rootId);
+    return group ? Array.from(group.keys()) : [entry.locale || 'en'];
+  };
+
+  const translationFlagsFor = (entry: any) =>
+    translationCodesFor(entry).map((code) => {
+      const language = languages.find((item) => item.code === code);
+      return { code, flag: language?.flag ?? null, name: language?.name ?? code };
+    });
+
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -553,6 +627,18 @@ export default function CollectionList() {
       initializeColumnConfig();
     }
   }, [collectionType]);
+
+  // Show one row per content item, in the currently selected language.
+  useEffect(() => {
+    const display: any[] = [];
+    for (const byLocale of translationGroups.values()) {
+      const entry = byLocale.get(selectedLocale);
+      if (entry) display.push(entry);
+    }
+    display.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    setEntries(display);
+    setSelectedEntries(new Set());
+  }, [selectedLocale, translationGroups]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -617,15 +703,18 @@ export default function CollectionList() {
   const fetchData = async () => {
     try {
       const [typeRes, entriesRes] = await Promise.all([
-        fetch(`/api/collection-types/${name}`),
-        fetch(`/api/collections/${name}`),
+        fetchWithAuth(`/api/collection-types/${name}`),
+        fetchWithAuth(`/api/collections/${name}`),
       ]);
 
       const typeData = await typeRes.json();
       const entriesData = await entriesRes.json();
 
       setCollectionType(typeData.data);
-      setEntries(entriesData.data || []);
+
+      const raw = entriesData.data || [];
+      setRawEntries(raw);
+      setTranslationGroups(buildTranslationGroups(raw));
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -656,7 +745,9 @@ export default function CollectionList() {
       });
 
       if (response.ok) {
-        setEntries(entries.filter((e) => e.id !== id));
+        const remaining = rawEntries.filter((e) => e.id !== id);
+        setRawEntries(remaining);
+        setTranslationGroups(buildTranslationGroups(remaining));
         toast.success('Entry deleted successfully!', { id: toastId });
       } else {
         toast.error('Failed to delete entry', { id: toastId });
@@ -664,6 +755,32 @@ export default function CollectionList() {
     } catch (error) {
       console.error('Error deleting entry:', error);
       toast.error('Failed to delete entry', { id: toastId });
+    }
+  };
+
+  const openTranslationDialog = (entry: any) => {
+    setTranslationDialog({
+      entryId: entry.id,
+      existingCodes: translationCodesFor(entry),
+    });
+  };
+
+  const handleCreateTranslation = async (locale: string) => {
+    if (!translationDialog) return;
+
+    setCreatingLocale(locale);
+    const toastId = toast.loading('Creating translation...');
+
+    try {
+      const created = await createEntryTranslation(name, translationDialog.entryId, locale);
+      toast.success('Translation created', { id: toastId });
+      setTranslationDialog(null);
+      // Open the newly created translation for editing.
+      router.push(`/admin/collections/${name}/${created.id}`);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create translation', { id: toastId });
+    } finally {
+      setCreatingLocale(null);
     }
   };
 
@@ -925,6 +1042,14 @@ export default function CollectionList() {
                 </button>
               </>
             )}
+            {languages.length > 0 && (
+              <LanguageSelect
+                languages={languages}
+                value={selectedLocale}
+                onChange={setSelectedLocale}
+                translationCodes={availableLocales}
+              />
+            )}
             <div className="relative export-menu-container">
               <button
                 onClick={() => setShowExportMenu(!showExportMenu)}
@@ -989,16 +1114,24 @@ export default function CollectionList() {
 
         {entries.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-8 text-center">
-            <p className="text-gray-600 mb-4">
-              No entries yet
-            </p>
-            <Link
-              href={`/admin/collections/${name}/new`}
-              className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              <Plus size={20} />
-              <span>Create First Entry</span>
-            </Link>
+            {rawEntries.length > 0 ? (
+              <p className="text-gray-600 mb-4">
+                No {languages.find((language) => language.code === selectedLocale)?.name || selectedLocale} entries yet. Switch language or create a translation from another language.
+              </p>
+            ) : (
+              <>
+                <p className="text-gray-600 mb-4">
+                  No entries yet
+                </p>
+                <Link
+                  href={`/admin/collections/${name}/new`}
+                  className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  <Plus size={20} />
+                  <span>Create First Entry</span>
+                </Link>
+              </>
+            )}
           </div>
         ) : (
           <>
@@ -1033,6 +1166,7 @@ export default function CollectionList() {
                       </th>
                     );
                   })}
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">Languages</th>
                   <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase w-24">ACTIONS</th>
                 </tr>
               </thead>
@@ -1059,6 +1193,8 @@ export default function CollectionList() {
                         collectionType={collectionType}
                         isSelected={selectedEntries.has(entry.id)}
                         onSelect={handleSelectEntry}
+                        translationFlags={translationFlagsFor(entry)}
+                        onCreateTranslation={() => openTranslationDialog(entry)}
                       />
                     ))}
                   </tbody>
@@ -1086,6 +1222,15 @@ export default function CollectionList() {
           onClose={() => setLightboxImages(null)}
         />
       )}
+
+      <CreateTranslationDialog
+        open={translationDialog !== null}
+        languages={languages}
+        existingCodes={translationDialog?.existingCodes || []}
+        onClose={() => setTranslationDialog(null)}
+        onSelect={handleCreateTranslation}
+        creatingLocale={creatingLocale}
+      />
     </Layout>
   );
 }

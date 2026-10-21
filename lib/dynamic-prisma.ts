@@ -1,6 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import { randomBytes } from 'crypto';
-import { getTableColumns } from './dynamic-table-service';
+import {
+  getTableColumns,
+  ensureContentI18nSchema,
+  DEFAULT_CONTENT_LOCALE,
+} from './dynamic-table-service';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
@@ -31,6 +35,8 @@ export async function executeRawQuery(query: string, params: any[] = []) {
  */
 export async function findManyDynamic(tableName: string, options?: { where?: Record<string, any> }) {
   const sanitizedTableName = tableName.toLowerCase().replace(/-/g, '_');
+
+  await ensureContentI18nSchema(sanitizedTableName);
   
   if (options?.where) {
     const whereKeys = Object.keys(options.where);
@@ -54,6 +60,7 @@ export async function findManyDynamic(tableName: string, options?: { where?: Rec
  */
 export async function findUniqueDynamic(tableName: string, id: string) {
   const sanitizedTableName = tableName.toLowerCase().replace(/-/g, '_');
+  await ensureContentI18nSchema(sanitizedTableName);
   const query = `SELECT * FROM "${sanitizedTableName}" WHERE id = $1`;
   return await executeRawQuery(query, [id]);
 }
@@ -116,10 +123,13 @@ function getDefaultValueForColumn(col: { column_name: string; data_type: string 
  */
 export async function createDynamic(
   tableName: string,
-  data: Record<string, any>
+  data: Record<string, any>,
+  options?: { allowReservedI18n?: boolean }
 ) {
   const sanitizedTableName = tableName.toLowerCase().replace(/-/g, '_');
-  
+
+  await ensureContentI18nSchema(sanitizedTableName);
+
   // First, get column types to know which are JSONB
   const columnsInfo: any = await getTableColumns(sanitizedTableName);
 
@@ -139,6 +149,24 @@ export async function createDynamic(
     createdAt: data.createdAt || new Date(),
     updatedAt: data.updatedAt || new Date(),
   };
+
+  // Internationalization defaults:
+  //  - every new entry defaults to English
+  //  - the entry becomes the root of its own translation group (rootId = id)
+  //    unless an explicit rootId is supplied (used when creating a translation)
+  //
+  // The i18n identity columns may only be set by the i18n layer itself
+  // (options.allowReservedI18n). Regular API callers can never inject an
+  // arbitrary rootId.
+  if (!options?.allowReservedI18n) {
+    delete dataWithDefaults.rootId;
+  }
+  if (actualColumnNames.has('locale') && (dataWithDefaults.locale === undefined || dataWithDefaults.locale === null || dataWithDefaults.locale === '')) {
+    dataWithDefaults.locale = DEFAULT_CONTENT_LOCALE;
+  }
+  if (actualColumnNames.has('rootId') && (dataWithDefaults.rootId === undefined || dataWithDefaults.rootId === null || dataWithDefaults.rootId === '')) {
+    dataWithDefaults.rootId = dataWithDefaults.id;
+  }
 
   // CRITICAL: Filter out virtual relation fields before processing
   // This prevents errors like: column "products" of relation "product_category" does not exist
@@ -244,7 +272,9 @@ export async function updateDynamic(
   data: Record<string, any>
 ) {
   const sanitizedTableName = tableName.toLowerCase().replace(/-/g, '_');
-  
+
+  await ensureContentI18nSchema(sanitizedTableName);
+
   // First, get column types to know which are JSONB
   const columnsInfo: any = await getTableColumns(sanitizedTableName);
   const jsonbColumns = new Set(
@@ -256,6 +286,12 @@ export async function updateDynamic(
   // CRITICAL: Filter out virtual relation fields before processing
   // This prevents errors like: column "products" of relation "product_category" does not exist
   const filteredData = await filterVirtualRelationFields(tableName, data);
+
+  // The i18n identity columns are immutable after creation. Editing a
+  // translation must never change its language or move it into another
+  // translation group.
+  delete filteredData.rootId;
+  delete filteredData.locale;
 
   // Remove updatedAt from data if it exists (we'll add it manually in the query)
   const { updatedAt, ...dataWithoutUpdatedAt } = filteredData;

@@ -6,6 +6,7 @@
 
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { WORLD_LANGUAGES, DEFAULT_LANGUAGE_CODE } from '../lib/i18n/languages';
 
 const prisma = new PrismaClient();
 
@@ -104,21 +105,16 @@ const ROLES = [
   },
 ];
 
-// Define default languages
-const LANGUAGES = [
-  { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸', isDefault: true, isActive: true },
-  { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷', isDefault: false, isActive: false },
-  { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪', isDefault: false, isActive: false },
-  { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸', isDefault: false, isActive: false },
-  { code: 'it', name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹', isDefault: false, isActive: false },
-  { code: 'pt', name: 'Portuguese', nativeName: 'Português', flag: '🇵🇹', isDefault: false, isActive: false },
-  { code: 'nl', name: 'Dutch', nativeName: 'Nederlands', flag: '🇳🇱', isDefault: false, isActive: false },
-  { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺', isDefault: false, isActive: false },
-  { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵', isDefault: false, isActive: false },
-  { code: 'zh', name: 'Chinese', nativeName: '中文', flag: '🇨🇳', isDefault: false, isActive: false },
-  { code: 'ko', name: 'Korean', nativeName: '한국어', flag: '🇰🇷', isDefault: false, isActive: false },
-  { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦', isDefault: false, isActive: false },
-];
+// Define default languages from the centralized i18n catalog.
+// English is the default and starts active; every other language starts inactive.
+const LANGUAGES = WORLD_LANGUAGES.map((language) => ({
+  code: language.code,
+  name: language.name,
+  nativeName: language.nativeName,
+  flag: language.flag,
+  isDefault: language.code === DEFAULT_LANGUAGE_CODE,
+  isActive: language.code === DEFAULT_LANGUAGE_CODE,
+}));
 
 async function main() {
   console.log('🌱 Starting database seed...\n');
@@ -261,11 +257,23 @@ async function main() {
   for (const lang of LANGUAGES) {
     await prisma.language.upsert({
       where: { code: lang.code },
-      update: lang,
+      // Preserve admin-managed isActive/isDefault on re-seed; only refresh metadata.
+      update: {
+        name: lang.name,
+        nativeName: lang.nativeName,
+        flag: lang.flag,
+      },
       create: lang,
     });
     console.log(`  ✓ ${lang.flag} ${lang.name} (${lang.code})`);
   }
+
+  // The default language must always remain active and flagged as default.
+  await prisma.language.update({
+    where: { code: DEFAULT_LANGUAGE_CODE },
+    data: { isDefault: true, isActive: true },
+  });
+
   
   console.log(`\n✅ Created/Updated ${LANGUAGES.length} languages\n`);
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');

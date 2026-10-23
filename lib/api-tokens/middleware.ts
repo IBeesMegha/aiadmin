@@ -2,13 +2,17 @@
  * API Token Authentication Middleware
  * Validates API tokens and checks endpoint permissions
  * 
- * IMPORTANT: This middleware is ONLY for frontend CMS APIs under /cms/*
+ * IMPORTANT: This middleware is ONLY for the public /v1 API namespace.
  * Admin panel APIs under /api/* use JWT authentication and should NOT accept API tokens.
- * 
+ *
  * API Namespaces:
  * - /api/*   → Admin JWT authentication (authMiddleware)
- * - /cms/*   → Bearer API token authentication (withApiToken)
- * - /v1/*   → Bearer API token authentication (withApiToken)
+ * - /v1/*    → Bearer API token authentication (withApiToken)
+ *
+ * Public mode:
+ * When the api_tokens table is empty, /v1 allows anonymous access. Once at
+ * least one token exists, every /v1 request must send a valid Bearer token.
+ * /api/* never uses this middleware.
  */
 
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -26,8 +30,8 @@ export interface ApiTokenRequest extends NextApiRequest {
 
 /**
  * Middleware to authenticate API token from request
- * This should ONLY be used on frontend CMS routes under /cms/*
- * Admin routes under /api/* should use JWT authentication instead
+ * This should ONLY be used on public /v1 routes.
+ * Admin routes under /api/* should use JWT authentication instead.
  */
 export async function authenticateApiToken(
   req: ApiTokenRequest,
@@ -52,6 +56,19 @@ export async function authenticateApiToken(
         error: 'Forbidden',
         message: 'API tokens cannot access admin routes. Use JWT authentication for admin panel.',
       });
+    }
+
+    // ===== PUBLIC MODE =====
+    // The /v1 namespace is only protected once at least one API token exists.
+    // If every token has been deleted, /v1 is public so a freshly set up or
+    // fully reset CMS can still serve content. This never applies to /api/*.
+    if (isV1Route(requestPath)) {
+      const totalTokens = await prisma.apiToken.count();
+
+      if (totalTokens === 0) {
+        console.log('[API Token Middleware] ✓ Public mode - no API tokens configured');
+        return next();
+      }
     }
     
     // Extract token from Authorization header
@@ -194,6 +211,14 @@ export async function authenticateApiToken(
       error: 'Authentication failed',
     });
   }
+}
+
+/**
+ * Check if a route belongs to the public /v1 API namespace.
+ * Only /v1 supports the "no tokens configured" public mode.
+ */
+function isV1Route(path: string): boolean {
+  return path === '/v1' || path.startsWith('/v1/');
 }
 
 /**

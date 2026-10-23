@@ -10,7 +10,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { ApiResponse, Field } from '@/lib/types';
 import { authMiddleware } from '@/lib/middlewares/api/auth-middleware';
-import { withApiToken } from '@/lib/api-tokens/middleware';
 import { resolveMultipleRelations } from '@/lib/relation-resolver';
 import { populateRelations } from '@/lib/relation-populate';
 import {

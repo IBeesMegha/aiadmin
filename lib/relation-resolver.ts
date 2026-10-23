@@ -9,6 +9,10 @@ import { prisma } from './prisma';
 import { Field } from './types';
 import { findManyDynamic, findUniqueDynamic } from './dynamic-prisma';
 import { isVirtualRelation, ownsRelation } from './relation-metadata';
+import {
+  resolveLocalizedRelationId,
+  resolveSharedRelationValue,
+} from './i18n-relations';
 
 function isVirtualField(field: Field): boolean {
   if (!field.relation) return false;
@@ -71,6 +75,7 @@ export async function resolveRelations(
         // Physical relation - resolve via FK
         resolved[field.name] = await resolvePhysicalRelation(
           entry,
+          collectionName,
           field,
           { ...options, maxDepth: maxDepth - 1 }
         );
@@ -93,6 +98,7 @@ export async function resolveRelations(
  */
 async function resolvePhysicalRelation(
   entry: Record<string, any>,
+  collectionName: string,
   field: Field,
   options: ResolveOptions
 ): Promise<any> {
@@ -102,7 +108,20 @@ async function resolvePhysicalRelation(
   
   // Get FK column name (no Id suffix - field name is the FK column)
   const fkColumnName = sanitizeFieldName(field.name);
-  const fkValue = entry[fkColumnName];
+  let fkValue = entry[fkColumnName];
+
+  // Relationships are shared by the whole translation group. A translation
+  // row without its own value inherits the group's value.
+  if (
+    (relationType === 'manyToOne' || relationType === 'oneToOne') &&
+    !fkValue
+  ) {
+    fkValue = await resolveSharedRelationValue(
+      collectionName,
+      entry,
+      fkColumnName
+    );
+  }
 
   console.log(`[Relation Resolver] Physical: ${field.name}, FK: ${fkColumnName} = ${fkValue}`);
 
@@ -111,8 +130,16 @@ async function resolvePhysicalRelation(
   }
 
   if (relationType === 'manyToOne' || relationType === 'oneToOne') {
+    // Resolve the related entry for the current translation's language.
+    const localizedId =
+      (await resolveLocalizedRelationId(
+        targetCollection,
+        fkValue,
+        entry.locale
+      )) || fkValue;
+
     // Fetch single related entry
-    const result = await findUniqueDynamic(targetCollection, fkValue) as any[];
+    const result = await findUniqueDynamic(targetCollection, localizedId) as any[];
     
     if (!result || result.length === 0) {
       return null;

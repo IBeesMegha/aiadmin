@@ -100,12 +100,41 @@ export default function EditCollectionEntry() {
     return formattedEntry;
   };
 
-  const loadEntry = async (entryId: string) => {
+  // Owning relations are shared by every translation of an entry. When a
+  // translation does not exist yet, keep those values while the translatable
+  // fields start empty.
+  const seedSharedRelations = (
+    sourceEntry: Record<string, any>,
+    fields: any[]
+  ): Record<string, any> => {
+    const seeded: Record<string, any> = {};
+
+    fields.forEach((field) => {
+      if (field.type !== 'relation' || !field.relation) return;
+      if (field.relation.isVirtual) return;
+      if (
+        field.relation.type !== 'manyToOne' &&
+        field.relation.type !== 'oneToOne'
+      ) {
+        return;
+      }
+
+      const value = sourceEntry?.[field.name];
+      if (value !== undefined && value !== null && value !== '') {
+        seeded[field.name] = value;
+      }
+    });
+
+    return seeded;
+  };
+
+  const loadEntry = async (entryId: string, knownFields?: any[]) => {
     setLoading(true);
     try {
       const entryRes = await fetchWithAuth(`/api/collections/${name}/${entryId}`);
       const entryData = await entryRes.json();
-      const fields = (collectionType.fields as any)?.fields || [];
+      const fields =
+        knownFields || (collectionType?.fields as any)?.fields || [];
       setEntry(formatEntry(entryData.data, fields));
       setActiveEntryId(entryId);
       setIsCreatingTranslation(false);
@@ -142,9 +171,10 @@ export default function EditCollectionEntry() {
         console.log('[Edit Page] Translations map:', translationsMap);
       }
 
-      setEntry(
-        formatEntry(entryData.data, (typeData.data.fields as any)?.fields || [])
-      );
+      const fields = (typeData.data.fields as any)?.fields || [];
+      const formattedEntry = formatEntry(entryData.data, fields);
+
+      setEntry(formattedEntry);
       setActiveEntryId(id);
       setIsCreatingTranslation(false);
 
@@ -153,7 +183,12 @@ export default function EditCollectionEntry() {
       // is no page reload and the dropdown stays on the chosen language.
       const existingId = translationsMap[selectedLocale];
       if (existingId && existingId !== id) {
-        await loadEntry(existingId);
+        await loadEntry(existingId, fields);
+      } else if (selectedLocale !== (entryData.data?.locale || 'en')) {
+        // The selected language has no translation yet: prepare a new one and
+        // keep the shared relations visible.
+        setEntry(seedSharedRelations(formattedEntry, fields));
+        setIsCreatingTranslation(true);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -323,10 +358,13 @@ export default function EditCollectionEntry() {
         setEntry(formatEntry(loadedEntry, fields));
         setActiveEntryId(loadedEntry.id);
       } else {
-        // No translation exists yet for this locale. Clear the form so the user
-        // sees empty fields to add new translated content (not the previous
-        // language's data). Saving will create the translation automatically.
-        setEntry({});
+        // No translation exists yet for this locale. Clear the translatable
+        // fields so the user can add new content, but keep shared relations
+        // (e.g. the blog category) so they stay visible in every language.
+        // Saving will create the translation automatically.
+        const sourceEntry =
+          entry || (loadedEntry ? formatEntry(loadedEntry, fields) : {});
+        setEntry(seedSharedRelations(sourceEntry, fields));
         setActiveEntryId(id);
         setIsCreatingTranslation(true);
       }

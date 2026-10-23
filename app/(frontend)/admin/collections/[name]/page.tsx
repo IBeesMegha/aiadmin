@@ -571,6 +571,17 @@ export default function CollectionList() {
     localStorage.setItem(`ssmed:locale:${name}`, selectedLocale);
   }, [selectedLocale, name]);
 
+  // A stored locale can become inactive or stale; fall back to the default
+  // language instead of filtering every entry out.
+  useEffect(() => {
+    if (languages.length === 0) return;
+    if (languages.some((language) => language.code === selectedLocale)) return;
+
+    const fallback =
+      languages.find((language) => language.isDefault)?.code || languages[0].code;
+    setSelectedLocale(fallback);
+  }, [languages, selectedLocale]);
+
   const [entries, setEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [lightboxImages, setLightboxImages] = useState<string[] | null>(null);
@@ -637,17 +648,22 @@ export default function CollectionList() {
     }
   }, [collectionType]);
 
-  // Show one row per content item, in the currently selected language.
+  // Show one row per content item in the currently selected language. Content
+  // that has no translation yet falls back to the default language so entries
+  // never disappear from the list; opening one lets the editor create the
+  // missing translation (the edit page seeds shared relations).
   useEffect(() => {
+    const defaultLocale =
+      languages.find((language) => language.isDefault)?.code || 'en';
     const display: any[] = [];
     for (const byLocale of translationGroups.values()) {
-      const entry = byLocale.get(selectedLocale);
+      const entry = byLocale.get(selectedLocale) || byLocale.get(defaultLocale);
       if (entry) display.push(entry);
     }
     display.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     setEntries(display);
     setSelectedEntries(new Set());
-  }, [selectedLocale, translationGroups]);
+  }, [selectedLocale, translationGroups, languages]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

@@ -82,12 +82,13 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
     await onSubmit(mergedData);
   };
 
-  // Reset form when defaultValues change (for edit forms)
+  // Reset form when defaultValues change (for edit forms). An empty object is
+  // meaningful: switching to a language that has no translation yet must clear
+  // the previous language's values while keeping shared relations seeded.
   useEffect(() => {
-    if (defaultValues && Object.keys(defaultValues).length > 0) {
-      console.log('[DynamicForm] Resetting form with default values:', defaultValues);
-      reset(defaultValues);
-    }
+    if (defaultValues === undefined) return;
+    console.log('[DynamicForm] Resetting form with default values:', defaultValues);
+    reset(defaultValues);
   }, [defaultValues, reset]);
 
   return (

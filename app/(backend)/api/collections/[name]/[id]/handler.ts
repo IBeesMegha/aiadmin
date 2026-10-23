@@ -8,6 +8,7 @@ import { ApiResponse, Field } from '@/lib/types';
 import { filterVirtualRelationFields } from '@/lib/relation-engine';
 import { populateComponents, createComponentEntry } from '@/lib/component-populate';
 import { populateRelations } from '@/lib/relation-populate';
+import { syncOwningRelationsAcrossTranslations } from '@/lib/i18n-relations';
 import { authMiddleware } from '@/lib/middlewares/api/auth-middleware';
 
 async function handler(
@@ -165,7 +166,11 @@ async function handler(
       });
 
       const entry = await updateDynamic(name, id, dataToUpdate);
-      
+
+      // Keep owning relationships identical across every translation of the
+      // same rootId (using each translation's language for the related entry).
+      await syncOwningRelationsAcrossTranslations(name, id, dataToUpdate, fields);
+
       // Handle manyToMany relations separately after the main update
       if (Object.keys(manyToManyData).length > 0) {
         console.log('[API PUT] Updating manyToMany relations:', manyToManyData);

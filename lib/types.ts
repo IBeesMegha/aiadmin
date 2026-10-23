@@ -59,6 +59,8 @@ export interface ApiResponse<T = any> {
   count?: number;
   requiresRestart?: boolean;
   code?: string;
+  rootId?: string;
+  locale?: string;
 }
 
 // Content Type Builder Types

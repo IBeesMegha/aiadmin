@@ -125,7 +125,7 @@ export default function SingleTypeEdit() {
           {singleType.fields && singleType.fields.fields && singleType.fields.fields.length > 0 ? (
             <DynamicForm
               fields={singleType.fields.fields}
-              defaultValues={singleType.data || {}}
+              defaultValues={singleType.data || undefined}
               onSubmit={handleSubmit}
               submitLabel="Save"
             />

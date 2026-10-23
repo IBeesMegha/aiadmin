@@ -24,6 +24,14 @@ import {
   findUniqueDynamic,
   createDynamic,
 } from './dynamic-prisma';
+import type { Field } from './types';
+import {
+  extractRelationId,
+  getOwningRelationFields,
+  resolveRelationIdForLocale,
+  resolveRelationRootId,
+  syncOwningRelationsAcrossTranslations,
+} from './i18n-relations';
 
 /** Error carrying an HTTP status code so API handlers can map it directly. */
 export class ContentI18nError extends Error {
@@ -175,11 +183,64 @@ export async function createTranslation(
     clone[key] = value;
   }
 
+  // Owning relationships are shared by the whole translation group. Keep the
+  // source relationship (or the caller's selection) and map it to the related
+  // entry's translation for the new language. An empty override means "not
+  // provided" so a new translation still inherits the group's relationship.
+  const collectionType = await prisma.collectionType.findUnique({
+    where: { name: collectionName },
+  });
+  const fields = (((collectionType?.fields as any)?.fields || []) as Field[]);
+  const relationValues: Record<string, any> = {};
+
+  for (const field of getOwningRelationFields(fields)) {
+    const targetCollection = field.relation!.targetCollection;
+    const overrideValue = (overrides || {})[field.name];
+    const hasOverride =
+      Object.prototype.hasOwnProperty.call(overrides || {}, field.name) &&
+      overrideValue !== null &&
+      overrideValue !== undefined &&
+      overrideValue !== '';
+
+    const selectedId = extractRelationId(
+      hasOverride ? overrideValue : clone[field.name]
+    );
+
+    if (!selectedId) {
+      clone[field.name] = null;
+      continue;
+    }
+
+    const targetRootId = await resolveRelationRootId(
+      targetCollection,
+      selectedId
+    );
+    const localizedId = targetRootId
+      ? await resolveRelationIdForLocale(targetCollection, targetRootId, locale)
+      : selectedId;
+
+    clone[field.name] = localizedId || selectedId;
+    relationValues[field.name] = clone[field.name];
+  }
+
   clone.rootId = rootId;
   clone.locale = locale;
 
   // Only the i18n layer is allowed to set the reserved rootId/locale columns.
-  return createDynamic(collectionName, clone, { allowReservedI18n: true });
+  const created = await createDynamic(collectionName, clone, {
+    allowReservedI18n: true,
+  });
+
+  if (Object.keys(relationValues).length > 0) {
+    await syncOwningRelationsAcrossTranslations(
+      collectionName,
+      created.id,
+      relationValues,
+      fields
+    );
+  }
+
+  return created;
 }
 
 /**

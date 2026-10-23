@@ -14,6 +14,10 @@
 import { prisma } from './prisma';
 import { Field } from './types';
 import { findManyDynamic, findUniqueDynamic } from './dynamic-prisma';
+import {
+  resolveLocalizedRelationId,
+  resolveSharedRelationValue,
+} from './i18n-relations';
 
 export interface PopulateOptions {
   maxDepth?: number;
@@ -58,15 +62,30 @@ export async function populateRelations(
   for (const field of relationFields) {
     // The field name in the database matches the field name in the schema (no sanitization)
     const fkFieldName = field.name;
-    const fkValue = entry[fkFieldName];
-    
-    console.log(`[Relation Populate] Processing field: ${field.name}, FK value: ${fkValue}`);
+    let fkValue = entry[fkFieldName];
 
     if (!field.relation) continue;
 
     try {
       const relationType = field.relation.type;
       const targetCollection = field.relation.targetCollection;
+
+      // Translation rows created before a relationship was selected may not
+      // carry the foreign key. Relationships are shared by the whole
+      // translation group, so fall back to a sibling translation's value.
+      if (
+        (relationType === 'manyToOne' || relationType === 'oneToOne') &&
+        !field.relation.isVirtual &&
+        (fkValue === null || fkValue === undefined || fkValue === '')
+      ) {
+        fkValue = await resolveSharedRelationValue(
+          collectionName,
+          entry,
+          fkFieldName
+        );
+      }
+
+      console.log(`[Relation Populate] Processing field: ${field.name}, FK value: ${fkValue}`);
 
       if (relationType === 'oneToOne' && field.relation.isVirtual) {
         const related = await populateManyRelation(
@@ -80,9 +99,18 @@ export async function populateRelations(
       } else if (relationType === 'manyToOne' || relationType === 'oneToOne') {
         // Populate single relation using FK field
         if (fkValue) {
+          // Resolve the related entry for the current translation's language.
+          // The physical FK may point at the default-language entry.
+          const localizedId =
+            (await resolveLocalizedRelationId(
+              targetCollection,
+              fkValue,
+              entry.locale
+            )) || fkValue;
+
           // Use the original field name for the populated object
           populatedEntry[field.name] = await populateSingleRelation(
-            fkValue,
+            localizedId,
             targetCollection,
             visitedIds,
             { ...options, maxDepth: maxDepth - 1 }

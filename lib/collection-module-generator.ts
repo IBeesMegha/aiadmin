@@ -375,14 +375,46 @@ async function listEntries(options: { populate?: boolean } = {}): Promise<Record
   return resolved;
 }
 
-async function getEntry(id: string, options: { populate?: boolean } = {}): Promise<Record<string, any>> {
+async function getEntry(id: string, options: { populate?: boolean; locale?: string } = {}): Promise<Record<string, any>> {
   const fields = await getFields();
+  
+  // First, get the entry by id to determine the rootId
   const entry = await ${alias}.findById(id);
   if (!entry) {
     throw httpError(404, 'Entry not found');
   }
 
-  const resolved = await populateRelations({ ...entry }, ${alias}.COLLECTION_NAME, fields);
+  // Determine the target locale (default to 'en' if not specified)
+  const targetLocale = options.locale || DEFAULT_CONTENT_LOCALE;
+  
+  // Get the rootId (for English entries, rootId === id)
+  const rootId = entry.rootId || entry.id;
+  
+  let finalEntry = entry;
+  
+  // If the requested locale is different from the entry's locale, find the translation
+  if (targetLocale !== entry.locale) {
+    console.log(\`[${identifier} GET] Entry locale (\${entry.locale}) doesn't match requested locale (\${targetLocale})\`);
+    console.log(\`[${identifier} GET] Looking for translation with rootId=\${rootId} and locale=\${targetLocale}\`);
+    
+    // Query for the entry with matching rootId and locale
+    const translatedEntries = await ${alias}.findMany({
+      where: {
+        rootId: rootId,
+        locale: targetLocale
+      }
+    });
+    
+    if (translatedEntries && translatedEntries.length > 0) {
+      finalEntry = translatedEntries[0];
+      console.log(\`[${identifier} GET] Found translation:\`, finalEntry.id);
+    } else {
+      console.log(\`[${identifier} GET] No translation found for locale \${targetLocale}\`);
+      throw httpError(404, \`Entry not found for locale: \${targetLocale}\`);
+    }
+  }
+
+  const resolved = await populateRelations({ ...finalEntry }, ${alias}.COLLECTION_NAME, fields);
 
   if (options.populate) {
     return populateComponents(resolved, fields);
@@ -465,6 +497,7 @@ import {
   extractManyToManyData,
   updateManyToManyRelations,
 } from '@/lib/many-to-many-handler';
+import { DEFAULT_CONTENT_LOCALE } from '@/lib/dynamic-table-service';
 import * as ${identifier}Model from '@/models/${collectionName}.model';`;
 }
 
@@ -582,7 +615,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ApiResponse>): 
       return;
     }
     if (req.method === 'GET') {
-      const entry = await getEntry(id, { populate: req.query.populate === 'true' });
+      const locale = typeof req.query.locale === 'string' ? req.query.locale : undefined;
+      const entry = await getEntry(id, { 
+        populate: req.query.populate === 'true',
+        locale: locale 
+      });
       res.status(200).json({ data: entry });
       return;
     }
@@ -699,7 +736,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ApiResponse>): 
       return;
     }
     if (req.method === 'GET') {
-      const entry = await getEntry(id, { populate: req.query.populate === 'true' });
+      const locale = typeof req.query.locale === 'string' ? req.query.locale : undefined;
+      const entry = await getEntry(id, { 
+        populate: req.query.populate === 'true',
+        locale: locale 
+      });
       res.status(200).json({ data: entry });
       return;
     }

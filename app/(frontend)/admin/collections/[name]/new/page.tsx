@@ -21,7 +21,15 @@ export default function NewCollectionEntry() {
   const [collectionType, setCollectionType] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [serverError, setServerError] = useState<{ field: string; message: string } | null>(null);
-  const [selectedLocale, setSelectedLocale] = useState('en');
+  const [selectedLocale, setSelectedLocale] = useState(() => {
+    if (typeof window === 'undefined') return 'en';
+    const stored = localStorage.getItem(`ssmed:locale:${name}`);
+    return stored || 'en';
+  });
+
+  useEffect(() => {
+    localStorage.setItem(`ssmed:locale:${name}`, selectedLocale);
+  }, [selectedLocale, name]);
 
   const fetchCollectionType = async () => {
     try {
@@ -46,9 +54,13 @@ export default function NewCollectionEntry() {
     setServerError(null); // Clear previous errors
     
     try {
+      // System fields that must never be sent from the client; the server owns them.
+      const SYSTEM_FIELDS = new Set(['id', 'rootId', 'locale', 'createdAt', 'updatedAt']);
+
       // Remove empty strings and convert them to undefined (will be filtered out)
       const cleanedData: Record<string, any> = {};
       Object.keys(data).forEach(key => {
+        if (SYSTEM_FIELDS.has(key)) return;
         const value = data[key];
         // Only include non-empty values
         if (value !== '' && value !== null && value !== undefined) {

@@ -4,11 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { Layout } from '@/components/admin/Layout';
 import { DynamicForm } from '@/components/admin/DynamicForm';
 import { LanguageSelect } from '@/components/admin/LanguageSelect';
-import { CreateTranslationDialog } from '@/components/admin/CreateTranslationDialog';
 import { useActiveLanguages } from '@/hooks/useActiveLanguages';
-import { fetchTranslations, createEntryTranslation } from '@/lib/content-i18n-client';
+import { fetchTranslations } from '@/lib/content-i18n-client';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Languages } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { fetchWithAuth } from '@/lib/api-client';
@@ -23,12 +22,26 @@ export default function EditCollectionEntry() {
 
   const [collectionType, setCollectionType] = useState<any>(null);
   const [entry, setEntry] = useState<any>(null);
+  const [activeEntryId, setActiveEntryId] = useState(id);
   const [loading, setLoading] = useState(true);
   const [serverError, setServerError] = useState<{ field: string; message: string } | null>(null);
-  const [selectedLocale, setSelectedLocale] = useState('en');
+  const [selectedLocale, setSelectedLocale] = useState(() => {
+    if (typeof window === 'undefined') return 'en';
+    const stored = localStorage.getItem(`ssmed:locale:${name}`);
+    return stored || 'en';
+  });
+
+  // Persist locale changes to localStorage so they survive page reloads.
+  useEffect(() => {
+    if (typeof window !== 'undefined' && name) {
+      localStorage.setItem(`ssmed:locale:${name}`, selectedLocale);
+    }
+  }, [selectedLocale, name]);
+
   const [translationsByLocale, setTranslationsByLocale] = useState<Record<string, string>>({});
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [creatingLocale, setCreatingLocale] = useState<string | null>(null);
+  // True when the selected locale has no existing translation for this rootId,
+  // so saving should create a new translation instead of updating the current entry.
+  const [isCreatingTranslation, setIsCreatingTranslation] = useState(false);
 
   useEffect(() => {
     if (name && id) {
@@ -37,7 +50,74 @@ export default function EditCollectionEntry() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, id]);
 
+  const formatEntry = (rawEntry: any, fields: any[]): Record<string, any> => {
+    const formattedEntry = { ...rawEntry };
+    Object.keys(formattedEntry).forEach((key) => {
+      const value = formattedEntry[key];
+      const field = fields.find((f: any) => f.name === key);
+      if (field && field.type === 'relation' && field.relation) {
+        if (field.relation.type === 'manyToOne' || field.relation.type === 'oneToOne') {
+          if (typeof value === 'object' && value !== null && value.id) {
+            formattedEntry[key] = value.id;
+          } else if (typeof value === 'string') {
+            formattedEntry[key] = value;
+          } else if (value === null || value === undefined) {
+            formattedEntry[key] = null;
+          }
+        } else if (field.relation.type === 'manyToMany') {
+          if (Array.isArray(value)) {
+            formattedEntry[key] = value.map((item: any) => {
+              if (typeof item === 'object' && item !== null && item.id) return item.id;
+              return item;
+            });
+          } else {
+            formattedEntry[key] = [];
+          }
+        } else if (field.relation.type === 'oneToMany') {
+          // keep the populated array as-is for display
+        }
+      } else if (field && field.type === 'media') {
+        if (field.multiple) {
+          if (Array.isArray(value)) {
+            formattedEntry[key] = JSON.stringify(value);
+          } else if (typeof value === 'object' && value !== null) {
+            formattedEntry[key] = JSON.stringify(value);
+          } else if (typeof value === 'string') {
+            formattedEntry[key] = value;
+          }
+        } else {
+          if (typeof value === 'string') {
+            formattedEntry[key] = value;
+          }
+        }
+      } else if (value instanceof Date || (typeof value === 'string' && !isNaN(Date.parse(value)))) {
+        const date = new Date(value);
+        if (!isNaN(date.getTime())) {
+          formattedEntry[key] = date.toISOString().split('T')[0];
+        }
+      }
+    });
+    return formattedEntry;
+  };
+
+  const loadEntry = async (entryId: string) => {
+    setLoading(true);
+    try {
+      const entryRes = await fetchWithAuth(`/api/collections/${name}/${entryId}`);
+      const entryData = await entryRes.json();
+      const fields = (collectionType.fields as any)?.fields || [];
+      setEntry(formatEntry(entryData.data, fields));
+      setActiveEntryId(entryId);
+      setIsCreatingTranslation(false);
+    } catch (error) {
+      console.error('Error loading entry:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchData = async () => {
+    setLoading(true);
     try {
       const [typeRes, entryRes, translationData] = await Promise.all([
         fetchWithAuth(`/api/collection-types/${name}`),
@@ -48,102 +128,33 @@ export default function EditCollectionEntry() {
       const typeData = await typeRes.json();
       const entryData = await entryRes.json();
 
+      console.log('[Edit Page] Fetched entry data:', entryData.data);
+      console.log('[Edit Page] Entry locale:', entryData.data?.locale);
+
       setCollectionType(typeData.data);
 
+      const translationsMap: Record<string, string> = {};
       if (translationData) {
-        const map: Record<string, string> = {};
         translationData.translations.forEach((translation) => {
-          map[translation.locale] = translation.id;
+          translationsMap[translation.locale] = translation.id;
         });
-        setTranslationsByLocale(map);
+        setTranslationsByLocale(translationsMap);
+        console.log('[Edit Page] Translations map:', translationsMap);
       }
 
-      setSelectedLocale(entryData.data?.locale || 'en');
+      setEntry(
+        formatEntry(entryData.data, (typeData.data.fields as any)?.fields || [])
+      );
+      setActiveEntryId(id);
+      setIsCreatingTranslation(false);
 
-      // Format dates for HTML date inputs (YYYY-MM-DD)
-      // Also handle JSON fields for media
-      // Also handle relation fields - extract IDs from populated objects
-      const formattedEntry = { ...entryData.data };
-      const fields = (typeData.data.fields as any)?.fields || [];
-      
-      console.log('[Edit Page] Raw entry data:', entryData.data);
-      console.log('[Edit Page] Fields:', fields);
-      
-      Object.keys(formattedEntry).forEach(key => {
-        const value = formattedEntry[key];
-        const field = fields.find((f: any) => f.name === key);
-        
-        // Handle relation fields
-        if (field && field.type === 'relation' && field.relation) {
-          console.log(`[Edit Page] Processing relation field: ${key}`, value);
-          
-          if (field.relation.type === 'manyToOne' || field.relation.type === 'oneToOne') {
-            // For manyToOne and oneToOne, the field name IS the FK column (no Id suffix)
-            // We need to extract the ID from populated object and set it to the same field
-            if (typeof value === 'object' && value !== null && value.id) {
-              // Extract the ID and set it directly to the field name
-              formattedEntry[key] = value.id;
-              console.log(`[Edit Page] Set FK field ${key} = ${value.id} (from object)`);
-            } else if (typeof value === 'string') {
-              // Already an ID string, keep it as-is
-              formattedEntry[key] = value;
-              console.log(`[Edit Page] FK field ${key} = ${value} (already string)`);
-            } else if (value === null || value === undefined) {
-              // No relation set, keep as null
-              formattedEntry[key] = null;
-              console.log(`[Edit Page] FK field ${key} = null (no relation)`);
-            }
-          } else if (field.relation.type === 'manyToMany') {
-            // For manyToMany, extract IDs from populated array
-            if (Array.isArray(value)) {
-              formattedEntry[key] = value.map((item: any) => {
-                if (typeof item === 'object' && item !== null && item.id) {
-                  return item.id;
-                }
-                return item;
-              });
-              console.log(`[Edit Page] Set manyToMany field ${key} =`, formattedEntry[key]);
-            } else {
-              formattedEntry[key] = [];
-              console.log(`[Edit Page] Set manyToMany field ${key} = [] (empty)`);
-            }
-          } else if (field.relation.type === 'oneToMany') {
-            // For oneToMany, keep the populated array as-is for display
-            console.log(`[Edit Page] Keeping oneToMany field ${key} as-is`);
-          }
-        }
-        // Handle media fields - ensure they're in the correct format
-        else if (field && field.type === 'media') {
-          if (field.multiple) {
-            // Multiple media - should be JSON string of array
-            if (Array.isArray(value)) {
-              formattedEntry[key] = JSON.stringify(value);
-            } else if (typeof value === 'object' && value !== null) {
-              formattedEntry[key] = JSON.stringify(value);
-            } else if (typeof value === 'string') {
-              // Already a string, keep as is
-              formattedEntry[key] = value;
-            }
-          } else {
-            // Single media - should be a URL string
-            if (typeof value === 'string') {
-              formattedEntry[key] = value;
-            }
-          }
-        }
-        // Handle date fields
-        else if (value instanceof Date || (typeof value === 'string' && !isNaN(Date.parse(value)))) {
-          const date = new Date(value);
-          // Check if it's a valid date and format it
-          if (!isNaN(date.getTime())) {
-            // Format as YYYY-MM-DD for date inputs
-            formattedEntry[key] = date.toISOString().split('T')[0];
-          }
-        }
-      });
-      
-      console.log('[Edit Page] Formatted entry for form:', formattedEntry);
-      setEntry(formattedEntry);
+      // Honor the previously selected locale if a translation already exists
+      // for it. Load that entry's data in place without navigating, so there
+      // is no page reload and the dropdown stays on the chosen language.
+      const existingId = translationsMap[selectedLocale];
+      if (existingId && existingId !== id) {
+        await loadEntry(existingId);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -158,11 +169,15 @@ export default function EditCollectionEntry() {
     try {
       console.log('[Edit Form] Original data:', data);
       
+      // System fields that must never be sent from the client; the server owns them.
+      const SYSTEM_FIELDS = new Set(['id', 'rootId', 'locale', 'createdAt', 'updatedAt']);
+
       // Get collection type fields to identify relation fields
       const fields = collectionType?.fields?.fields || [];
       
       const cleanedData: Record<string, any> = {};
       Object.keys(data).forEach(key => {
+        if (SYSTEM_FIELDS.has(key)) return;
         const value = data[key];
         
         // Check if this is a relation field (not checking for 'Id' suffix anymore)
@@ -185,8 +200,30 @@ export default function EditCollectionEntry() {
       
       console.log('[Edit Form] Cleaned data:', cleanedData);
       
+      // When editing a locale that has no existing translation row, create a new
+      // translation instead of updating the current entry.
+      if (isCreatingTranslation) {
+        const response = await fetchWithAuth(`/api/collections/${name}/${activeEntryId}/translate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ locale: selectedLocale, data: cleanedData }),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          toast.success('Translation created successfully!', { id: toastId });
+          // Navigate to the newly created translation entry.
+          router.push(`/admin/collections/${name}/${result.data.id}`);
+        } else {
+          const error = await response.json();
+          const errorMessage = error.error || 'Failed to create translation';
+          toast.error(errorMessage, { id: toastId });
+        }
+        return;
+      }
+
       // Update existing entry
-      const response = await fetchWithAuth(`/api/collections/${name}/${id}`, {
+      const response = await fetchWithAuth(`/api/collections/${name}/${activeEntryId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ data: cleanedData }),
@@ -238,7 +275,7 @@ export default function EditCollectionEntry() {
         }
       });
 
-      const response = await fetch(`/api/collections/${name}/${id}`, {
+      const response = await fetch(`/api/collections/${name}/${activeEntryId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ data: fieldData, published: !entry.published }),
@@ -256,34 +293,48 @@ export default function EditCollectionEntry() {
     }
   };
 
-  const handleLanguageChange = (code: string) => {
+  const handleLanguageChange = async (code: string) => {
+    console.log('[Edit Page] Language change requested:', code);
+    console.log('[Edit Page] Current locale:', selectedLocale);
+
     if (code === selectedLocale) return;
 
-    const existingId = translationsByLocale[code];
-    if (existingId) {
-      // Open the existing translation.
-      router.push(`/admin/collections/${name}/${existingId}`);
-      return;
+    // Persist immediately (sync) before any navigation so the value survives page reload.
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`ssmed:locale:${name}`, code);
     }
+    setSelectedLocale(code);
 
-    // No translation yet - let the user create one.
-    setDialogOpen(true);
-  };
-
-  const handleCreateTranslation = async (locale: string) => {
-    setCreatingLocale(locale);
-    const toastId = toast.loading('Creating translation...');
-
+    // Load the translation for this locale directly via the API. The API resolves
+    // the translation by rootId + locale, so we do not depend on translationsByLocale
+    // being populated (fetchTranslations may have failed silently). No router.push,
+    // so no page reload.
+    setLoading(true);
+    setIsCreatingTranslation(false);
     try {
-      const created = await createEntryTranslation(name, id, locale);
-      toast.success('Translation created', { id: toastId });
-      setDialogOpen(false);
-      // Open the newly created translation for editing.
-      router.push(`/admin/collections/${name}/${created.id}`);
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to create translation', { id: toastId });
+      const entryRes = await fetchWithAuth(`/api/collections/${name}/${id}?locale=${code}`);
+      const entryData = await entryRes.json();
+      const fields = (collectionType.fields as any)?.fields || [];
+      const loadedEntry = entryData.data;
+
+      // If the API actually returned a translation for this locale, load its data.
+      // Otherwise it fell back to the original entry -> no translation exists yet.
+      if (loadedEntry && loadedEntry.locale === code) {
+        setEntry(formatEntry(loadedEntry, fields));
+        setActiveEntryId(loadedEntry.id);
+      } else {
+        // No translation exists yet for this locale. Clear the form so the user
+        // sees empty fields to add new translated content (not the previous
+        // language's data). Saving will create the translation automatically.
+        setEntry({});
+        setActiveEntryId(id);
+        setIsCreatingTranslation(true);
+      }
+    } catch (error) {
+      console.error('Error loading translation:', error);
+      setIsCreatingTranslation(true);
     } finally {
-      setCreatingLocale(null);
+      setLoading(false);
     }
   };
 
@@ -351,13 +402,6 @@ export default function EditCollectionEntry() {
               />
             )}
             <button
-              onClick={() => setDialogOpen(true)}
-              className="flex items-center space-x-2 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
-            >
-              <Languages size={18} />
-              <span>Create translation</span>
-            </button>
-            <button
               onClick={handlePublish}
               className={`px-4 py-2 rounded-lg ${
                 entry.published
@@ -377,20 +421,11 @@ export default function EditCollectionEntry() {
             onSubmit={handleSubmit}
             submitLabel="Update Entry"
             collectionName={name as string}
-            entryId={id as string}
+            entryId={activeEntryId}
             serverError={serverError}
           />
         </div>
       </div>
-
-      <CreateTranslationDialog
-        open={dialogOpen}
-        languages={languages}
-        existingCodes={Object.keys(translationsByLocale)}
-        onClose={() => setDialogOpen(false)}
-        onSelect={handleCreateTranslation}
-        creatingLocale={creatingLocale}
-      />
     </Layout>
   );
 }

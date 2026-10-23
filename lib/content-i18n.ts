@@ -181,3 +181,27 @@ export async function createTranslation(
   // Only the i18n layer is allowed to set the reserved rootId/locale columns.
   return createDynamic(collectionName, clone, { allowReservedI18n: true });
 }
+
+/**
+ * Resolve and validate the requested content locale from an API query object.
+ *
+ * - omits / empty → falls back to the default content locale ("en")
+ * - otherwise validates the code against the active `Language` rows
+ *
+ * Returns the normalized, active language code. Throws ContentI18nError(400)
+ * when the requested locale is unknown or inactive, so inactive-language
+ * content can never be requested through public queries.
+ */
+export async function resolveRequestLocale(
+  query: Record<string, unknown>,
+  defaultCode: string = DEFAULT_CONTENT_LOCALE
+): Promise<string> {
+  const raw = query?.locale;
+  const code =
+    raw === undefined || raw === null || raw === ''
+      ? defaultCode
+      : String(raw).trim();
+
+  const language = await getActiveLanguage(code);
+  return language.code;
+}

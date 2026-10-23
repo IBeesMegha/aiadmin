@@ -15,6 +15,8 @@ export const runtime = 'nodejs'
 import type { NextApiResponse } from 'next';
 
 import { prisma } from '@/lib/prisma';
+import { findManyDynamic } from '@/lib/dynamic-prisma';
+import { resolveRequestLocale } from '@/lib/content-i18n';
 
 import { withApiToken, ApiTokenRequest } from '@/lib/api-tokens/middleware';
 
@@ -24,7 +26,6 @@ async function handler(
   res: NextApiResponse
 ) {
   try {
-    // Get blog collection type
     const blogCollection = await prisma.collectionType.findUnique({
       where: { name: 'blog' },
     });
@@ -36,13 +37,11 @@ async function handler(
       });
     }
 
-    // Fetch all blog entries
-    const blogs = await prisma.$queryRaw`
-      SELECT id, data, created_at, updated_at
-      FROM collection_entries
-      WHERE collection_type_id = ${blogCollection.id}
-      ORDER BY created_at DESC
-    `;
+    const locale = await resolveRequestLocale(req.query);
+
+    // Fetch all blog entries for the requested locale from the dynamic
+    // content table, which carries the i18n `locale` / `rootId` columns.
+    const blogs = await findManyDynamic('blog', { where: { locale } });
 
     return res.status(200).json({
       success: true,
@@ -50,6 +49,9 @@ async function handler(
       count: Array.isArray(blogs) ? blogs.length : 0,
     });
   } catch (error: any) {
+    if (error?.statusCode) {
+      return res.status(error.statusCode).json({ success: false, error: error.message });
+    }
     console.error('Error fetching blogs:', error);
     
     return res.status(500).json({

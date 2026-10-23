@@ -561,7 +561,16 @@ export default function CollectionList() {
   const [collectionType, setCollectionType] = useState<any>(null);
   const [rawEntries, setRawEntries] = useState<any[]>([]);
   const [translationGroups, setTranslationGroups] = useState<Map<string, Map<string, any>>>(new Map());
-  const [selectedLocale, setSelectedLocale] = useState('en');
+  const [selectedLocale, setSelectedLocale] = useState(() => {
+    if (typeof window === 'undefined') return 'en';
+    const stored = localStorage.getItem(`ssmed:locale:${name}`);
+    return stored || 'en';
+  });
+
+  useEffect(() => {
+    localStorage.setItem(`ssmed:locale:${name}`, selectedLocale);
+  }, [selectedLocale, name]);
+
   const [entries, setEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [lightboxImages, setLightboxImages] = useState<string[] | null>(null);

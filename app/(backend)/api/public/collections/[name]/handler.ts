@@ -8,6 +8,7 @@ import { ApiResponse, Field } from '@/lib/types';
 import { filterVirtualRelationFields } from '@/lib/relation-engine';
 import { populateMultipleEntries, createComponentEntry } from '@/lib/component-populate';
 import { resolveMultipleRelations } from '@/lib/relation-resolver';
+import { resolveRequestLocale } from '@/lib/content-i18n';
 import { withApiToken, ApiTokenRequest } from '@/lib/api-tokens/middleware';
 
 async function handler(
@@ -32,7 +33,14 @@ async function handler(
     const fields = (collectionType.fields as any)?.fields || [];
 
     if (req.method === 'GET') {
-      let entries: any = await findManyDynamic(name, {});
+      const locale = await resolveRequestLocale(req.query);
+
+      const where: Record<string, any> = { locale };
+      if (req.query.rootId && typeof req.query.rootId === 'string') {
+        where.rootId = req.query.rootId;
+      }
+
+      let entries: any = await findManyDynamic(name, { where });
 
       const convertedEntries = entries.map((entry: any) => {
         return { ...entry };
@@ -82,6 +90,9 @@ async function handler(
 
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (error: any) {
+    if (error?.statusCode) {
+      return res.status(error.statusCode).json({ error: error.message });
+    }
     console.error('Public Collections API Error:', error);
     return res.status(500).json({ error: error.message || 'Internal server error' });
   }

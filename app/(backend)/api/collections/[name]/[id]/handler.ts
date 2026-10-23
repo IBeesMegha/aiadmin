@@ -33,6 +33,8 @@ async function handler(
     const fields = (collectionType.fields as any)?.fields || [];
 
     if (req.method === 'GET') {
+      const locale = req.query.locale as string | undefined;
+      
       // Get specific entry from dynamic table
       let entries: any = await findUniqueDynamic(name, id);
       
@@ -41,6 +43,32 @@ async function handler(
       }
 
       let entry = entries[0];
+      
+      // If locale is specified and different from entry's locale, try to find translation
+      if (locale && entry.locale && entry.locale !== locale) {
+        console.log(`[API GET] Entry locale (${entry.locale}) doesn't match requested locale (${locale})`);
+        
+        // Get the rootId to find related translations
+        const rootId = entry.rootId || entry.id;
+        console.log(`[API GET] Looking for translation with rootId=${rootId} and locale=${locale}`);
+        
+        // Query for the entry with matching rootId and locale
+        const translatedEntries = await findManyDynamic(name, {
+          where: {
+            rootId: rootId,
+            locale: locale
+          }
+        }) as any[];
+        
+        if (translatedEntries && translatedEntries.length > 0) {
+          entry = translatedEntries[0];
+          console.log(`[API GET] Found translation:`, entry.id);
+        } else {
+          console.log(`[API GET] No translation found for locale ${locale}, returning original entry`);
+          // Optionally, you could return 404 here if you want strict locale matching
+          // return res.status(404).json({ error: `Entry not found for locale: ${locale}` });
+        }
+      }
 
       // Convert field names from database format back to collection type format
       // Use exact field names - no conversion

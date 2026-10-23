@@ -3,11 +3,12 @@ export const runtime = 'nodejs'
 
 import type { NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import { findUniqueDynamic, findManyDynamic, updateDynamic, deleteDynamic } from '@/lib/dynamic-prisma';
+import { findManyDynamic, updateDynamic, deleteDynamic } from '@/lib/dynamic-prisma';
 import { ApiResponse, Field } from '@/lib/types';
 import { filterVirtualRelationFields } from '@/lib/relation-engine';
 import { populateComponents, createComponentEntry } from '@/lib/component-populate';
 import { populateRelations } from '@/lib/relation-populate';
+import { resolveRequestLocale } from '@/lib/content-i18n';
 import { withApiToken, ApiTokenRequest } from '@/lib/api-tokens/middleware';
 
 async function handler(
@@ -32,14 +33,41 @@ async function handler(
     const fields = (collectionType.fields as any)?.fields || [];
 
     if (req.method === 'GET') {
-      let entries: any = await findUniqueDynamic(name, id);
+      const locale = await resolveRequestLocale(req.query);
+      const defaultLocale = 'en';
 
-      if (!entries || entries.length === 0) {
-        return res.status(404).json({ error: 'Entry not found' });
+      // :id is the rootId (translation group), never a per-locale primary key.
+      // Find the row matching rootId + requested locale, fall back to default.
+      let target: any = null;
+      let resolvedLocale = locale;
+
+      const rows: any = await findManyDynamic(name, {
+        where: { rootId: id, locale },
+      });
+      const found = Array.isArray(rows) ? rows[0] : rows;
+
+      if (found) {
+        target = found;
+        resolvedLocale = locale;
+      } else if (locale !== defaultLocale) {
+        const fallbackRows: any = await findManyDynamic(name, {
+          where: { rootId: id, locale: defaultLocale },
+        });
+        const fallback = Array.isArray(fallbackRows) ? fallbackRows[0] : fallbackRows;
+        if (fallback) {
+          target = fallback;
+          resolvedLocale = defaultLocale;
+        }
       }
 
-      let entry = entries[0];
-      const convertedEntry: Record<string, any> = { ...entry };
+      if (!target) {
+        return res.status(404).json({
+          error: `Entry not found in locale "${locale}"`,
+        });
+      }
+
+      // Never expose the per-locale primary key as the public API id.
+      const { id: _pk, ...convertedEntry } = target;
 
       let finalEntry = await populateRelations(convertedEntry, name, fields);
 
@@ -47,7 +75,7 @@ async function handler(
         finalEntry = await populateComponents(finalEntry, fields);
       }
 
-      return res.status(200).json({ data: finalEntry });
+      return res.status(200).json({ data: finalEntry, rootId: id, locale: resolvedLocale });
     }
 
     if (req.method === 'PUT') {
@@ -56,6 +84,19 @@ async function handler(
       if (!entryData || Object.keys(entryData).length === 0) {
         return res.status(400).json({ error: 'Missing entry data' });
       }
+
+      const locale = await resolveRequestLocale(req.query);
+
+      // Locate the specific locale row by rootId + locale.
+      const existing: any = await findManyDynamic(name, {
+        where: { rootId: id, locale },
+      }) as any[];
+
+      if (!existing || existing.length === 0) {
+        return res.status(404).json({ error: 'Entry not found' });
+      }
+
+      const localeId = existing[0].id;
 
       const convertedData: Record<string, any> = {};
       Object.keys(entryData).forEach(key => {
@@ -68,7 +109,7 @@ async function handler(
             where: { [field.name]: convertedData[field.name] }
           }) as any[];
 
-          if (existingEntry && existingEntry.length > 0 && existingEntry[0].id !== id) {
+          if (existingEntry && existingEntry.length > 0 && existingEntry[0].id !== localeId) {
             return res.status(400).json({
               error: `This ${field.displayName} already exists. The field "${field.displayName}" must be unique.`
             });
@@ -79,7 +120,7 @@ async function handler(
       const processedData = await processComponentFields(convertedData, fields);
       const filteredData = filterVirtualRelationFields(fields, processedData);
 
-      const entry = await updateDynamic(name, id, filteredData);
+      const entry = await updateDynamic(name, localeId, filteredData);
       return res.status(200).json({ data: entry });
     }
 
@@ -90,20 +131,47 @@ async function handler(
         return res.status(400).json({ error: 'Missing entry data' });
       }
 
+      const locale = await resolveRequestLocale(req.query);
+
+      const existing: any = await findManyDynamic(name, {
+        where: { rootId: id, locale },
+      }) as any[];
+
+      if (!existing || existing.length === 0) {
+        return res.status(404).json({ error: 'Entry not found' });
+      }
+
+      const localeId = existing[0].id;
+
       const processedData = await processComponentFields(entryData, fields);
       const filteredData = filterVirtualRelationFields(fields, processedData);
 
-      const entry = await updateDynamic(name, id, filteredData);
+      const entry = await updateDynamic(name, localeId, filteredData);
       return res.status(200).json({ data: entry });
     }
 
     if (req.method === 'DELETE') {
-      await deleteDynamic(name, id);
+      const locale = await resolveRequestLocale(req.query);
+
+      const existing: any = await findManyDynamic(name, {
+        where: { rootId: id, locale },
+      }) as any[];
+
+      if (!existing || existing.length === 0) {
+        return res.status(404).json({ error: 'Entry not found' });
+      }
+
+      const localeId = existing[0].id;
+
+      await deleteDynamic(name, localeId);
       return res.status(200).json({ message: 'Entry deleted' });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (error: any) {
+    if (error?.statusCode) {
+      return res.status(error.statusCode).json({ error: error.message });
+    }
     console.error('Public Collection Entry API Error:', error);
     return res.status(500).json({ error: error.message || 'Internal server error' });
   }

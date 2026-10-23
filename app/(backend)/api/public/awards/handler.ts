@@ -13,10 +13,9 @@ export const runtime = 'nodejs'
 
 import type { NextApiResponse } from 'next';
 
-import { prisma } from '@/lib/prisma';
-
 import { findManyDynamic } from '@/lib/dynamic-prisma';
 
+import { resolveRequestLocale } from '@/lib/content-i18n';
 import { withApiToken, ApiTokenRequest } from '@/lib/api-tokens/middleware';
 
 
@@ -32,7 +31,9 @@ async function handler(
   }
 
   try {
-    const awards = await findManyDynamic('award');
+    const locale = await resolveRequestLocale(req.query);
+
+    const awards = await findManyDynamic('award', { where: { locale } });
 
     return res.status(200).json({
       success: true,
@@ -40,6 +41,9 @@ async function handler(
       count: Array.isArray(awards) ? awards.length : 0,
     });
   } catch (error: any) {
+    if (error?.statusCode) {
+      return res.status(error.statusCode).json({ success: false, error: error.message });
+    }
     console.error('Error fetching awards:', error);
 
     return res.status(500).json({

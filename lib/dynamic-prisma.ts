@@ -142,10 +142,12 @@ export async function createDynamic(
   // Build set of actual table column names
   const actualColumnNames = new Set(columnsInfo.map((col: any) => col.column_name));
 
-  // Add default values for required fields
+  // Never trust a caller-supplied id for inserts. Always generate a fresh id
+  // so a translation clone (or any create) can never collide with an existing row.
+  const { id: _ignoredId, ...dataWithoutId } = data;
   const dataWithDefaults: Record<string, any> = {
-    id: data.id || generateCuid(),
-    ...data,
+    id: generateCuid(),
+    ...dataWithoutId,
     createdAt: data.createdAt || new Date(),
     updatedAt: data.updatedAt || new Date(),
   };
@@ -287,13 +289,14 @@ export async function updateDynamic(
   // This prevents errors like: column "products" of relation "product_category" does not exist
   const filteredData = await filterVirtualRelationFields(tableName, data);
 
-  // The i18n identity columns are immutable after creation. Editing a
-  // translation must never change its language or move it into another
-  // translation group.
+  // The i18n identity columns and immutable system columns are stripped.
+  // Editing a translation must never change its id, language, or move it
+  // into another translation group. createdAt is also immutable.
+  delete filteredData.id;
+  delete filteredData.createdAt;
   delete filteredData.rootId;
   delete filteredData.locale;
 
-  // Remove updatedAt from data if it exists (we'll add it manually in the query)
   const { updatedAt, ...dataWithoutUpdatedAt } = filteredData;
 
   // Process data - keep objects/arrays as-is for JSONB columns

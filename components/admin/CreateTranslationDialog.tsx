@@ -69,8 +69,9 @@ export const CreateTranslationDialog: React.FC<CreateTranslationDialogProps> = (
           ) : (
             <>
               <p className="text-sm text-gray-600 mb-3">
-                Pick a language. The content is copied from the current entry and
-                you can then edit the translation.
+                Pick a language. The translation keeps the same translation
+                group but stores its own content and category, so you can edit
+                it independently.
               </p>
               <div className="space-y-2">
                 {available.map((language) => {

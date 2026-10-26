@@ -14,10 +14,7 @@
 import { prisma } from './prisma';
 import { Field } from './types';
 import { findManyDynamic, findUniqueDynamic } from './dynamic-prisma';
-import {
-  resolveLocalizedRelationId,
-  resolveSharedRelationValue,
-} from './i18n-relations';
+import { resolveLocalizedRelationId } from './i18n-relations';
 
 export interface PopulateOptions {
   maxDepth?: number;
@@ -70,21 +67,9 @@ export async function populateRelations(
       const relationType = field.relation.type;
       const targetCollection = field.relation.targetCollection;
 
-      // Translation rows created before a relationship was selected may not
-      // carry the foreign key. Relationships are shared by the whole
-      // translation group, so fall back to a sibling translation's value.
-      if (
-        (relationType === 'manyToOne' || relationType === 'oneToOne') &&
-        !field.relation.isVirtual &&
-        (fkValue === null || fkValue === undefined || fkValue === '')
-      ) {
-        fkValue = await resolveSharedRelationValue(
-          collectionName,
-          entry,
-          fkFieldName
-        );
-      }
-
+      // Each translation stores its own owning-relation value (for example its
+      // own category), so a missing value is never inherited from a sibling
+      // translation.
       console.log(`[Relation Populate] Processing field: ${field.name}, FK value: ${fkValue}`);
 
       if (relationType === 'oneToOne' && field.relation.isVirtual) {

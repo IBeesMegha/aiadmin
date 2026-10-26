@@ -5,8 +5,8 @@
  *
  * A small, self-contained language dropdown used across the Content Manager
  * (list, create and edit screens). It shows only the active languages passed
- * in, marks which ones already have a translation and lets the parent decide
- * what happens on selection.
+ * in, marks which ones already have a translation, can show per-language entry
+ * counts and lets the parent decide what happens on selection.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -19,6 +19,8 @@ interface LanguageSelectProps {
   onChange: (code: string) => void;
   /** Locale codes that already have a translation for the current entry. */
   translationCodes?: string[];
+  /** Optional per-language entry counts, shown as a badge. */
+  counts?: Record<string, number>;
   disabled?: boolean;
   /** Optional label rendered above the control. */
   label?: string;
@@ -34,6 +36,7 @@ export const LanguageSelect: React.FC<LanguageSelectProps> = ({
   value,
   onChange,
   translationCodes = [],
+  counts,
   disabled = false,
   label,
   className = '',
@@ -83,6 +86,14 @@ export const LanguageSelect: React.FC<LanguageSelectProps> = ({
         <span className="flex-1 text-left truncate">
           {current ? current.name : 'Select language'}
         </span>
+        {current && counts && (
+          <span
+            className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600 tabular-nums"
+            title={`${counts[current.code] ?? 0} entries`}
+          >
+            {counts[current.code] ?? 0}
+          </span>
+        )}
         <ChevronDown size={16} className="text-gray-400" />
       </button>
 
@@ -112,6 +123,15 @@ export const LanguageSelect: React.FC<LanguageSelectProps> = ({
                     </span>
                   )}
                 </span>
+
+                {counts && (
+                  <span
+                    className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600 tabular-nums"
+                    title={`${counts[language.code] ?? 0} entries`}
+                  >
+                    {counts[language.code] ?? 0}
+                  </span>
+                )}
 
                 {translated ? (
                   <span className="inline-flex items-center gap-1 text-xs text-green-600" title="Translation exists">

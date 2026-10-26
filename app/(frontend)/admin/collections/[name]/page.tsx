@@ -9,7 +9,6 @@ import { ColumnConfigModal } from '@/components/admin/ColumnConfigModal';
 import { LanguageSelect } from '@/components/admin/LanguageSelect';
 import { CreateTranslationDialog } from '@/components/admin/CreateTranslationDialog';
 import { useActiveLanguages } from '@/hooks/useActiveLanguages';
-import { createEntryTranslation } from '@/lib/content-i18n-client';
 import { fetchWithAuth } from '@/lib/api-client';
 import toast from 'react-hot-toast';
 import {
@@ -48,7 +47,7 @@ interface SortableRowProps {
   collectionType: any;
   isSelected: boolean;
   onSelect: (id: string, checked: boolean) => void;
-  translationFlags: { code: string; flag: string | null; name: string }[];
+  translationFlags: { code: string; flag: string | null; name: string; exists: boolean }[];
   onCreateTranslation: () => void;
 }
 
@@ -374,8 +373,14 @@ const SortableRow: React.FC<SortableRowProps> = ({ entry, index, name, fields, o
           {translationFlags.map((translation) => (
             <span
               key={translation.code}
-              title={translation.name}
-              className="text-lg leading-none"
+              title={
+                translation.exists
+                  ? translation.name
+                  : `${translation.name} (no translation yet)`
+              }
+              className={`text-lg leading-none ${
+                translation.exists ? '' : 'opacity-30 grayscale'
+              }`}
               aria-hidden
             >
               {translation.flag || '🏳️'}
@@ -591,13 +596,22 @@ export default function CollectionList() {
   const [selectedEntries, setSelectedEntries] = useState<Set<string>>(new Set());
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [translationDialog, setTranslationDialog] = useState<{ entryId: string; existingCodes: string[] } | null>(null);
-  const [creatingLocale, setCreatingLocale] = useState<string | null>(null);
 
   // Locales that appear anywhere in the collection (used for header badges).
   const availableLocales = useMemo(
     () => Array.from(new Set(rawEntries.map((entry) => entry.locale || 'en'))),
     [rawEntries]
   );
+
+  // Number of entries that actually exist in each language.
+  const entryCountsByLocale = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const entry of rawEntries) {
+      const locale = entry.locale || 'en';
+      counts[locale] = (counts[locale] || 0) + 1;
+    }
+    return counts;
+  }, [rawEntries]);
 
   /**
    * Group entries by their translation root. Each group maps a locale to the
@@ -622,11 +636,17 @@ export default function CollectionList() {
     return group ? Array.from(group.keys()) : [entry.locale || 'en'];
   };
 
-  const translationFlagsFor = (entry: any) =>
-    translationCodesFor(entry).map((code) => {
-      const language = languages.find((item) => item.code === code);
-      return { code, flag: language?.flag ?? null, name: language?.name ?? code };
-    });
+  // Show every active language, marking which ones already have a translation
+  // for this content item and which are still missing.
+  const translationFlagsFor = (entry: any) => {
+    const existing = new Set(translationCodesFor(entry));
+    return languages.map((language) => ({
+      code: language.code,
+      flag: language.flag ?? null,
+      name: language.name,
+      exists: existing.has(language.code),
+    }));
+  };
 
 
   const sensors = useSensors(
@@ -648,22 +668,19 @@ export default function CollectionList() {
     }
   }, [collectionType]);
 
-  // Show one row per content item in the currently selected language. Content
-  // that has no translation yet falls back to the default language so entries
-  // never disappear from the list; opening one lets the editor create the
-  // missing translation (the edit page seeds shared relations).
+  // Show only entries that exist in the selected language. There is no
+  // fallback to the default language: a missing translation is shown as
+  // missing, not as the default-language row.
   useEffect(() => {
-    const defaultLocale =
-      languages.find((language) => language.isDefault)?.code || 'en';
     const display: any[] = [];
     for (const byLocale of translationGroups.values()) {
-      const entry = byLocale.get(selectedLocale) || byLocale.get(defaultLocale);
+      const entry = byLocale.get(selectedLocale);
       if (entry) display.push(entry);
     }
     display.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     setEntries(display);
     setSelectedEntries(new Set());
-  }, [selectedLocale, translationGroups, languages]);
+  }, [selectedLocale, translationGroups]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -790,23 +807,14 @@ export default function CollectionList() {
     });
   };
 
-  const handleCreateTranslation = async (locale: string) => {
+  const handleCreateTranslation = (locale: string) => {
     if (!translationDialog) return;
 
-    setCreatingLocale(locale);
-    const toastId = toast.loading('Creating translation...');
-
-    try {
-      const created = await createEntryTranslation(name, translationDialog.entryId, locale);
-      toast.success('Translation created', { id: toastId });
-      setTranslationDialog(null);
-      // Open the newly created translation for editing.
-      router.push(`/admin/collections/${name}/${created.id}`);
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to create translation', { id: toastId });
-    } finally {
-      setCreatingLocale(null);
-    }
+    const entryId = translationDialog.entryId;
+    setTranslationDialog(null);
+    // Open the entry in create-translation mode. The row is only written when
+    // the editor saves actual content, so no empty placeholder is created.
+    router.push(`/admin/collections/${name}/${entryId}?locale=${locale}`);
   };
 
   const handleImageClick = (images: string[], startIndex: number) => {
@@ -1051,6 +1059,12 @@ export default function CollectionList() {
             {collectionType.description && (
               <p className="text-gray-600 mt-2">{collectionType.description}</p>
             )}
+            <p className="text-sm text-gray-500 mt-2">
+              {entryCountsByLocale[selectedLocale] ?? 0}{' '}
+              {(entryCountsByLocale[selectedLocale] ?? 0) === 1 ? 'entry' : 'entries'} in{' '}
+              {languages.find((language) => language.code === selectedLocale)?.name ||
+                selectedLocale}
+            </p>
           </div>
           <div className="flex items-center space-x-3">
             {selectedEntries.size > 0 && (
@@ -1073,6 +1087,7 @@ export default function CollectionList() {
                 value={selectedLocale}
                 onChange={setSelectedLocale}
                 translationCodes={availableLocales}
+                counts={entryCountsByLocale}
               />
             )}
             <div className="relative export-menu-container">
@@ -1141,7 +1156,10 @@ export default function CollectionList() {
           <div className="bg-white rounded-lg shadow p-8 text-center">
             {rawEntries.length > 0 ? (
               <p className="text-gray-600 mb-4">
-                No {languages.find((language) => language.code === selectedLocale)?.name || selectedLocale} entries yet. Switch language or create a translation from another language.
+                No entries exist in{' '}
+                {languages.find((language) => language.code === selectedLocale)?.name ||
+                  selectedLocale}
+                .
               </p>
             ) : (
               <>
@@ -1254,7 +1272,6 @@ export default function CollectionList() {
         existingCodes={translationDialog?.existingCodes || []}
         onClose={() => setTranslationDialog(null)}
         onSelect={handleCreateTranslation}
-        creatingLocale={creatingLocale}
       />
     </Layout>
   );

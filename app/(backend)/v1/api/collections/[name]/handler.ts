@@ -5,6 +5,8 @@ import type { NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import { withApiToken, ApiTokenRequest } from '@/lib/api-tokens/middleware';
 import { resolveRequestLocale } from '@/lib/content-i18n';
+import { resolveMultipleRelations } from '@/lib/relation-resolver';
+import { populateMultipleEntries } from '@/lib/component-populate';
 
 async function handler(req: ApiTokenRequest, res: NextApiResponse) {
   try {
@@ -23,6 +25,8 @@ async function handler(req: ApiTokenRequest, res: NextApiResponse) {
     if (!collectionType) {
       return res.status(404).json({ success: false, error: `Collection "${name}" not found` });
     }
+
+    const fields = (collectionType.fields as any)?.fields || [];
 
     if (req.method === 'GET') {
       const { page = '1', limit = '20', sort, order } = req.query;
@@ -50,20 +54,25 @@ async function handler(req: ApiTokenRequest, res: NextApiResponse) {
         `SELECT * FROM "${sanitizedTableName}"${localeFilter} ORDER BY ${orderBy} LIMIT ${limitNum} OFFSET ${offset}`,
       );
 
+      const resolvedEntries = await resolveMultipleRelations(
+        entries,
+        sanitizedTableName,
+        fields,
+      );
+      const finalEntries =
+        req.query.populate === 'true'
+          ? await populateMultipleEntries(resolvedEntries, fields)
+          : resolvedEntries;
+
       return res.status(200).json({
         success: true,
-        data: entries,
+        data: finalEntries,
         locale,
         pagination: {
           page: pageNum,
           limit: limitNum,
           totalItems,
           totalPages: Math.ceil(totalItems / limitNum),
-        },
-        collectionType: {
-          id: collectionType.id,
-          name: collectionType.name,
-          displayName: collectionType.displayName,
         },
       });
     }

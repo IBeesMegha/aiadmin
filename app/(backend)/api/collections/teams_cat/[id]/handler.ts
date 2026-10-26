@@ -22,7 +22,6 @@ import {
   extractManyToManyData,
   updateManyToManyRelations,
 } from '@/lib/many-to-many-handler';
-import { syncOwningRelationsAcrossTranslations } from '@/lib/i18n-relations';
 import { DEFAULT_CONTENT_LOCALE } from '@/lib/dynamic-table-service';
 import * as TeamsCatModel from '@/models/teams_cat.model';
 
@@ -203,14 +202,7 @@ async function updateEntry(id: string, entryData: Record<string, any>): Promise<
 
   const entry = await TeamsCatModel.update(id, dataToUpdate);
 
-  // Keep owning relationships identical across every translation of the same
-  // rootId (using each translation's language for the related entry).
-  await syncOwningRelationsAcrossTranslations(
-    TeamsCatModel.COLLECTION_NAME,
-    id,
-    dataToUpdate,
-    fields
-  );
+  // Owning relations (for example categories) stay independent per translation.
 
   if (Object.keys(manyToManyData).length > 0) {
     await updateManyToManyRelations(TeamsCatModel.COLLECTION_NAME, id, manyToManyData, fields);

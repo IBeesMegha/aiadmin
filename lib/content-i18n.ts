@@ -28,9 +28,6 @@ import type { Field } from './types';
 import {
   extractRelationId,
   getOwningRelationFields,
-  resolveRelationIdForLocale,
-  resolveRelationRootId,
-  syncOwningRelationsAcrossTranslations,
 } from './i18n-relations';
 
 /** Error carrying an HTTP status code so API handlers can map it directly. */
@@ -143,8 +140,10 @@ export async function listTranslations(
  *
  * - the target language must be active (validated against the Language model)
  * - the new row keeps the source `rootId` but receives a brand new primary id
- * - content (regular fields, relations, media, components, drafts) is cloned
- *   so the translation starts from the source and can then be edited
+ * - content (regular fields, media, components, drafts) is cloned so the
+ *   translation starts from the source and can then be edited
+ * - owning relations (for example a category) are NOT cloned: every language
+ *   stores its own selection, so categories stay independent per translation
  * - duplicate (rootId, locale) pairs are rejected with 409
  *
  * `overrides` lets the caller supply translated field values up-front; the
@@ -173,9 +172,21 @@ export async function createTranslation(
     );
   }
 
+  const collectionType = await prisma.collectionType.findUnique({
+    where: { name: collectionName },
+  });
+  const fields = (((collectionType?.fields as any)?.fields || []) as Field[]);
+  const owningRelationFields = getOwningRelationFields(fields);
+  const owningRelationNames = new Set(
+    owningRelationFields.map((field) => field.name)
+  );
+
   const clone: Record<string, any> = {};
   for (const [key, value] of Object.entries(source)) {
     if (RESERVED_COLUMNS.has(key)) continue;
+    // Categories and other owning relations belong to the individual language.
+    // They must be selected explicitly for the new translation, never copied.
+    if (owningRelationNames.has(key)) continue;
     clone[key] = value;
   }
   for (const [key, value] of Object.entries(overrides || {})) {
@@ -183,44 +194,16 @@ export async function createTranslation(
     clone[key] = value;
   }
 
-  // Owning relationships are shared by the whole translation group. Keep the
-  // source relationship (or the caller's selection) and map it to the related
-  // entry's translation for the new language. An empty override means "not
-  // provided" so a new translation still inherits the group's relationship.
-  const collectionType = await prisma.collectionType.findUnique({
-    where: { name: collectionName },
-  });
-  const fields = (((collectionType?.fields as any)?.fields || []) as Field[]);
-  const relationValues: Record<string, any> = {};
-
-  for (const field of getOwningRelationFields(fields)) {
-    const targetCollection = field.relation!.targetCollection;
-    const overrideValue = (overrides || {})[field.name];
-    const hasOverride =
-      Object.prototype.hasOwnProperty.call(overrides || {}, field.name) &&
-      overrideValue !== null &&
-      overrideValue !== undefined &&
-      overrideValue !== '';
-
-    const selectedId = extractRelationId(
-      hasOverride ? overrideValue : clone[field.name]
+  // Normalize the caller's relation selection (or clear it when omitted) so the
+  // new translation keeps its own category/relationship value.
+  for (const field of owningRelationFields) {
+    const hasOverride = Object.prototype.hasOwnProperty.call(
+      overrides || {},
+      field.name
     );
-
-    if (!selectedId) {
-      clone[field.name] = null;
-      continue;
-    }
-
-    const targetRootId = await resolveRelationRootId(
-      targetCollection,
-      selectedId
-    );
-    const localizedId = targetRootId
-      ? await resolveRelationIdForLocale(targetCollection, targetRootId, locale)
-      : selectedId;
-
-    clone[field.name] = localizedId || selectedId;
-    relationValues[field.name] = clone[field.name];
+    clone[field.name] = hasOverride
+      ? extractRelationId((overrides || {})[field.name])
+      : null;
   }
 
   clone.rootId = rootId;
@@ -230,15 +213,6 @@ export async function createTranslation(
   const created = await createDynamic(collectionName, clone, {
     allowReservedI18n: true,
   });
-
-  if (Object.keys(relationValues).length > 0) {
-    await syncOwningRelationsAcrossTranslations(
-      collectionName,
-      created.id,
-      relationValues,
-      fields
-    );
-  }
 
   return created;
 }

@@ -9,10 +9,7 @@ import { prisma } from './prisma';
 import { Field } from './types';
 import { findManyDynamic, findUniqueDynamic } from './dynamic-prisma';
 import { isVirtualRelation, ownsRelation } from './relation-metadata';
-import {
-  resolveLocalizedRelationId,
-  resolveSharedRelationValue,
-} from './i18n-relations';
+import { resolveLocalizedRelationId } from './i18n-relations';
 
 function isVirtualField(field: Field): boolean {
   if (!field.relation) return false;
@@ -110,19 +107,9 @@ async function resolvePhysicalRelation(
   const fkColumnName = sanitizeFieldName(field.name);
   let fkValue = entry[fkColumnName];
 
-  // Relationships are shared by the whole translation group. A translation
-  // row without its own value inherits the group's value.
-  if (
-    (relationType === 'manyToOne' || relationType === 'oneToOne') &&
-    !fkValue
-  ) {
-    fkValue = await resolveSharedRelationValue(
-      collectionName,
-      entry,
-      fkColumnName
-    );
-  }
-
+  // Owning relations (for example categories) are stored independently for
+  // every language, so a missing value is never inherited from a sibling
+  // translation.
   console.log(`[Relation Resolver] Physical: ${field.name}, FK: ${fkColumnName} = ${fkValue}`);
 
   if (!fkValue) {

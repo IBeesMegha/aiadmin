@@ -5,6 +5,8 @@ import type { NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import { withApiToken, ApiTokenRequest } from '@/lib/api-tokens/middleware';
 import { resolveRequestLocale } from '@/lib/content-i18n';
+import { populateRelations } from '@/lib/relation-populate';
+import { populateComponents } from '@/lib/component-populate';
 
 async function handler(req: ApiTokenRequest, res: NextApiResponse) {
   try {
@@ -28,6 +30,8 @@ async function handler(req: ApiTokenRequest, res: NextApiResponse) {
     if (!collectionType) {
       return res.status(404).json({ success: false, error: `Collection "${name}" not found` });
     }
+
+    const fields = (collectionType.fields as any)?.fields || [];
 
     if (req.method === 'GET') {
       const locale = await resolveRequestLocale(req.query);
@@ -68,19 +72,24 @@ async function handler(req: ApiTokenRequest, res: NextApiResponse) {
         });
       }
 
+      const resolved = await populateRelations(
+        { ...target },
+        sanitizedTableName,
+        fields,
+      );
+      const populated =
+        req.query.populate === 'true'
+          ? await populateComponents(resolved, fields)
+          : resolved;
+
       // Never expose the per-locale primary key as the public API id.
-      const { id: _pk, ...publicEntry } = target;
+      const { id: _pk, ...publicEntry } = populated;
 
       return res.status(200).json({
         success: true,
         data: publicEntry,
         rootId,
         locale: resolvedLocale,
-        collectionType: {
-          id: collectionType.id,
-          name: collectionType.name,
-          displayName: collectionType.displayName,
-        },
       });
     }
 

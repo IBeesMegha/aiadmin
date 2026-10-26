@@ -2,17 +2,16 @@
  * Internationalized relations
  *
  * Translation rows of the same entry share a `rootId`. Owning relations
- * (`manyToOne` / `oneToOne`) are stored as a foreign key on every translation
- * row, so they must be kept logically identical across the whole translation
- * group.
+ * (`manyToOne` / `oneToOne`, for example a category) are stored as a foreign
+ * key on every translation row and are independent per language: selecting a
+ * category for one language never changes another language.
  *
  * The helpers in this module resolve relations through translation groups:
  * a stored id is mapped to the related entry's translation for the requested
- * language (falling back to the default language), and a relation selected in
- * one language is applied to every translation of the owning entry.
+ * language (falling back to the default language).
  */
 
-import { findManyDynamic, findUniqueDynamic, updateDynamic } from './dynamic-prisma';
+import { findManyDynamic, findUniqueDynamic } from './dynamic-prisma';
 import { DEFAULT_CONTENT_LOCALE } from './dynamic-table-service';
 import type { Field } from './types';
 
@@ -153,91 +152,4 @@ export async function resolveLocalizedRelationId(
   );
 
   return localizedId || target.id;
-}
-
-/**
- * Return the relation value shared by the entry's translation group.
- *
- * Used when loading a translation whose own foreign key was never populated
- * (for example translations created before the relation was selected). The
- * value is only inherited when the current row is empty, so explicitly set
- * relationships always win.
- */
-export async function resolveSharedRelationValue(
-  collectionName: string,
-  entry: Record<string, any>,
-  fieldName: string
-): Promise<any> {
-  const current = entry?.[fieldName];
-  if (!isEmptyRelation(current)) return current;
-
-  const rootId = entry?.rootId || entry?.id;
-  if (!rootId) return current ?? null;
-
-  const rows = await findRowByRoot(collectionName, rootId);
-  if (rows.length === 0) return current ?? null;
-
-  const match = orderByLocale(rows).find(
-    (row) => !isEmptyRelation(row[fieldName])
-  );
-
-  return match ? match[fieldName] : current ?? null;
-}
-
-/**
- * Apply owning-relation changes from one translation to every translation in
- * the same `rootId` group.
- *
- * Each row receives the related entry's translation for that row's language,
- * so all language versions keep the same logical relationship while the
- * physical foreign key still points at a valid entry id.
- */
-export async function syncOwningRelationsAcrossTranslations(
-  collectionName: string,
-  entryId: string,
-  data: Record<string, any>,
-  fields: Field[]
-): Promise<void> {
-  const relationFields = getOwningRelationFields(fields).filter((field) =>
-    Object.prototype.hasOwnProperty.call(data, field.name)
-  );
-
-  if (relationFields.length === 0) return;
-
-  const entryRows: any = await findUniqueDynamic(collectionName, entryId);
-  const entry = Array.isArray(entryRows) ? entryRows[0] : entryRows;
-  if (!entry) return;
-
-  const rootId = entry.rootId || entry.id;
-  const groupRows = await findRowByRoot(collectionName, rootId);
-  const rows = groupRows.length > 0 ? groupRows : [entry];
-
-  for (const field of relationFields) {
-    const targetCollection = field.relation!.targetCollection;
-    const selectedId = extractRelationId(data[field.name]);
-    const targetRootId = selectedId
-      ? await resolveRelationRootId(targetCollection, selectedId)
-      : null;
-
-    for (const row of rows) {
-      const nextValue = targetRootId
-        ? await resolveRelationIdForLocale(
-            targetCollection,
-            targetRootId,
-            row.locale
-          )
-        : null;
-
-      const currentValue = isEmptyRelation(row[field.name])
-        ? null
-        : row[field.name];
-
-      if (currentValue !== nextValue) {
-        await updateDynamic(collectionName, row.id, {
-          [field.name]: nextValue,
-        });
-        row[field.name] = nextValue;
-      }
-    }
-  }
 }

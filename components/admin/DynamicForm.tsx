@@ -84,7 +84,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
 
   // Reset form when defaultValues change (for edit forms). An empty object is
   // meaningful: switching to a language that has no translation yet must clear
-  // the previous language's values while keeping shared relations seeded.
+  // the previous language's values so the new translation starts empty.
   useEffect(() => {
     if (defaultValues === undefined) return;
     console.log('[DynamicForm] Resetting form with default values:', defaultValues);

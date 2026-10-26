@@ -9,7 +9,6 @@ import { filterVirtualRelationFields } from '@/lib/relation-engine';
 import { populateComponents, createComponentEntry } from '@/lib/component-populate';
 import { populateRelations } from '@/lib/relation-populate';
 import { resolveRequestLocale } from '@/lib/content-i18n';
-import { syncOwningRelationsAcrossTranslations } from '@/lib/i18n-relations';
 import { withApiToken, ApiTokenRequest } from '@/lib/api-tokens/middleware';
 
 async function handler(
@@ -123,12 +122,7 @@ async function handler(
 
       const entry = await updateDynamic(name, localeId, filteredData);
 
-      await syncOwningRelationsAcrossTranslations(
-        name,
-        localeId,
-        filteredData,
-        fields
-      );
+      // Owning relations stay independent per translation (no propagation).
 
       return res.status(200).json({ data: entry });
     }
@@ -157,12 +151,7 @@ async function handler(
 
       const entry = await updateDynamic(name, localeId, filteredData);
 
-      await syncOwningRelationsAcrossTranslations(
-        name,
-        localeId,
-        filteredData,
-        fields
-      );
+      // Owning relations stay independent per translation (no propagation).
 
       return res.status(200).json({ data: entry });
     }

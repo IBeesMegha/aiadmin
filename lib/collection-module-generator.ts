@@ -410,7 +410,7 @@ async function getEntry(id: string, options: { populate?: boolean; locale?: stri
       console.log(\`[${identifier} GET] Found translation:\`, finalEntry.id);
     } else {
       // No translation yet: return the source entry so the UI can offer to
-      // create it (and inherit shared relationships) instead of failing.
+      // create it instead of failing. Content and category stay independent.
       console.log(\`[${identifier} GET] No translation found for locale \${targetLocale}, returning source entry\`);
     }
   }
@@ -458,14 +458,7 @@ async function updateEntry(id: string, entryData: Record<string, any>): Promise<
 
   const entry = await ${alias}.update(id, dataToUpdate);
 
-  // Keep owning relationships identical across every translation of the same
-  // rootId (using each translation's language for the related entry).
-  await syncOwningRelationsAcrossTranslations(
-    ${alias}.COLLECTION_NAME,
-    id,
-    dataToUpdate,
-    fields
-  );
+  // Owning relations (for example categories) stay independent per translation.
 
   if (Object.keys(manyToManyData).length > 0) {
     await updateManyToManyRelations(${alias}.COLLECTION_NAME, id, manyToManyData, fields);
@@ -515,7 +508,6 @@ import {
   extractManyToManyData,
   updateManyToManyRelations,
 } from '@/lib/many-to-many-handler';
-import { syncOwningRelationsAcrossTranslations } from '@/lib/i18n-relations';
 import { DEFAULT_CONTENT_LOCALE } from '@/lib/dynamic-table-service';
 import * as ${identifier}Model from '@/models/${collectionName}.model';`;
 }

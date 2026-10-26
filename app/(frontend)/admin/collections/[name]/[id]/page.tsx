@@ -27,6 +27,9 @@ export default function EditCollectionEntry() {
   const [serverError, setServerError] = useState<{ field: string; message: string } | null>(null);
   const [selectedLocale, setSelectedLocale] = useState(() => {
     if (typeof window === 'undefined') return 'en';
+    // The list screen links to a missing translation with ?locale=<code>.
+    const requested = new URLSearchParams(window.location.search).get('locale');
+    if (requested) return requested;
     const stored = localStorage.getItem(`ssmed:locale:${name}`);
     return stored || 'en';
   });
@@ -37,6 +40,20 @@ export default function EditCollectionEntry() {
       localStorage.setItem(`ssmed:locale:${name}`, selectedLocale);
     }
   }, [selectedLocale, name]);
+
+  // The ?locale= hint is only needed for the first load. Drop it afterwards so
+  // switching languages and reloading does not jump back to the hinted locale.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has('locale')) return;
+    url.searchParams.delete('locale');
+    window.history.replaceState(
+      {},
+      '',
+      `${url.pathname}${url.search}${url.hash}`
+    );
+  }, []);
 
   const [translationsByLocale, setTranslationsByLocale] = useState<Record<string, string>>({});
   // True when the selected locale has no existing translation for this rootId,
@@ -100,34 +117,6 @@ export default function EditCollectionEntry() {
     return formattedEntry;
   };
 
-  // Owning relations are shared by every translation of an entry. When a
-  // translation does not exist yet, keep those values while the translatable
-  // fields start empty.
-  const seedSharedRelations = (
-    sourceEntry: Record<string, any>,
-    fields: any[]
-  ): Record<string, any> => {
-    const seeded: Record<string, any> = {};
-
-    fields.forEach((field) => {
-      if (field.type !== 'relation' || !field.relation) return;
-      if (field.relation.isVirtual) return;
-      if (
-        field.relation.type !== 'manyToOne' &&
-        field.relation.type !== 'oneToOne'
-      ) {
-        return;
-      }
-
-      const value = sourceEntry?.[field.name];
-      if (value !== undefined && value !== null && value !== '') {
-        seeded[field.name] = value;
-      }
-    });
-
-    return seeded;
-  };
-
   const loadEntry = async (entryId: string, knownFields?: any[]) => {
     setLoading(true);
     try {
@@ -162,14 +151,19 @@ export default function EditCollectionEntry() {
 
       setCollectionType(typeData.data);
 
+      const sourceLocale = entryData.data?.locale || 'en';
       const translationsMap: Record<string, string> = {};
       if (translationData) {
         translationData.translations.forEach((translation) => {
           translationsMap[translation.locale] = translation.id;
         });
-        setTranslationsByLocale(translationsMap);
-        console.log('[Edit Page] Translations map:', translationsMap);
       }
+      // The source row itself is always an existing translation.
+      if (entryData.data?.id) {
+        translationsMap[sourceLocale] = entryData.data.id;
+      }
+      setTranslationsByLocale(translationsMap);
+      console.log('[Edit Page] Translations map:', translationsMap);
 
       const fields = (typeData.data.fields as any)?.fields || [];
       const formattedEntry = formatEntry(entryData.data, fields);
@@ -184,10 +178,10 @@ export default function EditCollectionEntry() {
       const existingId = translationsMap[selectedLocale];
       if (existingId && existingId !== id) {
         await loadEntry(existingId, fields);
-      } else if (selectedLocale !== (entryData.data?.locale || 'en')) {
-        // The selected language has no translation yet: prepare a new one and
-        // keep the shared relations visible.
-        setEntry(seedSharedRelations(formattedEntry, fields));
+      } else if (selectedLocale !== sourceLocale) {
+        // No translation for this language yet: start from an empty form.
+        // Content and category are stored independently per language.
+        setEntry({});
         setIsCreatingTranslation(true);
       }
     } catch (error) {
@@ -358,13 +352,10 @@ export default function EditCollectionEntry() {
         setEntry(formatEntry(loadedEntry, fields));
         setActiveEntryId(loadedEntry.id);
       } else {
-        // No translation exists yet for this locale. Clear the translatable
-        // fields so the user can add new content, but keep shared relations
-        // (e.g. the blog category) so they stay visible in every language.
-        // Saving will create the translation automatically.
-        const sourceEntry =
-          entry || (loadedEntry ? formatEntry(loadedEntry, fields) : {});
-        setEntry(seedSharedRelations(sourceEntry, fields));
+        // No translation exists yet for this locale. Start from an empty form:
+        // content and category are stored independently per language, so
+        // nothing is copied from another translation. Saving creates the row.
+        setEntry({});
         setActiveEntryId(id);
         setIsCreatingTranslation(true);
       }
@@ -412,20 +403,27 @@ export default function EditCollectionEntry() {
             </h1>
             {languages.length > 0 && (
               <div className="flex items-center gap-1 mt-2">
-                {languages
-                  .filter((language) => translationsByLocale[language.code])
-                  .map((language) => (
+                {languages.map((language) => {
+                  const hasTranslation = Boolean(
+                    translationsByLocale[language.code]
+                  );
+                  return (
                     <span
                       key={language.code}
-                      title={language.name}
+                      title={
+                        hasTranslation
+                          ? language.name
+                          : `${language.name} (no translation yet)`
+                      }
                       className={`text-lg leading-none px-1 rounded ${
                         language.code === selectedLocale ? 'ring-2 ring-blue-400' : ''
-                      }`}
+                      } ${hasTranslation ? '' : 'opacity-30 grayscale'}`}
                       aria-hidden
                     >
                       {language.flag || '🏳️'}
                     </span>
-                  ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -453,11 +451,20 @@ export default function EditCollectionEntry() {
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
+          {isCreatingTranslation && (
+            <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              No translation exists for{' '}
+              {languages.find((language) => language.code === selectedLocale)?.name ||
+                selectedLocale}
+              . Fill in the fields and use <strong>Create Translation</strong> to
+              create it. Content and category are independent for each language.
+            </div>
+          )}
           <DynamicForm
             fields={collectionType.fields.fields}
             defaultValues={entry}
             onSubmit={handleSubmit}
-            submitLabel="Update Entry"
+            submitLabel={isCreatingTranslation ? 'Create Translation' : 'Update Entry'}
             collectionName={name as string}
             entryId={activeEntryId}
             serverError={serverError}

@@ -120,6 +120,7 @@ model SingleType {
   description String?
   fields      Json
   data        Json?
+  tableName   String?  @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

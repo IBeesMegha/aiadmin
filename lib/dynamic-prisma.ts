@@ -24,6 +24,25 @@ function generateCuid(): string {
 }
 
 /**
+ * Quote a database identifier for raw SQL.
+ */
+function quoteIdentifier(name: string): string {
+  return `"${String(name).replace(/"/g, '""')}"`;
+}
+
+/**
+ * Build an explicit column list instead of `SELECT *` / `RETURNING *`.
+ *
+ * Dynamic tables change shape at runtime (fields are added or removed). An
+ * explicit list makes the SQL text itself change with the schema, so PostgreSQL
+ * never reuses a prepared statement whose cached result type no longer matches
+ * the table (`cached plan must not change result type`).
+ */
+function buildColumnList(columns: Array<{ column_name: string }>): string {
+  return columns.map((column) => quoteIdentifier(column.column_name)).join(', ');
+}
+
+/**
  * Execute raw SQL query
  */
 export async function executeRawQuery(query: string, params: any[] = []) {
@@ -37,12 +56,16 @@ export async function findManyDynamic(tableName: string, options?: { where?: Rec
   const sanitizedTableName = tableName.toLowerCase().replace(/-/g, '_');
 
   await ensureContentI18nSchema(sanitizedTableName);
-  
+  const columnsInfo: any = await getTableColumns(sanitizedTableName);
+  const columnList = buildColumnList(columnsInfo);
+
   if (options?.where) {
     const whereKeys = Object.keys(options.where);
     const whereValues = Object.values(options.where);
-    const whereClause = whereKeys.map((key, i) => `"${key}" = $${i + 1}`).join(' AND ');
-    const query = `SELECT * FROM "${sanitizedTableName}" WHERE ${whereClause} ORDER BY "createdAt" DESC`;
+    const whereClause = whereKeys
+      .map((key, i) => `${quoteIdentifier(key)} = $${i + 1}`)
+      .join(' AND ');
+    const query = `SELECT ${columnList} FROM "${sanitizedTableName}" WHERE ${whereClause} ORDER BY "createdAt" DESC`;
     
     console.log(`[findManyDynamic] Table: ${tableName} -> ${sanitizedTableName}`);
     console.log(`[findManyDynamic] Query: ${query}`);
@@ -51,7 +74,7 @@ export async function findManyDynamic(tableName: string, options?: { where?: Rec
     return await executeRawQuery(query, whereValues);
   }
   
-  const query = `SELECT * FROM "${sanitizedTableName}" ORDER BY "createdAt" DESC`;
+  const query = `SELECT ${columnList} FROM "${sanitizedTableName}" ORDER BY "createdAt" DESC`;
   return await executeRawQuery(query);
 }
 
@@ -61,7 +84,9 @@ export async function findManyDynamic(tableName: string, options?: { where?: Rec
 export async function findUniqueDynamic(tableName: string, id: string) {
   const sanitizedTableName = tableName.toLowerCase().replace(/-/g, '_');
   await ensureContentI18nSchema(sanitizedTableName);
-  const query = `SELECT * FROM "${sanitizedTableName}" WHERE id = $1`;
+  const columnsInfo: any = await getTableColumns(sanitizedTableName);
+  const columnList = buildColumnList(columnsInfo);
+  const query = `SELECT ${columnList} FROM "${sanitizedTableName}" WHERE id = $1`;
   return await executeRawQuery(query, [id]);
 }
 
@@ -251,10 +276,11 @@ export async function createDynamic(
     return `$${i + 1}`;
   }).join(', ');
   
+  const returningColumns = buildColumnList(columnsInfo);
   const query = `
-    INSERT INTO "${sanitizedTableName}" (${columns.map(c => `"${c}"`).join(', ')})
+    INSERT INTO "${sanitizedTableName}" (${columns.map(c => quoteIdentifier(c)).join(', ')})
     VALUES (${placeholders})
-    RETURNING *
+    RETURNING ${returningColumns}
   `;
   
   console.log(`[Dynamic CRUD] Creating record in ${tableName} with columns:`, columns);
@@ -345,16 +371,17 @@ export async function updateDynamic(
   // Build SET clause with JSONB casting for JSONB columns
   const setClause = columns.map((col, i) => {
     if (jsonbColumns.has(col)) {
-      return `"${col}" = $${i + 1}::jsonb`;
+      return `${quoteIdentifier(col)} = $${i + 1}::jsonb`;
     }
-    return `"${col}" = $${i + 1}`;
+    return `${quoteIdentifier(col)} = $${i + 1}`;
   }).join(', ');
+  const returningColumns = buildColumnList(columnsInfo);
   
   const query = `
     UPDATE "${sanitizedTableName}"
     SET ${setClause}, "updatedAt" = NOW()
     WHERE id = $${values.length + 1}
-    RETURNING *
+    RETURNING ${returningColumns}
   `;
   
   console.log(`[Dynamic CRUD] Updating record in ${tableName} with columns:`, columns);
@@ -370,7 +397,9 @@ export async function updateDynamic(
  */
 export async function deleteDynamic(tableName: string, id: string) {
   const sanitizedTableName = tableName.toLowerCase().replace(/-/g, '_');
-  const query = `DELETE FROM "${sanitizedTableName}" WHERE id = $1 RETURNING *`;
+  const columnsInfo: any = await getTableColumns(sanitizedTableName);
+  const returningColumns = buildColumnList(columnsInfo);
+  const query = `DELETE FROM "${sanitizedTableName}" WHERE id = $1 RETURNING ${returningColumns}`;
   const result: any = await executeRawQuery(query, [id]);
   return result[0];
 }

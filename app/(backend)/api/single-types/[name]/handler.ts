@@ -7,6 +7,28 @@ import { prisma } from '@/lib/prisma';
 
 import { ApiResponse } from '@/lib/types';
 
+import {
+  deleteSingleTypeDefinition,
+  getSingleTypeSnapshot,
+  resolveSingleTypeLocale,
+  SingleTypeStorageError,
+  updateSingleTypeContent,
+  updateSingleTypeDefinition,
+} from '@/lib/single-type-service';
+
+function sendError(res: NextApiResponse<ApiResponse>, error: any) {
+  if (error instanceof SingleTypeStorageError || error?.statusCode) {
+    return res.status(error.statusCode || 500).json({
+      error: error.message,
+      code: error.code,
+    });
+  }
+
+  console.error('Single Type API Error:', error);
+  return res.status(500).json({
+    error: error.message || 'Internal server error',
+  });
+}
 
 async function handler(
   req: NextApiRequest,
@@ -19,52 +41,85 @@ async function handler(
   }
 
   try {
+    const existing = await prisma.singleType.findUnique({
+      where: { name },
+    });
+
+    if (!existing) {
+      return res.status(404).json({ error: 'Single type not found' });
+    }
+
     if (req.method === 'GET') {
-      const singleType = await prisma.singleType.findUnique({
-        where: { name },
+      const locale = await resolveSingleTypeLocale(
+        (req.query.locale as string | undefined) ?? undefined
+      );
+      const snapshot = await getSingleTypeSnapshot(existing, locale, {
+        fallbackToDefault: false,
       });
 
-      if (!singleType) {
-        return res.status(404).json({ error: 'Single type not found' });
-      }
-
       if (req.query.includeMeta === 'true') {
-        return res.status(200).json({ data: singleType });
+        return res.status(200).json({
+          data: {
+            ...existing,
+            tableName: snapshot.tableName,
+            data: snapshot.data,
+            locale: snapshot.locale,
+            availableLocales: snapshot.availableLocales,
+          },
+        });
       }
 
-      return res.status(200).json({ data: singleType.data });
+      return res.status(200).json({
+        data: snapshot.data,
+        meta: {
+          locale: snapshot.locale,
+          availableLocales: snapshot.availableLocales,
+        },
+      });
     }
 
     if (req.method === 'PUT') {
-      // Update single type (structure or data)
-      const { displayName, description, fields, data } = req.body;
+      const { displayName, description, fields, data } = req.body || {};
+      const locale = await resolveSingleTypeLocale(
+        (req.body?.locale as string | undefined) ??
+          (req.query.locale as string | undefined) ??
+          undefined
+      );
 
-      const updateData: any = {};
-      if (displayName !== undefined) updateData.displayName = displayName;
-      if (description !== undefined) updateData.description = description;
-      if (fields !== undefined) updateData.fields = fields;
-      if (data !== undefined) updateData.data = data;
-
-      const singleType = await prisma.singleType.update({
-        where: { name },
-        data: updateData,
+      const updated = await updateSingleTypeDefinition(existing, {
+        displayName,
+        description,
+        fields,
       });
 
-      return res.status(200).json({ data: singleType });
+      if (data !== undefined) {
+        await updateSingleTypeContent(updated, locale, data);
+      }
+
+      const snapshot = await getSingleTypeSnapshot(updated, locale, {
+        fallbackToDefault: false,
+      });
+
+      return res.status(200).json({
+        data: {
+          ...updated,
+          tableName: snapshot.tableName,
+          data: snapshot.data,
+          locale: snapshot.locale,
+          availableLocales: snapshot.availableLocales,
+        },
+        message: 'Single type updated',
+      });
     }
 
     if (req.method === 'DELETE') {
-      await prisma.singleType.delete({
-        where: { name },
-      });
-
+      await deleteSingleTypeDefinition(existing);
       return res.status(200).json({ message: 'Single type deleted' });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (error: any) {
-    console.error('Single Type API Error:', error);
-    return res.status(500).json({ error: error.message || 'Internal server error' });
+    return sendError(res, error);
   }
 }
 

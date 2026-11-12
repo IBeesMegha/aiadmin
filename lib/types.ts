@@ -61,6 +61,7 @@ export interface ApiResponse<T = any> {
   code?: string;
   rootId?: string;
   locale?: string;
+  meta?: Record<string, any>;
 }
 
 // Content Type Builder Types
@@ -81,6 +82,7 @@ export interface SingleTypeData {
   description?: string;
   fields: ContentTypeFields;
   data?: any;
+  tableName?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

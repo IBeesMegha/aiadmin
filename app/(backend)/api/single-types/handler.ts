@@ -7,6 +7,24 @@ import { prisma } from '@/lib/prisma';
 
 import { ApiResponse } from '@/lib/types';
 
+import {
+  createSingleTypeDefinition,
+  SingleTypeStorageError,
+} from '@/lib/single-type-service';
+
+function sendError(res: NextApiResponse<ApiResponse>, error: any) {
+  if (error instanceof SingleTypeStorageError || error?.statusCode) {
+    return res.status(error.statusCode || 500).json({
+      error: error.message,
+      code: error.code,
+    });
+  }
+
+  console.error('Single Types API Error:', error);
+  return res.status(500).json({
+    error: error.message || 'Internal server error',
+  });
+}
 
 async function handler(
   req: NextApiRequest,
@@ -17,34 +35,34 @@ async function handler(
       const singleTypes = await prisma.singleType.findMany({
         orderBy: { createdAt: 'desc' },
       });
-      
+
       return res.status(200).json({ data: singleTypes });
     }
 
     if (req.method === 'POST') {
-      // Create new single type
-      const { name, displayName, description, fields } = req.body;
+      const { name, displayName, description, fields, data } = req.body || {};
 
       if (!name || !displayName || !fields) {
         return res.status(400).json({ error: 'Missing required fields' });
       }
 
-      const singleType = await prisma.singleType.create({
-        data: {
-          name: name.toLowerCase().replace(/\s+/g, '-'),
-          displayName,
-          description,
-          fields,
-        },
+      const singleType = await createSingleTypeDefinition({
+        name,
+        displayName,
+        description,
+        fields,
+        initialData: data,
       });
 
-      return res.status(201).json({ data: singleType });
+      return res.status(201).json({
+        data: singleType,
+        message: 'Single type created successfully',
+      });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (error: any) {
-    console.error('Single Types API Error:', error);
-    return res.status(500).json({ error: error.message || 'Internal server error' });
+    return sendError(res, error);
   }
 }
 

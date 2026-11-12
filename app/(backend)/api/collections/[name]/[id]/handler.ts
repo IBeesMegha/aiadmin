@@ -180,9 +180,26 @@ async function handler(
     }
 
     if (req.method === 'DELETE') {
-      // Delete entry from dynamic table
-      await deleteDynamic(name, id);
-      return res.status(200).json({ message: 'Entry deleted' });
+      // Deleting an entry removes the whole content item, including every
+      // language row that shares its rootId. Deleting only the selected
+      // locale would leave orphaned translations behind.
+      const current = (await findUniqueDynamic(name, id)) as any[];
+      const rootId = current?.[0]?.rootId || current?.[0]?.id || id;
+
+      const translations = (await findManyDynamic(name, {
+        where: { rootId },
+      })) as any[];
+
+      const ids = new Set<string>([id]);
+      for (const translation of translations || []) {
+        if (translation?.id) ids.add(translation.id);
+      }
+
+      await Promise.all(
+        Array.from(ids).map((entryId) => deleteDynamic(name, entryId))
+      );
+
+      return res.status(200).json({ message: 'Entry and translations deleted' });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });

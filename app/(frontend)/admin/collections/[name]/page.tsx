@@ -787,7 +787,13 @@ export default function CollectionList() {
       });
 
       if (response.ok) {
-        const remaining = rawEntries.filter((e) => e.id !== id);
+        // The API deletes every language row of this content item, so drop the
+        // whole translation group from the local state as well.
+        const deleted = rawEntries.find((e) => e.id === id);
+        const rootId = deleted?.rootId || deleted?.id || id;
+        const remaining = rawEntries.filter(
+          (e) => (e.rootId || e.id) !== rootId
+        );
         setRawEntries(remaining);
         setTranslationGroups(buildTranslationGroups(remaining));
         toast.success('Entry deleted successfully!', { id: toastId });
@@ -861,7 +867,18 @@ export default function CollectionList() {
       const successCount = results.filter(r => r.ok).length;
 
       if (successCount === selectedEntries.size) {
-        setEntries(entries.filter(e => !selectedEntries.has(e.id)));
+        // The API removes every language row for each selected content item,
+        // so drop the entire translation groups, not just the visible rows.
+        const deletedRootIds = new Set<string>();
+        for (const id of selectedEntries) {
+          const entry = rawEntries.find((e) => e.id === id);
+          deletedRootIds.add(entry?.rootId || entry?.id || id);
+        }
+        const remaining = rawEntries.filter(
+          (e) => !deletedRootIds.has(e.rootId || e.id)
+        );
+        setRawEntries(remaining);
+        setTranslationGroups(buildTranslationGroups(remaining));
         setSelectedEntries(new Set());
         toast.success(`Successfully deleted ${successCount} entries`, { id: toastId });
       } else {

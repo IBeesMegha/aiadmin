@@ -4,6 +4,30 @@ export const runtime = 'nodejs'
 import type { NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import { withApiToken, ApiTokenRequest } from '@/lib/api-tokens/middleware';
+import {
+  deleteSingleTypeDefinition,
+  getSingleTypeSnapshot,
+  resolveSingleTypeLocale,
+  SingleTypeStorageError,
+  updateSingleTypeContent,
+  updateSingleTypeDefinition,
+} from '@/lib/single-type-service';
+
+function sendError(res: NextApiResponse, error: any) {
+  if (error instanceof SingleTypeStorageError || error?.statusCode) {
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      error: error.message,
+      code: error.code,
+    });
+  }
+
+  console.error('V1 Single Type API Error:', error);
+  return res.status(500).json({
+    success: false,
+    error: error.message || 'Internal server error',
+  });
+}
 
 async function handler(req: ApiTokenRequest, res: NextApiResponse) {
   const { name } = req.query;
@@ -22,50 +46,85 @@ async function handler(req: ApiTokenRequest, res: NextApiResponse) {
     }
 
     if (req.method === 'GET') {
-      // Default: return the content data only, so frontend consumers do not
-      // receive the schema. Use ?includeMeta=true to get the full record.
+      const requestedLocale = await resolveSingleTypeLocale(
+        req.query.locale as string | undefined
+      );
+      const snapshot = await getSingleTypeSnapshot(singleType, requestedLocale, {
+        fallbackToDefault: true,
+      });
+
       if (req.query.includeMeta === 'true') {
-        return res.status(200).json({ success: true, data: singleType });
+        return res.status(200).json({
+          success: true,
+          data: {
+            ...singleType,
+            tableName: snapshot.tableName,
+            data: snapshot.data,
+            locale: snapshot.locale,
+            availableLocales: snapshot.availableLocales,
+          },
+        });
       }
 
       return res.status(200).json({
         success: true,
-        data: singleType.data ?? {},
+        data: snapshot.data ?? {},
         meta: {
           name: singleType.name,
           displayName: singleType.displayName,
           description: singleType.description,
+          locale: snapshot.locale,
+          requestedLocale: snapshot.requestedLocale,
+          availableLocales: snapshot.availableLocales,
         },
       });
     }
 
     if (req.method === 'PUT' || req.method === 'PATCH') {
       const { displayName, description, fields, data } = req.body || {};
+      const locale = await resolveSingleTypeLocale(
+        (req.body?.locale as string | undefined) ??
+          (req.query.locale as string | undefined)
+      );
 
-      const updateData: any = {};
-      if (displayName !== undefined) updateData.displayName = displayName;
-      if (description !== undefined) updateData.description = description;
-      if (fields !== undefined) updateData.fields = fields;
-      if (data !== undefined) updateData.data = data;
+      const hasStructureUpdate =
+        displayName !== undefined ||
+        description !== undefined ||
+        fields !== undefined;
 
-      if (Object.keys(updateData).length === 0) {
+      if (!hasStructureUpdate && data === undefined) {
         return res.status(400).json({ success: false, error: 'Nothing to update' });
       }
 
-      const updated = await prisma.singleType.update({
-        where: { name },
-        data: updateData,
+      const updated = await updateSingleTypeDefinition(singleType, {
+        displayName,
+        description,
+        fields,
+      });
+
+      if (data !== undefined) {
+        await updateSingleTypeContent(updated, locale, data);
+      }
+
+      const snapshot = await getSingleTypeSnapshot(updated, locale, {
+        fallbackToDefault: false,
       });
 
       return res.status(200).json({
         success: true,
-        data: updated,
+        data: {
+          ...updated,
+          tableName: snapshot.tableName,
+          data: snapshot.data,
+          locale: snapshot.locale,
+          availableLocales: snapshot.availableLocales,
+        },
         message: 'Single type updated',
       });
     }
 
     if (req.method === 'DELETE') {
-      await prisma.singleType.delete({ where: { name } });
+      await deleteSingleTypeDefinition(singleType);
 
       return res.status(200).json({
         success: true,
@@ -75,8 +134,7 @@ async function handler(req: ApiTokenRequest, res: NextApiResponse) {
 
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   } catch (error: any) {
-    console.error('V1 Single Type API Error:', error);
-    return res.status(500).json({ success: false, error: error.message || 'Internal server error' });
+    return sendError(res, error);
   }
 }
 
